@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WinSonic (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WinSonic (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
