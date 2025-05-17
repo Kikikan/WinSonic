@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinSonic.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" x:DataType="local:SettingsPage">
+
+    <Grid Margin="10">
+        <SplitView x:Name="SplitView" PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+           IsPaneOpen="True" OpenPaneLength="256" CompactPaneLength="48" DisplayMode="Inline">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Categories" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <ListView x:Name="NavLinksList"
+                              Margin="0,12,0,0"
+                              SelectionMode="Single"
+                              Grid.Row="1"
+                              VerticalAlignment="Stretch"
+                              ItemClick="NavLinksList_ItemClick"
+                              IsItemClickEnabled="True">
+                        <ListViewItem>
+                            <TextBlock Text="Setting 1"/>
+                        </ListViewItem>
+                        <ListViewItem>
+                            <TextBlock Text="Setting 2"/>
+                        </ListViewItem>
+                        <ListViewItem>
+                            <TextBlock Text="Setting 3"/>
+                        </ListViewItem>
+                    </ListView>
+                </Grid>
+            </SplitView.Pane>
+
+            <StackPanel Margin="10">
+                <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" Margin="0 40 0 36"/>
+            </StackPanel>
+        </SplitView>
+    </Grid>
+</Page>

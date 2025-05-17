@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinSonic.Pages.EditServerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" xmlns:models="using:WinSonic.Model">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ServerTemplate" x:DataType="models:Server">
+            <Grid>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Delete" Click="Delete_Click"/>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock  Grid.Column="0"
+                            Text="{x:Bind Name}"
+                            x:Phase="1"
+                            Style="{ThemeResource BaseTextBlockStyle}"
+                            Margin="12,6,0,0"/>
+                <TextBlock  Grid.Column="1"
+                            Text="{x:Bind Address}"
+                            x:Phase="1"
+                            Style="{ThemeResource BaseTextBlockStyle}"
+                            Margin="12,6,0,0"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Text="{x:Bind Username}"
+                            x:Phase="2"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Margin="12,0,0,6"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <StackPanel Margin="25 0 25 0">
+        <TextBlock Text="Servers" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
+        <ListView x:Name="ServerListView" SelectionMode="Single" ItemsSource="{x:Bind Servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Margin="0 0 0 50"/>
+        <TextBox x:Name="Name" Header="Server Name" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Name, Mode=OneWay}" Margin="0 0 0 16"/>
+        <TextBox x:Name="URL" Header="Enter the URL of the server." IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Address, Mode=OneWay}" Margin="0 0 0 20"/>
+        <TextBox x:Name="Username" Header="Username" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Username, Mode=OneWay}" Margin="0 0 0 16"/>
+        <PasswordBox x:Name="Password" Header="Password" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Margin="0 0 0 16"/>
+    </StackPanel>
+</Page>

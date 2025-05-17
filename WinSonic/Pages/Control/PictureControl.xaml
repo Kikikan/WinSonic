@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="WinSonic.Pages.Control.PictureControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages.Control"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" x:Name="Image" Height="200" Stretch="Uniform">
+            <Image.Source>
+                <BitmapImage UriSource="{x:Bind IconUri}"/>
+            </Image.Source>
+        </Image>
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="{x:Bind Title}" FontWeight="Bold" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind Subtitle}" TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</UserControl>

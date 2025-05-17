@@ -14,6 +14,63 @@
     </Window.SystemBackdrop>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="AppTitleBar" Grid.Row="0" VerticalAlignment="Top">
+            <TextBlock x:Name="AppTitle" FontSize="12" Text="WinSonic" VerticalAlignment="Top" Margin="60 8 0 0" />
+        </Border>
+        <NavigationView x:Name="MainNav"
+                        Grid.Row="1"
+                        PaneDisplayMode="Left"
+                        ItemInvoked="NavView_ItemInvoked"
+                        IsBackEnabled="False"
+                        IsBackButtonVisible="Collapsed">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Tag="WinSonic.Pages.PlayerPage" Content="Now Playing">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe768;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem Tag="WinSonic.Pages.FavouritePage" Content="Favourites">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe734;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="WinSonic.Pages.AlbumPage" Content="Albums">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe93c;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem Content="Servers">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe977;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Add" ToolTipService.ToolTip="Add a new Subsonic server" Tag="WinSonic.Pages.AddServerPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe710;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Edit" ToolTipService.ToolTip="Edit already added Subsonic servers" Tag="WinSonic.Pages.EditServerPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe70f;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
 
+            <Grid>
+                <Frame x:Name="ContentFrame" IsTabStop="True"
+                NavigationFailed="ContentFrame_NavigationFailed"/>
+            </Grid>
+        </NavigationView>
+        <MediaPlayerElement x:Name="mediaPlayerElement" Grid.Row="2"
+                   AreTransportControlsEnabled="True"/>
     </Grid>
 </Window>
