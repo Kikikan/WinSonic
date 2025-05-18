@@ -20,6 +20,8 @@ public sealed partial class PictureControl : UserControl, INotifyPropertyChanged
     private string _subtitle;
     public string Subtitle { get => _subtitle; set { _subtitle = value; OnPropertyChanged(nameof(Subtitle)); } }
     private bool _isFavourite = false;
+
+    public Type DetailsType { get; set; }
     public bool IsFavourite
     {
         get => _isFavourite; set

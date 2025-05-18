@@ -15,6 +15,7 @@ namespace WinSonic
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        public Frame NavFrame { get { return ContentFrame; } }
         public MainWindow()
         {
             InitializeComponent();
@@ -50,6 +51,14 @@ namespace WinSonic
             if (navPageType is not null && !Type.Equals(preNavPageType, navPageType))
             {
                 ContentFrame.Navigate(navPageType, null, transitionInfo);
+            }
+        }
+
+        private void MainNav_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            if (NavFrame.CanGoBack)
+            {
+                NavFrame.GoBack();
             }
         }
     }

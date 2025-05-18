@@ -13,11 +13,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Pages\ArtistPage.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Pages\AddServerPage.xaml" />
     <None Remove="Pages\AlbumPage.xaml" />
     <None Remove="Pages\ArtistPage.xaml" />
     <None Remove="Pages\Control\PictureControl.xaml" />
     <None Remove="Pages\Control\PictureControlPage.xaml" />
+    <None Remove="Pages\Details\ArtistDetailPage.xaml" />
     <None Remove="Pages\Favourites\FavouriteAlbumPage.xaml" />
     <None Remove="Pages\Favourites\FavouriteArtistPage.xaml" />
     <None Remove="Pages\Favourites\FavouriteSongPage.xaml" />
@@ -28,6 +32,7 @@
     <None Remove="Pages\PlaylistPage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
     <None Remove="Pages\SongPage.xaml" />
+    <None Remove="Pages\SongsPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,7 +87,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\AlbumPage.xaml">
+    <Page Update="Pages\AlbumsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -115,6 +120,26 @@
     <Folder Include="Pages\Servers\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Pages\SongsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Details\ArtistDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\ArtistPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\AlbumPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Pages\SongPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,7 +155,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\ArtistPage.xaml">
+    <Page Update="Pages\ArtistsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

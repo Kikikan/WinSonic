@@ -10,7 +10,17 @@
     xmlns:control="using:WinSonic.Pages.Control"
     Loaded="Page_Loaded">
 
-    <Grid>
-        <control:PictureControlPage x:Name="PictureControl"/>
+    <Grid Margin="25 25 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Favourites" Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 25"/>
+            <TextBlock Text="Albums" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 15"/>
+        </StackPanel>
+        
+        <control:PictureControlPage x:Name="PictureControl" Grid.Row="1"/>
     </Grid>
 </Page>

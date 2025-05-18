@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="WinSonic.Pages.AlbumPage"
+    x:Class="WinSonic.Pages.AlbumsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:WinSonic.Pages"
@@ -10,12 +10,12 @@
     xmlns:models="using:WinSonic.Model.Api"
     xmlns:controls="using:WinSonic.Pages.Control">
 
-    <Grid Margin="25 0 0 0">
+    <Grid Margin="25 25 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
+        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 25"/>
         <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
     </Grid>
 </Page>

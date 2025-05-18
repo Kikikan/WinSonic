@@ -15,27 +15,34 @@ namespace WinSonic.Pages.Favourites;
 public sealed partial class FavouriteAlbumPage : Page
 {
     private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
+    private bool initialized = false;
     public FavouriteAlbumPage()
     {
         InitializeComponent();
+        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        foreach (var server in serverFile.Servers)
+        if (!initialized)
         {
-            var rs = await SubsonicApiHelper.GetStarred(server);
-            if (rs != null && rs.Middle != null)
+            foreach (var server in serverFile.Servers)
             {
-                foreach (var album in rs.Middle)
+                var rs = await SubsonicApiHelper.GetStarred(server);
+                if (rs != null && rs.Middle != null)
                 {
-                    PictureControl control = new PictureControl();
-                    control.IconUri = album.CoverImageUrl;
-                    control.Title = album.Title;
-                    control.Subtitle = album.Artist;
-                    PictureControl.Items.Add(control);
+                    foreach (var album in rs.Middle)
+                    {
+                        PictureControl control = new PictureControl();
+                        control.IconUri = album.CoverImageUrl;
+                        control.Title = album.Title;
+                        control.Subtitle = album.Artist;
+                        control.DetailsType = typeof(AlbumDetailPage);
+                        PictureControl.Items.Add(control);
+                    }
                 }
             }
+            initialized = true;
         }
     }
 }

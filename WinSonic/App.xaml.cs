@@ -13,7 +13,7 @@ namespace WinSonic
     {
         internal ServerFile ServerFile { get; private set; } = new();
 
-        private Window? _window;
+        public MainWindow? Window { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -30,8 +30,8 @@ namespace WinSonic
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            _window = new MainWindow();
-            _window.Activate();
+            Window = new MainWindow();
+            Window.Activate();
         }
     }
 }

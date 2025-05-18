@@ -14,14 +14,15 @@ namespace WinSonic.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AlbumPage : Page
+    public sealed partial class AlbumsPage : Page
     {
 
         private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
 
-        public AlbumPage()
+        public AlbumsPage()
         {
             InitializeComponent();
+            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
             AlbumControl.UpdateAction = (count) => Update(count);
         }
 
@@ -40,6 +41,7 @@ namespace WinSonic.Pages
                         control.Title = album.Title;
                         control.Subtitle = album.Artist;
                         control.IsFavourite = album.IsFavourite;
+                        control.DetailsType = typeof(AlbumDetailPage);
                         AlbumControl.Items.Add(control);
                     }
                     result = true;

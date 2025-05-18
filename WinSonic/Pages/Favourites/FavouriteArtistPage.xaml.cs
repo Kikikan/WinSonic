@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Control;
+using WinSonic.Pages.Details;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,27 +16,34 @@ namespace WinSonic.Pages.Favourites;
 public sealed partial class FavouriteArtistPage : Page
 {
     private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
+    private bool initialized = false;
     public FavouriteArtistPage()
     {
         InitializeComponent();
+        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        foreach (var server in serverFile.Servers)
+        if (!initialized)
         {
-            var rs = await SubsonicApiHelper.GetStarred(server);
-            if (rs != null && rs.Left != null)
+            foreach (var server in serverFile.Servers)
             {
-                foreach (var artist in rs.Left)
+                var rs = await SubsonicApiHelper.GetStarred(server);
+                if (rs != null && rs.Left != null)
                 {
-                    PictureControl control = new PictureControl();
-                    control.Title = artist.Name;
-                    var artistRs = await SubsonicApiHelper.GetArtistInfo(server, artist.Id);
-                    control.IconUri = artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null;
-                    PictureControl.Items.Add(control);
+                    foreach (var artist in rs.Left)
+                    {
+                        PictureControl control = new PictureControl();
+                        control.Title = artist.Name;
+                        var artistRs = await SubsonicApiHelper.GetArtistInfo(server, artist.Id);
+                        control.IconUri = artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null;
+                        control.DetailsType = typeof(ArtistDetailPage);
+                        PictureControl.Items.Add(control);
+                    }
                 }
             }
+            initialized = true;
         }
     }
 }
