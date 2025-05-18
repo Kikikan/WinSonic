@@ -18,14 +18,6 @@
         <GridView ItemsSource="{x:Bind Items}"
                   IsItemClickEnabled="True"
                   SelectionMode="None">
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"
-                               MaximumRowsOrColumns="0"
-                               ItemWidth="200"
-                               ItemHeight="250"/>
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
         </GridView>
     </ScrollViewer>
 </Page>

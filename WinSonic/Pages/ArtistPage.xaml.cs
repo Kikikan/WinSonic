@@ -1,23 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Contacts;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Networking;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Control;
 using WinSonic.Persistence;
@@ -79,6 +64,7 @@ namespace WinSonic.Pages
                     control.Title = a.Title;
                     control.Subtitle = a.Artist;
                     control.IconUri = a.CoverImageUrl;
+                    control.IsFavourite = a.IsFavourite;
                     AlbumsPage.Items.Add(control);
                 }
             }

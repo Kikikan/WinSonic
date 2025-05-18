@@ -39,6 +39,7 @@ namespace WinSonic.Pages
                         control.IconUri = album.CoverImageUrl;
                         control.Title = album.Title;
                         control.Subtitle = album.Artist;
+                        control.IsFavourite = album.IsFavourite;
                         AlbumControl.Items.Add(control);
                     }
                     result = true;

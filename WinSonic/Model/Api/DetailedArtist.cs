@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinSonic.Model.Api
 {
@@ -16,7 +12,7 @@ namespace WinSonic.Model.Api
         public Uri SmallImageUri { get; private set; }
         public Uri MediumImageUri { get; private set; }
         public Uri LargeImageUri { get; private set; }
-        
+
         public DetailedArtist(Server server, string key, string id, string name, string biography, string smallImageUri, string mediumImageUri, string largeImageUri)
         {
             Server = server;

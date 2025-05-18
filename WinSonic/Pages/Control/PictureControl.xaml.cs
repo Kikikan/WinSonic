@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.ComponentModel;
@@ -18,9 +19,24 @@ public sealed partial class PictureControl : UserControl, INotifyPropertyChanged
     public string Title { get => _title; set { _title = value; OnPropertyChanged(nameof(Title)); } }
     private string _subtitle;
     public string Subtitle { get => _subtitle; set { _subtitle = value; OnPropertyChanged(nameof(Subtitle)); } }
+    private bool _isFavourite = false;
+    public bool IsFavourite
+    {
+        get => _isFavourite; set
+        {
+            _isFavourite = value;
+            FavouriteIcon1.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            FavouriteIcon2.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+    }
 
     public PictureControl()
     {
         InitializeComponent();
+    }
+
+    private void ControlGrid_PointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+
     }
 }

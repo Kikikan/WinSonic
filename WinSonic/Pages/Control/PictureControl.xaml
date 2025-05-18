@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Margin="8">
+    <Grid x:Name="ControlGrid" Padding="8" PointerPressed="ControlGrid_PointerPressed">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
@@ -18,9 +18,11 @@
                 <BitmapImage UriSource="{x:Bind IconUri}"/>
             </Image.Source>
         </Image>
+        <FontIcon x:Name="FavouriteIcon1" Glyph="&#xEB52;" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <FontIcon x:Name="FavouriteIcon2" Glyph="&#xEB51;" Foreground="Black" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
         <StackPanel Grid.Row="1">
-            <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextWrapping="Wrap" />
-            <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextWrapping="Wrap" />
+            <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextTrimming="CharacterEllipsis" />
         </StackPanel>
     </Grid>
 </UserControl>
