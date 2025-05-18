@@ -19,8 +19,8 @@
             </Image.Source>
         </Image>
         <StackPanel Grid.Row="1">
-            <TextBlock Text="{x:Bind Title}" FontWeight="Bold" TextWrapping="Wrap" />
-            <TextBlock Text="{x:Bind Subtitle}" TextWrapping="Wrap" />
+            <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextWrapping="Wrap" />
+            <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
 </UserControl>

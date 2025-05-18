@@ -6,9 +6,52 @@
     xmlns:local="using:WinSonic"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    xmlns:control="using:WinSonic.Pages.Control">
 
     <Grid Margin="25 0 0 0">
-        <TextBlock Text="Now Playing" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Now Playing" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
+        <Grid Grid.Row="1" Margin="0 25 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Image Grid.Row="0" x:Name="Image" Height="400" Stretch="Uniform">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Song.CoverImageUri}"/>
+                    </Image.Source>
+                </Image>
+                <StackPanel Grid.Row="1">
+                    <TextBlock Text="{x:Bind Song.Title}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Song.Artist}"/>
+                    <TextBlock Text="{x:Bind Song.Album}"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <SelectorBar Grid.Row="0" x:Name="RightSelectorBar" SelectionChanged="RightSelectorBar_SelectionChanged">
+                    <SelectorBarItem x:Name="QueueItemPage" Text="Queue" IsSelected="True" />
+                    <SelectorBarItem x:Name="LyricsItemPage" Text="Lyrics" />
+                    <SelectorBarItem x:Name="RelatedItemPage" Text="Related" />
+                </SelectorBar>
+
+                <Frame Grid.Row="1" x:Name="ContentFrame" IsNavigationStackEnabled="False" />
+            </Grid>
+        </Grid>
+        <TextBlock Grid.Row="2" Text="Small info on the bottom left screen" Style="{StaticResource CaptionTextBlockStyle}" Margin="0 25 0 10"/>
+
     </Grid>
 </Page>

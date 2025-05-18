@@ -31,6 +31,8 @@ public sealed partial class FavouriteArtistPage : Page
                 {
                     PictureControl control = new PictureControl();
                     control.Title = artist.Name;
+                    var artistRs = await SubsonicApiHelper.GetArtistInfo(server, artist.Id);
+                    control.IconUri = artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null;
                     PictureControl.Items.Add(control);
                 }
             }

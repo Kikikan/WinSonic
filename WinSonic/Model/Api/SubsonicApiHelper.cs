@@ -62,6 +62,37 @@ namespace WinSonic.Model.Api
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
         }
 
+        internal static async Task<ArtistInfo2?> GetArtistInfo(Server server, string id)
+        {
+            string parameters = $"/rest/getArtistInfo2{server.GetParameters()}&id={id}";
+            var response = await Execute(server, parameters);
+            return response?.ArtistInfo2;
+        }
+
+        internal static async Task<List<DetailedArtist>> GetArtists(Server server)
+        {
+            var rs = await Execute(server, $"/rest/getArtists{server.GetParameters()}");
+            var artists = new List<DetailedArtist>();
+            if (rs != null && rs.Artists != null)
+            {
+                foreach (var index in rs.Artists.Index)
+                {
+                    foreach (var artist in index.Artist)
+                    {
+                        var artistRs = await GetArtistInfo(server, artist.Id);
+                        artists.Add(new DetailedArtist(server, index.Name, artist.Id, artist.Name, artistRs.Biography, artistRs.SmallImageUrl, artistRs.MediumImageUrl, artistRs.LargeImageUrl));
+                    }
+                }
+            }
+            return artists;
+        }
+
+        internal static async Task<ArtistWithAlbumsId3> GetArtist(Server server, string id)
+        {
+            var rs = await Execute(server, $"/rest/getArtist{server.GetParameters()}&id={id}");
+            return rs.Artist;
+        }
+
         private static Song ChildToSong(Server server, Child child)
         {
             return new Song(child.Id, child.Title, child.Album, child.Artist, child.CoverArt, server);

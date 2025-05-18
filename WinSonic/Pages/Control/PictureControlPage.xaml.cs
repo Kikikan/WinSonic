@@ -13,12 +13,11 @@ namespace WinSonic.Pages.Control;
 /// </summary>
 public partial class PictureControlPage : Page
 {
-    private bool isLoading = false;
     private bool canBeUpdated = true;
 
     public ObservableCollection<PictureControl> Items { get; set; } = new();
     private Func<int, Task<bool>> _updateAction;
-    public Func<int, Task<bool>> UpdateAction { get => _updateAction; set { value(Items.Count); _updateAction = value; } }
+    public Func<int, Task<bool>> UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
 
     public PictureControlPage()
     {
@@ -30,11 +29,33 @@ public partial class PictureControlPage : Page
         var scrollViewer = sender as ScrollViewer;
         if (scrollViewer == null) return;
 
-        var scrollPosition = scrollViewer.VerticalOffset / (scrollViewer.ScrollableHeight - scrollViewer.ViewportHeight);
-
-        if (scrollPosition > 0.5 && !e.IsIntermediate && !isLoading && canBeUpdated && UpdateAction != null)
+        if (scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset < 200 && !e.IsIntermediate && canBeUpdated && UpdateAction != null)
         {
             canBeUpdated = await UpdateAction.Invoke(Items.Count);
+        }
+    }
+
+    private void CheckAndLoadMoreIfNeeded()
+    {
+        // If there's no scrollbar yet (ScrollableHeight is 0 or very small)
+        // and we're not currently loading, load more items
+        if (GridViewScrollViewer.ScrollableHeight < 10)
+        {
+            // Load more in a loop until scrollbar appears or max attempts reached
+            LoadMoreUntilScrollable();
+        }
+    }
+
+    private async void LoadMoreUntilScrollable(int maxAttempts = 5)
+    {
+        int attempts = 0;
+        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts)
+        {
+            canBeUpdated = await UpdateAction.Invoke(Items.Count);
+
+            // Give UI time to update and recalculate layout
+            await Task.Delay(100);
+            attempts++;
         }
     }
 }
