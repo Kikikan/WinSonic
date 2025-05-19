@@ -16,22 +16,21 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumsPage : Page
     {
-
         private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
 
         public AlbumsPage()
         {
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-            AlbumControl.UpdateAction = (count) => Update(count);
+            AlbumControl.UpdateAction = Update;
         }
 
-        private async Task<bool> Update(int offset)
+        private async Task<bool> Update()
         {
             bool result = false;
             foreach (var server in serverFile.Servers)
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, SubsonicApiHelper.AlbumListType.newest, 20, offset);
+                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, SubsonicApiHelper.AlbumListType.newest, 10, AlbumControl.Items.Count);
                 if (albums != null && albums.Count > 0)
                 {
                     foreach (var album in albums)

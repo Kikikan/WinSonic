@@ -18,8 +18,8 @@
                 <BitmapImage UriSource="{x:Bind IconUri}"/>
             </Image.Source>
         </Image>
-        <FontIcon x:Name="FavouriteIcon1" Glyph="&#xEB52;" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-        <FontIcon x:Name="FavouriteIcon2" Glyph="&#xEB51;" Foreground="Black" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <FontIcon x:Name="FavouriteIcon1" Glyph="&#xEB52;" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30"/>
+        <FontIcon x:Name="FavouriteIcon2" Glyph="&#xEB51;" Foreground="Black" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30"/>
         <StackPanel Grid.Row="1">
             <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
             <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextTrimming="CharacterEllipsis" />

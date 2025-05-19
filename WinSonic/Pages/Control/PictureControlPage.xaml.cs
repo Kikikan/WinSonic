@@ -19,8 +19,9 @@ public partial class PictureControlPage : Page
     private bool canBeUpdated = true;
     private PictureControl _storedObject;
     public ObservableCollection<PictureControl> Items { get; set; } = new();
-    private Func<int, Task<bool>> _updateAction;
-    public Func<int, Task<bool>> UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
+    private Func<Task<bool>> _updateAction;
+    public Func<Task<bool>> UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
+    private bool isLoading = false;
 
     public PictureControlPage()
     {
@@ -32,9 +33,11 @@ public partial class PictureControlPage : Page
         var scrollViewer = sender as ScrollViewer;
         if (scrollViewer == null) return;
 
-        if (scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset < 200 && !e.IsIntermediate && canBeUpdated && UpdateAction != null)
+        if (scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset < 200 && !e.IsIntermediate && canBeUpdated && UpdateAction != null && !isLoading)
         {
-            canBeUpdated = await UpdateAction.Invoke(Items.Count);
+            isLoading = true;
+            canBeUpdated = await UpdateAction.Invoke();
+            isLoading = false;
         }
     }
 
@@ -52,13 +55,12 @@ public partial class PictureControlPage : Page
     private async void LoadMoreUntilScrollable(int maxAttempts = 5)
     {
         int attempts = 0;
-        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts)
+        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts && !isLoading)
         {
-            canBeUpdated = await UpdateAction.Invoke(Items.Count);
-
-            // Give UI time to update and recalculate layout
-            await Task.Delay(100);
+            isLoading = true;
+            canBeUpdated = await UpdateAction.Invoke();
             attempts++;
+            isLoading = false;
         }
     }
 
@@ -108,5 +110,13 @@ public partial class PictureControlPage : Page
             PictureGridView.Focus(FocusState.Programmatic);
         }
 
+    }
+
+    private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (UpdateAction != null)
+        {
+            CheckAndLoadMoreIfNeeded();
+        }
     }
 }
