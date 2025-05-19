@@ -62,6 +62,7 @@ namespace WinSonic.Pages
                 {
                     var a = new Album(album, selected.Server);
                     var control = new PictureControl();
+                    control.ApiObject = a;
                     control.Title = a.Title;
                     control.Subtitle = a.Artist;
                     control.IconUri = a.CoverImageUrl;

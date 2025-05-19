@@ -37,6 +37,7 @@ namespace WinSonic.Pages
                     foreach (var album in albums)
                     {
                         PictureControl control = new PictureControl();
+                        control.ApiObject = album;
                         control.IconUri = album.CoverImageUrl;
                         control.Title = album.Title;
                         control.Subtitle = album.Artist;

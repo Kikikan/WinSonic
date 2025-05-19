@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 25"/>
+        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
         <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
     </Grid>
 </Page>

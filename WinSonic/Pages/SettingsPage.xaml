@@ -40,7 +40,7 @@
             </SplitView.Pane>
 
             <StackPanel Margin="10">
-                <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" Margin="0 40 0 36"/>
+                <TextBlock Text="Settings" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
             </StackPanel>
         </SplitView>
     </Grid>

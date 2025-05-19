@@ -35,6 +35,7 @@ public sealed partial class FavouriteArtistPage : Page
                     foreach (var artist in rs.Left)
                     {
                         PictureControl control = new PictureControl();
+                        control.ApiObject = new ApiObject(artist.Id, server);
                         control.Title = artist.Name;
                         var artistRs = await SubsonicApiHelper.GetArtistInfo(server, artist.Id);
                         control.IconUri = artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null;

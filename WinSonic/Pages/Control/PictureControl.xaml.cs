@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.ComponentModel;
+using WinSonic.Model.Api;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,6 +14,8 @@ public sealed partial class PictureControl : UserControl, INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    public ApiObject ApiObject { get; set; }
     private Uri _iconUri;
     public Uri IconUri { get => _iconUri; set { _iconUri = value; OnPropertyChanged(nameof(IconUri)); } }
     private string _title;

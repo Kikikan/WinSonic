@@ -17,8 +17,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
-            <TextBlock Text="Favourites" Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 25"/>
-            <TextBlock Text="Songs" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 15"/>
+            <TextBlock Text="Favourites" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
+            <TextBlock Text="Songs" Style="{StaticResource SubheaderTextBlockStyle}" Margin="0 0 0 15"/>
         </StackPanel>
         <control:PictureControlPage x:Name="PictureControl" Grid.Row="1"/>
     </Grid>

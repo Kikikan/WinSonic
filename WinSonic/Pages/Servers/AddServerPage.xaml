@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <StackPanel Margin="25 0 25 0">
-        <TextBlock Text="New Subsonic Server" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
+        <TextBlock Text="New Subsonic Server" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
         <TextBox x:Name="Name" Header="Server Name" PlaceholderText="My Subsonic Server" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
         <TextBox x:Name="URL" Header="Enter the URL of the server." PlaceholderText="http://localhost:8080" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 20"/>
         <TextBox x:Name="Username" Header="Username" PlaceholderText="Username" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>

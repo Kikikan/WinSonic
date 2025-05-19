@@ -9,6 +9,6 @@
     mc:Ignorable="d">
 
     <Grid Margin="25 25 0 0">
-        <TextBlock Text="Songs" Style="{StaticResource TitleTextBlockStyle}" Margin="0 0 0 25"/>
+        <TextBlock Text="Songs" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
     </Grid>
 </Page>

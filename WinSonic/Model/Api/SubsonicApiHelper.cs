@@ -56,7 +56,7 @@ namespace WinSonic.Model.Api
                     .Select(c => new Album(c, server))
                     .ToImmutableList());
                 songs.AddRange(response.Starred2.Song
-                    .Select(c => ChildToSong(server, c))
+                    .Select(c => new Song(c, server))
                     .ToImmutableList());
             }
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
@@ -93,9 +93,16 @@ namespace WinSonic.Model.Api
             return rs.Artist;
         }
 
-        private static Song ChildToSong(Server server, Child child)
+        internal static async Task<AlbumInfo> GetAlbumInfo(Server server, string id)
         {
-            return new Song(child.Id, child.Title, child.Album, child.Artist, child.CoverArt, server);
+            var rs = await Execute(server, $"/rest/getAlbumInfo2{server.GetParameters()}&id={id}");
+            return rs.AlbumInfo;
+        }
+
+        internal static async Task<AlbumWithSongsId3> GetAlbum(Server server, string id)
+        {
+            var rs = await Execute(server, $"/rest/getAlbum{server.GetParameters()}&id={id}");
+            return rs.Album;
         }
 
         private static async Task<Response> Execute(Server server, string url)

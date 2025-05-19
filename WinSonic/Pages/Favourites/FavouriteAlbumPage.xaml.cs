@@ -34,6 +34,7 @@ public sealed partial class FavouriteAlbumPage : Page
                     foreach (var album in rs.Middle)
                     {
                         PictureControl control = new PictureControl();
+                        control.ApiObject = album;
                         control.IconUri = album.CoverImageUrl;
                         control.Title = album.Title;
                         control.Subtitle = album.Artist;

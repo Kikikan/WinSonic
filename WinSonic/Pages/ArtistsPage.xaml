@@ -45,8 +45,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Artists" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Artists" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
         <TextBlock x:Name="ArtistNameTextBlock" Grid.Row="0" Grid.Column="1" Style="{StaticResource TitleTextBlockStyle}" Margin="0 25 0 25"/>
         
         <ListView x:Name="ArtistListView" Grid.Row="1" Grid.Column="0" ItemsSource="{x:Bind ArtistsCVS.View, Mode=OneWay}" ItemTemplate="{StaticResource ArtistListViewTemplate}" SelectionChanged="ArtistListView_SelectionChanged">

@@ -2,6 +2,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using WinSonic.Model.Api;
 using WinSonic.Pages.Control;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,7 +19,9 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumDetailPage : Page
     {
+
         public PictureControl DetailedObject { get; set; }
+        public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
         public AlbumDetailPage()
         {
             InitializeComponent();
@@ -44,10 +51,21 @@ namespace WinSonic.Pages
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            ((App)Application.Current).Window.NavFrame.GoBack();
+            var albumInfo = await SubsonicApiHelper.GetAlbumInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+            if (albumInfo != null)
+            {
+                NoteTextBlock.Text = albumInfo.Notes;
+            }
+            var album = await SubsonicApiHelper.GetAlbum(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+            if (album != null)
+            {
+                foreach (var song in album.Song)
+                {
+                    Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
+                }
+            }
         }
-
     }
 }
