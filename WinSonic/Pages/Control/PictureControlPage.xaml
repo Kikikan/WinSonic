@@ -43,7 +43,7 @@
             VerticalScrollBarVisibility="Auto"
             ViewChanged="ScrollViewer_ViewChanged">
         <GridView x:Name="PictureGridView"
-                  ItemsSource="{x:Bind ItemsCVS.View}"
+                  ItemsSource="{x:Bind ItemsCVS.View, Mode=OneWay}"
                   IsItemClickEnabled="True"
                   ItemClick="GridView_ItemClick"
                   SelectionMode="None"
