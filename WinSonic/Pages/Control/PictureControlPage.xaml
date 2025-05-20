@@ -7,8 +7,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="Page_Loaded" SizeChanged="Page_SizeChanged">
-
+    Loaded="Page_Loaded" SizeChanged="Page_SizeChanged"
+    xmlns:model="using:WinSonic.Model"
+    xmlns:converters="using:WinSonic.Pages.Converter">
+    
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <CollectionViewSource x:Name="ItemsCVS"/>
+        <DataTemplate x:Key="InfoWithPictureTemplate" x:DataType="model:InfoWithPicture">
+            <Grid x:Name="ControlGrid" Padding="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Image Grid.Row="0" x:Name="Image" Height="200" Stretch="Uniform">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind IconUri}"/>
+                    </Image.Source>
+                </Image>
+                <FontIcon x:Name="FavouriteIcon1" Glyph="&#xEB52;" Foreground="Red" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30" Visibility="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"/>
+                <FontIcon x:Name="FavouriteIcon2" Glyph="&#xEB51;" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30" Visibility="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"/>
+                <StackPanel Grid.Row="1">
+                    <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    
     <ScrollViewer x:Name="GridViewScrollViewer"
             Grid.Row="1" 
             HorizontalScrollMode="Disabled"
@@ -17,11 +43,20 @@
             VerticalScrollBarVisibility="Auto"
             ViewChanged="ScrollViewer_ViewChanged">
         <GridView x:Name="PictureGridView"
-                  ItemsSource="{x:Bind Items}"
+                  ItemsSource="{x:Bind ItemsCVS.View}"
                   IsItemClickEnabled="True"
                   ItemClick="GridView_ItemClick"
-                  SelectionMode="None">
-            
+                  SelectionMode="None"
+                  ItemTemplate="{StaticResource InfoWithPictureTemplate}">
+            <GridView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate x:DataType="model:InfoWithPictureGroup">
+                            <TextBlock Text="{x:Bind GroupName}" Style="{ThemeResource SubtitleTextBlockStyle}" AutomationProperties.AccessibilityView="Raw"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </GridView.GroupStyle>
         </GridView>
     </ScrollViewer>
 </Page>

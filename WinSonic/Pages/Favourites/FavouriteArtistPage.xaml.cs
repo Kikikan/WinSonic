@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinSonic.Model;
 using WinSonic.Model.Api;
-using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
 
@@ -34,13 +34,8 @@ public sealed partial class FavouriteArtistPage : Page
                 {
                     foreach (var artist in rs.Left)
                     {
-                        PictureControl control = new PictureControl();
-                        control.ApiObject = new ApiObject(artist.Id, server);
-                        control.Title = artist.Name;
                         var artistRs = await SubsonicApiHelper.GetArtistInfo(server, artist.Id);
-                        control.IconUri = artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null;
-                        control.DetailsType = typeof(ArtistDetailPage);
-                        PictureControl.Items.Add(control);
+                        PictureControl.Items.Add(new InfoWithPicture(new ApiObject(artist.Id, server), artistRs != null ? new System.Uri(artistRs.MediumImageUrl) : null, artist.Name, "", false, typeof(ArtistDetailPage), artist.Name.Substring(0, 1)));
                     }
                 }
             }

@@ -7,15 +7,17 @@ namespace WinSonic.Model.Api
         public string Key { get; private set; }
         public string Name { get; private set; }
         public string Biography { get; private set; }
+        public bool IsFavourite { get; private set; }
         public Uri SmallImageUri { get; private set; }
         public Uri MediumImageUri { get; private set; }
         public Uri LargeImageUri { get; private set; }
 
-        public DetailedArtist(Server server, string key, string id, string name, string biography, string smallImageUri, string mediumImageUri, string largeImageUri) : base(id, server)
+        public DetailedArtist(Server server, string key, string id, string name, string biography, bool isFavourite, string smallImageUri, string mediumImageUri, string largeImageUri) : base(id, server)
         {
             Key = key;
             Name = name;
             Biography = biography;
+            IsFavourite = isFavourite;
             SmallImageUri = smallImageUri != null ? new Uri(smallImageUri) : null;
             MediumImageUri = mediumImageUri != null ? new Uri(mediumImageUri) : null;
             LargeImageUri = largeImageUri != null ? new Uri(largeImageUri) : null;

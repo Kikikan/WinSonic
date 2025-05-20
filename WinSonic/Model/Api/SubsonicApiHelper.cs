@@ -80,7 +80,7 @@ namespace WinSonic.Model.Api
                     foreach (var artist in index.Artist)
                     {
                         var artistRs = await GetArtistInfo(server, artist.Id);
-                        artists.Add(new DetailedArtist(server, index.Name, artist.Id, artist.Name, artistRs.Biography, artistRs.SmallImageUrl, artistRs.MediumImageUrl, artistRs.LargeImageUrl));
+                        artists.Add(new DetailedArtist(server, index.Name, artist.Id, artist.Name, artistRs.Biography, artist.StarredSpecified, artistRs.SmallImageUrl, artistRs.MediumImageUrl, artistRs.LargeImageUrl));
                     }
                 }
             }

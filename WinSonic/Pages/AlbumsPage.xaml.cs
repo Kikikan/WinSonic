@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
-using WinSonic.Pages.Control;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -35,14 +34,7 @@ namespace WinSonic.Pages
                 {
                     foreach (var album in albums)
                     {
-                        PictureControl control = new PictureControl();
-                        control.ApiObject = album;
-                        control.IconUri = album.CoverImageUrl;
-                        control.Title = album.Title;
-                        control.Subtitle = album.Artist;
-                        control.IsFavourite = album.IsFavourite;
-                        control.DetailsType = typeof(AlbumDetailPage);
-                        AlbumControl.Items.Add(control);
+                        AlbumControl.Items.Add(new Model.InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
                     }
                     result = true;
                 }

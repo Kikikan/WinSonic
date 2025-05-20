@@ -2,12 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using WinSonic.Model;
 using WinSonic.Model.Api;
-using WinSonic.Pages.Control;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,7 +17,7 @@ namespace WinSonic.Pages
     public sealed partial class AlbumDetailPage : Page
     {
 
-        public PictureControl DetailedObject { get; set; }
+        public InfoWithPicture DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
         public AlbumDetailPage()
         {
@@ -32,7 +29,7 @@ namespace WinSonic.Pages
             base.OnNavigatedTo(e);
 
             // Store the item to be used in binding to UI
-            DetailedObject = e.Parameter as PictureControl;
+            DetailedObject = e.Parameter as InfoWithPicture;
 
             ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
             if (imageAnimation != null)

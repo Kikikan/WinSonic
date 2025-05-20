@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinSonic.Model.Api;
-using WinSonic.Pages.Control;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,13 +32,7 @@ public sealed partial class FavouriteSongPage : Page
                 {
                     foreach (var song in rs.Right)
                     {
-                        PictureControl control = new PictureControl();
-                        control.ApiObject = song;
-                        control.IconUri = song.CoverImageUri;
-                        control.Title = song.Title;
-                        control.Subtitle = song.Artist;
-                        control.DetailsType = typeof(SongDetailPage);
-                        PictureControl.Items.Add(control);
+                        PictureControl.Items.Add(new Model.InfoWithPicture(song, song.CoverImageUri, song.Title, song.Artist, false, typeof(AlbumDetailPage), song.Title.Substring(0, 1))); // TODO
                     }
                 }
             }

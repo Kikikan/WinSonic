@@ -1,10 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using WinSonic.Model;
 using WinSonic.Model.Api;
-using WinSonic.Pages.Control;
+using WinSonic.Pages.Details;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -30,61 +29,18 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                List<DetailedArtist> list = new List<DetailedArtist>();
+                List<InfoWithPicture> list = new();
                 foreach (var server in serverFile.Servers)
                 {
                     var artists = await SubsonicApiHelper.GetArtists(server);
                     foreach (var artist in artists)
                     {
-                        list.Add(artist);
+                        ArtistControl.Items.Add(new InfoWithPicture(artist, artist.MediumImageUri, artist.Name, "", artist.IsFavourite, typeof(ArtistDetailPage), artist.Key));
                     }
                 }
-                var query = from item in list
-                            group item by item.Key.ToUpper() into g
-                            orderby g.Key
-                            select new GroupInfoList(g) { Key = g.Key };
-
-                ArtistsCVS.Source = new ObservableCollection<GroupInfoList>(query);
                 initialized = true;
-            }
-        }
-
-        private async void ArtistListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            AlbumsPage.Items.Clear();
-            var selected = (DetailedArtist)ArtistListView.SelectedValue;
-            if (selected != null)
-            {
-                BiographyTextBlock.Text = selected.Biography;
-                ArtistNameTextBlock.Text = selected.Name;
-                var artist = await SubsonicApiHelper.GetArtist(selected.Server, selected.Id);
-                foreach (var album in artist.Album)
-                {
-                    var a = new Album(album, selected.Server);
-                    var control = new PictureControl();
-                    control.ApiObject = a;
-                    control.Title = a.Title;
-                    control.Subtitle = a.Artist;
-                    control.IconUri = a.CoverImageUrl;
-                    control.IsFavourite = a.IsFavourite;
-                    control.DetailsType = typeof(AlbumDetailPage);
-                    AlbumsPage.Items.Add(control);
-                }
+                ArtistControl.IsGrouped = true;
             }
         }
     }
-
-    public class GroupInfoList : List<object>
-    {
-        public GroupInfoList(IEnumerable<object> items) : base(items)
-        {
-        }
-        public object Key { get; set; }
-
-        public override string ToString()
-        {
-            return "Group " + Key.ToString();
-        }
-    }
-
 }
