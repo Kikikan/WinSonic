@@ -114,6 +114,9 @@
     <Folder Include="Pages\Servers\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Pages\SongsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

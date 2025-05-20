@@ -10,16 +10,16 @@ using WinSonic.Model.Util;
 
 namespace WinSonic.Model.Api
 {
-    internal class SubsonicApiHelper
+    public class SubsonicApiHelper
     {
         private SubsonicApiHelper() { }
 
-        internal static Task<Response> Ping(Server server)
+        public static Task<Response> Ping(Server server)
         {
             return Execute(server, $"/rest/ping{server.GetParameters()}");
         }
 
-        internal static async Task<List<Album>> GetAlbumList(Server server, AlbumListType type, int size = 10, int offset = 0, int fromYear = -1, int toYear = -1, string genre = "")
+        public static async Task<List<Album>> GetAlbumList(Server server, AlbumListType type, int size = 10, int offset = 0, int fromYear = -1, int toYear = -1, string genre = "")
         {
             string parameters = $"/rest/getAlbumList2{server.GetParameters()}&type={type}&size={size}&offset={offset}";
             if (type == AlbumListType.byYear)
@@ -42,7 +42,7 @@ namespace WinSonic.Model.Api
             return albums;
         }
 
-        internal static async Task<Trio<List<ArtistId3>, List<Album>, List<Song>>> GetStarred(Server server)
+        public static async Task<Trio<List<ArtistId3>, List<Album>, List<Song>>> GetStarred(Server server)
         {
             var artists = new List<ArtistId3>();
             var albums = new List<Album>();
@@ -62,14 +62,14 @@ namespace WinSonic.Model.Api
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
         }
 
-        internal static async Task<ArtistInfo2?> GetArtistInfo(Server server, string id)
+        public static async Task<ArtistInfo2?> GetArtistInfo(Server server, string id)
         {
             string parameters = $"/rest/getArtistInfo2{server.GetParameters()}&id={id}";
             var response = await Execute(server, parameters);
             return response?.ArtistInfo2;
         }
 
-        internal static async Task<List<DetailedArtist>> GetArtists(Server server)
+        public static async Task<List<DetailedArtist>> GetArtists(Server server)
         {
             var rs = await Execute(server, $"/rest/getArtists{server.GetParameters()}");
             var artists = new List<DetailedArtist>();
@@ -87,19 +87,19 @@ namespace WinSonic.Model.Api
             return artists;
         }
 
-        internal static async Task<ArtistWithAlbumsId3> GetArtist(Server server, string id)
+        public static async Task<ArtistWithAlbumsId3> GetArtist(Server server, string id)
         {
             var rs = await Execute(server, $"/rest/getArtist{server.GetParameters()}&id={id}");
             return rs.Artist;
         }
 
-        internal static async Task<AlbumInfo> GetAlbumInfo(Server server, string id)
+        public static async Task<AlbumInfo> GetAlbumInfo(Server server, string id)
         {
             var rs = await Execute(server, $"/rest/getAlbumInfo2{server.GetParameters()}&id={id}");
             return rs.AlbumInfo;
         }
 
-        internal static async Task<AlbumWithSongsId3> GetAlbum(Server server, string id)
+        public static async Task<AlbumWithSongsId3> GetAlbum(Server server, string id)
         {
             var rs = await Execute(server, $"/rest/getAlbum{server.GetParameters()}&id={id}");
             return rs.Album;
@@ -124,7 +124,7 @@ namespace WinSonic.Model.Api
             }
         }
 
-        internal enum AlbumListType
+        public enum AlbumListType
         {
             random, newest, highest, frequent, recent, alphabeticalByName, alphabeticalByArtist, starred, byYear, byGenre
         }
