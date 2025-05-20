@@ -32,7 +32,7 @@ public sealed partial class FavouriteAlbumPage : Page
                 {
                     foreach (var album in rs.Middle)
                     {
-                        PictureControl.Items.Add(new Model.InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
+                        PictureControl.Items.Add(new Model.InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, false, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
                     }
                 }
             }
