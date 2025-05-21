@@ -73,12 +73,18 @@ public sealed partial class ArtistDetailPage : Page
     {
         if (!_initialized)
         {
-            var albumInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-            foreach (var album in albumInfo.Album)
+            var artistInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+            foreach (var album in artistInfo.Album)
             {
                 Album albumObj = new Album(album, DetailedObject.ApiObject.Server);
                 InfoWithPicture a = new InfoWithPicture(albumObj, albumObj.CoverImageUrl, albumObj.Title, albumObj.Artist, albumObj.IsFavourite, typeof(AlbumDetailPage), "", ((DetailedArtist)DetailedObject.ApiObject).SmallImageUri);
                 AlbumControl.Items.Add(a);
+            }
+
+            var artistInfo2 = await SubsonicApiHelper.GetArtistInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+            if (artistInfo2 != null)
+            {
+                NoteTextBlock.Text = artistInfo2.Biography;
             }
             _initialized = true;
         }
