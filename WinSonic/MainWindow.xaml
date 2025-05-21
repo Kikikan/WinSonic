@@ -108,7 +108,7 @@
                 NavigationFailed="ContentFrame_NavigationFailed"/>
             </Grid>
         </NavigationView>
-        <MediaPlayerElement x:Name="mediaPlayerElement" Grid.Row="2"
-                   AreTransportControlsEnabled="True"/>
+        <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Row="2"
+                   AreTransportControlsEnabled="True" AutoPlay="True"/>
     </Grid>
 </Window>

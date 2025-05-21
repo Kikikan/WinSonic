@@ -3,6 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections.Generic;
+using Windows.Media.Core;
+using WinSonic.Model.Api;
+using WinSonic.Model.Player;
 using WinSonic.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,6 +25,47 @@ namespace WinSonic
             InitializeComponent();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
+            PlayerPlaylist.Instance.SongAdded += Playlist_SongAdded;
+            PlayerPlaylist.Instance.SongRemoved += Playlist_SongRemoved;
+            PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
+            MediaPlayerElement.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+        }
+
+        private void Playlist_SongIndexChanged(object? sender, int oldIndex)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                MediaPlayerElement.Source = null;
+                StartSong();
+            });
+        }
+
+        private void MediaPlayer_MediaEnded(Windows.Media.Playback.MediaPlayer sender, object args)
+        {
+            PlayerPlaylist.Instance.SongIndex++;
+        }
+
+        private void Playlist_SongRemoved(object? sender, int index)
+        {
+            if (PlayerPlaylist.Instance.SongIndex == index)
+            {
+                MediaPlayerElement.Source = null;
+            }
+            StartSong();
+        }
+
+        private void Playlist_SongAdded(object? sender, Song song)
+        {
+            StartSong();
+        }
+
+        private async void StartSong()
+        {
+            if (MediaPlayerElement.Source == null && PlayerPlaylist.Instance.Song != null)
+            {
+                await SubsonicApiHelper.Scrobble(PlayerPlaylist.Instance.Song.Server, PlayerPlaylist.Instance.Song.Id);
+                MediaPlayerElement.Source = MediaSource.CreateFromUri(PlayerPlaylist.Instance.Song.StreamUri);
+            }
         }
 
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)

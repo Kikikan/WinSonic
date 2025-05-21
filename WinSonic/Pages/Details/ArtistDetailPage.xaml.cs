@@ -35,7 +35,7 @@ public sealed partial class ArtistDetailPage : Page
             if (imageAnimation != null)
             {
                 // Connected animation + coordinated animation
-                imageAnimation.TryStart(detailedImage);
+                imageAnimation.TryStart(detailedImage, new UIElement[] {coordinatedPanel});
             }
         }
         else

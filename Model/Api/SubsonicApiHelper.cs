@@ -105,6 +105,12 @@ namespace WinSonic.Model.Api
             return rs.Album;
         }
 
+        public static async Task<bool> Scrobble(Server server, string id)
+        {
+            var rs = await Execute(server, $"/rest/scrobble{server.GetParameters()}&id={id}&submission=false");
+            return rs.Status == ResponseStatus.Ok;
+        }
+
         private static async Task<Response> Execute(Server server, string url)
         {
             using (HttpResponseMessage response = await server.Client.GetAsync(url))

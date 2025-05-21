@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Model.Player;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -76,6 +77,21 @@ namespace WinSonic.Pages
                     Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
                 }
             }
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var song in Songs)
+            {
+                PlayerPlaylist.Instance.AddSong(song);
+            }
+            
+        }
+
+        private void AlbumListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            Song? song = e.ClickedItem as Song;
+            PlayerPlaylist.Instance.AddSong(song);
         }
     }
 }

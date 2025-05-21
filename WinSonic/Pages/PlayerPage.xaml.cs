@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using WinSonic.Model.Api;
+using WinSonic.Model.Player;
 using WinSonic.Pages.Player;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -20,11 +22,19 @@ namespace WinSonic.Pages
 
         private int previousSelectedIndex = -1;
 
-        private Song _song;
+        private Song _song = PlayerPlaylist.Instance.Song;
         private Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
+        public ObservableCollection<Song> Songs { get; set; } = new();
         public PlayerPage()
         {
             InitializeComponent();
+            PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
+        }
+
+        private void Playlist_SongIndexChanged(object? sender, int oldIndex)
+        {
+            Song = PlayerPlaylist.Instance.Song;
+            // TODO: Fix view not updating
         }
 
         private void RightSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -52,6 +62,19 @@ namespace WinSonic.Pages
 
             previousSelectedIndex = currentSelectedIndex;
 
+        }
+
+        private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            foreach (var song in PlayerPlaylist.Instance.GetSongs())
+            {
+                Songs.Add(song);
+            }
+        }
+
+        private void PlaylistView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            PlayerPlaylist.Instance.SongIndex = Songs.IndexOf(e.ClickedItem as Song);
         }
     }
 }

@@ -7,7 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:control="using:WinSonic.Pages.Control">
+    xmlns:control="using:WinSonic.Pages.Control"
+    xmlns:api="using:WinSonic.Model.Api"
+    Loaded="Page_Loaded">
 
     <Grid Margin="25 0 0 0">
         <Grid.RowDefinitions>
@@ -23,19 +25,34 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" x:Name="Image" Height="400" Stretch="Uniform">
+                <Image Grid.Row="0" x:Name="Image" Height="400" Stretch="Uniform" HorizontalAlignment="Center">
                     <Image.Source>
                         <BitmapImage UriSource="{x:Bind Song.CoverImageUri}"/>
                     </Image.Source>
                 </Image>
                 <StackPanel Grid.Row="1">
-                    <TextBlock Text="{x:Bind Song.Title}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Song.Artist}"/>
-                    <TextBlock Text="{x:Bind Song.Album}"/>
+                    <TextBlock Text="{x:Bind Song.Title}" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Song.Artist}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Song.Album}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                 </StackPanel>
+                <ListView x:Name="PlaylistView" Grid.Row="2" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" IsItemClickEnabled="True" ItemClick="PlaylistView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="api:Song">
+                            <ItemContainer>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Bind DiskNumber}"/>
+                                    <TextBlock Text="."/>
+                                    <TextBlock Text="{x:Bind Track}"/>
+                                    <TextBlock Text="{x:Bind Title}" Margin="5 0 0 0"/>
+                                </StackPanel>
+                            </ItemContainer>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
