@@ -18,24 +18,37 @@ public sealed partial class ArtistDetailPage : Page
 {
 
     public InfoWithPicture DetailedObject { get; set; }
+    private bool _initialized = false;
     public ArtistDetailPage()
     {
         InitializeComponent();
+        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
 
-        // Store the item to be used in binding to UI
-        DetailedObject = e.Parameter as InfoWithPicture;
-
-        ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
-        if (imageAnimation != null)
+        if (e.NavigationMode == NavigationMode.Back)
         {
-            // Connected animation + coordinated animation
-            imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
+            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackImageAnimation");
+            if (imageAnimation != null)
+            {
+                // Connected animation + coordinated animation
+                imageAnimation.TryStart(detailedImage);
+            }
+        }
+        else
+        {
+            // Store the item to be used in binding to UI
+            DetailedObject = e.Parameter as InfoWithPicture;
 
+            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
+            if (imageAnimation != null)
+            {
+                // Connected animation + coordinated animation
+                imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
+            }
         }
     }
 
@@ -43,18 +56,31 @@ public sealed partial class ArtistDetailPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-
-        ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
+        
+        
+        if (e.NavigationMode == NavigationMode.Back)
+        {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
+            NavigationCacheMode = NavigationCacheMode.Disabled;
+        }
+        else
+        {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", detailedImage);
+        }
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        var albumInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-        foreach (var album in albumInfo.Album)
+        if (!_initialized)
         {
-            Album albumObj = new Album(album, DetailedObject.ApiObject.Server);
-            InfoWithPicture a = new InfoWithPicture(albumObj, albumObj.CoverImageUrl, albumObj.Title, albumObj.Artist, albumObj.IsFavourite, typeof(AlbumDetailPage), "");
-            AlbumControl.Items.Add(a);
+            var albumInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+            foreach (var album in albumInfo.Album)
+            {
+                Album albumObj = new Album(album, DetailedObject.ApiObject.Server);
+                InfoWithPicture a = new InfoWithPicture(albumObj, albumObj.CoverImageUrl, albumObj.Title, albumObj.Artist, albumObj.IsFavourite, typeof(AlbumDetailPage), "", ((DetailedArtist)DetailedObject.ApiObject).SmallImageUri);
+                AlbumControl.Items.Add(a);
+            }
+            _initialized = true;
         }
     }
 }

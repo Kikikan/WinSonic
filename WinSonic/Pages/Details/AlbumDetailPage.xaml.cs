@@ -19,6 +19,7 @@ namespace WinSonic.Pages
 
         public InfoWithPicture DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
+        private bool fromArtist = false;
         public AlbumDetailPage()
         {
             InitializeComponent();
@@ -37,6 +38,13 @@ namespace WinSonic.Pages
                 // Connected animation + coordinated animation
                 imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
 
+                ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackImageAnimation");
+                if (backImageAnimation != null && DetailedObject.BackIconUri != null)
+                {
+                    backImageAnimation.TryStart(backImage);
+                    fromArtist = true;
+                }
+
             }
         }
 
@@ -46,6 +54,11 @@ namespace WinSonic.Pages
             base.OnNavigatingFrom(e);
 
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
+
+            if (fromArtist)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", backImage);
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

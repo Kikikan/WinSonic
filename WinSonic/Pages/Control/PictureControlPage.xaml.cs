@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -160,6 +161,15 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
             PictureGridView.Focus(FocusState.Programmatic);
         }
 
+    }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        base.OnNavigatingFrom(e);
+        if (e.NavigationMode == NavigationMode.Back)
+        {
+            NavigationCacheMode = NavigationCacheMode.Disabled;
+        }
     }
 
     private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

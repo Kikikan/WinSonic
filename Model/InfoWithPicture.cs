@@ -13,6 +13,7 @@ namespace WinSonic.Model
         public bool IsFavourite { get; set; }
         public Type DetailsType { get; set; }
         public string Key { get; set; }
+        public Uri BackIconUri { get; set; }
         public InfoWithPicture(ApiObject apiObject, Uri iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key)
         {
             ApiObject = apiObject;
@@ -23,6 +24,11 @@ namespace WinSonic.Model
             DetailsType = detailsType;
             Key = key;
         }
+        public InfoWithPicture(ApiObject apiObject, Uri iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key, Uri backIconUri) : this(apiObject, iconUri, title, subtitle, isFavourite, detailsType, key)
+        {
+            BackIconUri = backIconUri;
+        }
+
         public override string ToString()
         {
             return $"InfoWithPicture - {Title} : {Subtitle}";

@@ -29,6 +29,12 @@
                 </Image.Source>
             </Image>
 
+            <Image x:Name="backImage" Grid.Column="0"  MaxHeight="1" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Image.Source>
+                    <BitmapImage UriSource="{x:Bind DetailedObject.BackIconUri}"/>
+                </Image.Source>
+            </Image>
+
             <!-- Panel to be coordinated with connected animation -->
             <StackPanel x:Name="coordinatedPanel" Grid.Column="1" VerticalAlignment="Top" Margin="20 0">
                 <TextBlock Text="{x:Bind DetailedObject.Title}" Style="{ThemeResource SubheaderTextBlockStyle}" Margin="0 0 0 10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
