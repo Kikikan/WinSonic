@@ -23,7 +23,7 @@
         <tb:TaskbarIcon
         x:Name="TrayIcon"
         x:FieldModifier="public"
-        ContextMenuMode="SecondWindow"
+        ContextMenuMode="ActiveWindow"
         IconSource="Assets/Square44x44Logo.scale-200.ico"
         LeftClickCommand="{x:Bind ShowWindowCommand}"
         NoLeftClickDelay="True"
