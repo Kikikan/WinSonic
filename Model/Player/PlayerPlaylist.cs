@@ -12,7 +12,7 @@ namespace WinSonic.Model.Player
     {
         private int _songIndex;
         public int SongIndex { get => _songIndex; set { int oldIndex = _songIndex; _songIndex = value; SongIndexChanged?.Invoke(this, oldIndex); } }
-        private List<Song> Songs { get; set; } = [];
+        public List<Song> Songs { get; set; } = [];
 
         private PlayerPlaylist() { }
 
@@ -45,15 +45,6 @@ namespace WinSonic.Model.Player
                 return true;
             }
             return false;
-        }
-
-        public List<Song> GetSongs()
-        {
-            List<Song> songsCopy = new List<Song>();
-            foreach (var song in Songs) {
-                songsCopy.Add(song);
-            }
-            return songsCopy;
         }
     }
 }

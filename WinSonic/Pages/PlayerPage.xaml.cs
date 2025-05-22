@@ -1,7 +1,12 @@
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Player;
@@ -66,7 +71,7 @@ namespace WinSonic.Pages
 
         private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            foreach (var song in PlayerPlaylist.Instance.GetSongs())
+            foreach (var song in PlayerPlaylist.Instance.Songs)
             {
                 Songs.Add(song);
             }
@@ -75,6 +80,11 @@ namespace WinSonic.Pages
         private void PlaylistView_ItemClick(object sender, ItemClickEventArgs e)
         {
             PlayerPlaylist.Instance.SongIndex = Songs.IndexOf(e.ClickedItem as Song);
+        }
+
+        private void PlaylistView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            PlayerPlaylist.Instance.Songs = PlaylistView.Items.Cast<Song>().ToList();
         }
     }
 }

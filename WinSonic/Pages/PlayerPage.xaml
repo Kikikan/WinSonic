@@ -39,7 +39,7 @@
                     <TextBlock Text="{x:Bind Song.Artist}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind Song.Album}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                 </StackPanel>
-                <ListView x:Name="PlaylistView" Grid.Row="2" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" IsItemClickEnabled="True" ItemClick="PlaylistView_ItemClick">
+                <ListView x:Name="PlaylistView" Grid.Row="2" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" IsItemClickEnabled="True" ItemClick="PlaylistView_ItemClick" CanDragItems="True" CanReorderItems="True" AllowDrop="True" SelectionMode="Single" IsSwipeEnabled="True" ContainerContentChanging="PlaylistView_ContainerContentChanging">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="api:Song">
                             <ItemContainer>
