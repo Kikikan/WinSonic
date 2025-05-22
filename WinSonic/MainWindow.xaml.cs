@@ -1,9 +1,11 @@
+using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Windows.Media.Core;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
@@ -20,11 +22,20 @@ namespace WinSonic
     public sealed partial class MainWindow : Window
     {
         public Frame NavFrame { get { return ContentFrame; } }
+        public ICommand ShowWindowCommand { get; }
+        public ICommand CancelCloseCommand { get; }
+        public ICommand ExitApplicationCommand { get; }
+
         public MainWindow()
         {
             InitializeComponent();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
+            this.Closed += OnWindowClosing;
+
+            ShowWindowCommand = new RelayCommand(ShowWindow);
+            ExitApplicationCommand = new RelayCommand(ExitApplication);
+
             PlayerPlaylist.Instance.SongAdded += Playlist_SongAdded;
             PlayerPlaylist.Instance.SongRemoved += Playlist_SongRemoved;
             PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
@@ -105,6 +116,58 @@ namespace WinSonic
             {
                 NavFrame.GoBack();
             }
+        }
+        public void ShowFromTray()
+        {
+            this.Show();
+            this.Activate();
+        }
+        private void OnWindowClosing(object sender, WindowEventArgs args)
+        {
+            // Prevent window from closing
+            args.Handled = true;
+
+            // Hide instead (go to tray)
+            this.Hide();
+        }
+        private void ShowWindow()
+        {
+            this.ShowFromTray();
+        }
+
+        private void ExitApplication()
+        {
+            TrayIcon.Dispose();
+           Environment.Exit(0);
+        }
+    }
+    // Simple RelayCommand implementation
+    public class RelayCommand : ICommand
+    {
+        private readonly System.Action _execute;
+        private readonly System.Func<bool> _canExecute;
+
+        public RelayCommand(System.Action execute, System.Func<bool> canExecute = null)
+        {
+            _execute = execute ?? throw new System.ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public event System.EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute?.Invoke() ?? true;
+        }
+
+        public void Execute(object parameter)
+        {
+            _execute();
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, System.EventArgs.Empty);
         }
     }
 }
