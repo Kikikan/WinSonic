@@ -24,7 +24,7 @@
         x:Name="TrayIcon"
         x:FieldModifier="public"
         ContextMenuMode="SecondWindow"
-        IconSource="Assets/tray.ico"
+        IconSource="Assets/Square44x44Logo.scale-200.ico"
         LeftClickCommand="{x:Bind ShowWindowCommand}"
         NoLeftClickDelay="True"
         ToolTipText="WinSonic">
