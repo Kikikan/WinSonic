@@ -20,40 +20,88 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        <Grid.Resources>
+            <Style x:Key="NonClickableMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
+                <Setter Property="IsEnabled" Value="True" />
+                <Setter Property="IsHitTestVisible" Value="False" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                <Setter Property="Padding" Value="4,2,4,2" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="MenuFlyoutItem">
+                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver" />
+                                        <VisualState x:Name="Pressed" />
+                                        <VisualState x:Name="Disabled" />
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+
+                                <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Content="{TemplateBinding Text}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="Center"
+                            Margin="0"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            FontSize="{TemplateBinding FontSize}"
+                            Foreground="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
         <tb:TaskbarIcon
         x:Name="TrayIcon"
         x:FieldModifier="public"
-        ContextMenuMode="ActiveWindow"
+        ContextMenuMode="SecondWindow"
         IconSource="Assets/Square44x44Logo.scale-200.ico"
         LeftClickCommand="{x:Bind ShowWindowCommand}"
         NoLeftClickDelay="True"
         ToolTipText="WinSonic">
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout AreOpenCloseAnimationsEnabled="False">
-                    
+                    <MenuFlyoutItem
+                        Text="WinSonic"
+                        MinWidth="160"
+                        HorizontalContentAlignment="Center"
+                        FontWeight="Bold"
+                        FontSize="14"
+                        Style="{StaticResource NonClickableMenuFlyoutItemStyle}"
+                        IsEnabled="True" />
+                    <MenuFlyoutItem
+                        Text="Ver 0.1"
+                        MinWidth="160"
+                        HorizontalContentAlignment="Center"
+                        FontSize="11"
+                        Style="{StaticResource NonClickableMenuFlyoutItemStyle}"
+                        Foreground="Gray"
+                        IsEnabled="True" />
+
+                    <MenuFlyoutSeparator />
 
                     <MenuFlyoutItem
-        Command="{x:Bind ShowWindowCommand}"
-        Text="Show Window"
-        Padding="12,8"
-        MinWidth="160"
-        HorizontalContentAlignment="Stretch">
+                        Command="{x:Bind ShowWindowCommand}"
+                        Text="Show Window"
+                        Padding="12,8"
+                        MinWidth="160"
+                        HorizontalContentAlignment="Stretch">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xe8a7;" />
                         </MenuFlyoutItem.Icon>
                     </MenuFlyoutItem>
 
-                    <MenuFlyoutSeparator />
                     <MenuFlyoutItem
-        Text="Invisible Dummy"
-        Visibility="Collapsed"
-        IsEnabled="False" />
-                    <MenuFlyoutItem
-        Command="{x:Bind ExitApplicationCommand}"
-        Text="Exit"
-        Padding="12,8"
-        MinWidth="160"
-        HorizontalContentAlignment="Stretch">
+                        Command="{x:Bind ExitApplicationCommand}"
+                        Text="Exit"
+                        Padding="12,8"
+                        MinWidth="160"
+                        HorizontalContentAlignment="Stretch">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xe8bb;" />
                         </MenuFlyoutItem.Icon>
