@@ -23,24 +23,37 @@
         <tb:TaskbarIcon
         x:Name="TrayIcon"
         x:FieldModifier="public"
-        ContextMenuMode="SecondWindow"
+        ContextMenuMode="ActiveWindow"
         IconSource="Assets/tray.ico"
         LeftClickCommand="{x:Bind ShowWindowCommand}"
         NoLeftClickDelay="True"
         ToolTipText="WinSonic">
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout AreOpenCloseAnimationsEnabled="False">
+                    
+
                     <MenuFlyoutItem
-                    Command="{x:Bind ShowWindowCommand}"
-                    Text="Show Window">
+        Command="{x:Bind ShowWindowCommand}"
+        Text="Show Window"
+        Padding="12,8"
+        MinWidth="160"
+        HorizontalContentAlignment="Stretch">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xe8a7;" />
                         </MenuFlyoutItem.Icon>
                     </MenuFlyoutItem>
+
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
-                    Command="{x:Bind ExitApplicationCommand}"
-                    Text="Exit">
+        Text="Invisible Dummy"
+        Visibility="Collapsed"
+        IsEnabled="False" />
+                    <MenuFlyoutItem
+        Command="{x:Bind ExitApplicationCommand}"
+        Text="Exit"
+        Padding="12,8"
+        MinWidth="160"
+        HorizontalContentAlignment="Stretch">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xe8bb;" />
                         </MenuFlyoutItem.Icon>
