@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Windows.Storage;
 using WinSonic.Model;
+using WinSonic.Model.Api;
 
 namespace WinSonic.Persistence
 {
@@ -14,18 +17,68 @@ namespace WinSonic.Persistence
 
         public ServerFile()
         {
+            
+        }
+
+        internal async Task<List<Server>> Initialize()
+        {
+            List<Server> disabledServers = new List<Server>();
             var json = roaming.Values["servers"] as string;
             if (json is not null)
             {
-                var servers = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(json);
-                if (servers != null && servers.Count > 0)
+                var serverConfigs = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(json);
+                if (serverConfigs != null && serverConfigs.Count > 0)
                 {
-                    foreach (var server in servers)
+                    foreach (var config in serverConfigs)
                     {
-                        Servers.Add(new Server(server));
+                        Server server = new(config);
+                        if (server.Enabled)
+                        {
+                            try
+                            {
+                                var rs = await SubsonicApiHelper.Ping(server);
+                                if (rs.Status != ResponseStatus.Ok)
+                                {
+                                    server.Enabled = false;
+                                    disabledServers.Add(server);
+                                }
+                            }
+                            catch(Exception e)
+                            {
+                                server.Enabled = false;
+                                disabledServers.Add(server);
+                            }
+                        }
+                        Servers.Add(server);
                     }
                 }
             }
+            return disabledServers;
+        }
+
+        internal async Task<List<Server>> TryPing(List<Server> servers)
+        {
+            List<Server> unsuccessfulServers = new List<Server>();
+            foreach (var server in servers)
+            {
+                try
+                {
+                    var rs = await SubsonicApiHelper.Ping(server);
+                    if (rs.Status == ResponseStatus.Ok)
+                    {
+                        server.Enabled = true;
+                    }
+                    else
+                    {
+                        unsuccessfulServers.Add(server);
+                    }
+                }
+                catch (Exception e)
+                {
+                    unsuccessfulServers.Add(server);
+                }
+            }
+            return unsuccessfulServers;
         }
 
         public bool AddServer(Server server)

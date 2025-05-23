@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
 using WinSonic.Persistence;
@@ -27,7 +28,7 @@ namespace WinSonic.Pages
         private async Task<bool> Update()
         {
             bool result = false;
-            foreach (var server in serverFile.Servers)
+            foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
             {
                 List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, SubsonicApiHelper.AlbumListType.newest, 10, AlbumControl.Items.Count);
                 if (albums != null && albums.Count > 0)

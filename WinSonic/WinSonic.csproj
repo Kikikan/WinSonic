@@ -32,6 +32,7 @@
     <None Remove="Pages\SettingsPage.xaml" />
     <None Remove="Pages\SongPage.xaml" />
     <None Remove="Pages\SongsPage.xaml" />
+    <None Remove="Pages\UnsuccessfulConnectionDialog.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,6 +118,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\UnsuccessfulConnectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\MainPage.xaml">

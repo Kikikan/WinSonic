@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
+using System.Linq;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
@@ -30,7 +31,7 @@ namespace WinSonic.Pages
             if (!initialized)
             {
                 List<InfoWithPicture> list = new();
-                foreach (var server in serverFile.Servers)
+                foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
                 {
                     var artists = await SubsonicApiHelper.GetArtists(server);
                     foreach (var artist in artists)

@@ -13,6 +13,7 @@
             <Grid>
                 <Grid.ContextFlyout>
                     <MenuFlyout>
+                        <MenuFlyoutItem Text="Edit" Click="Edit_Click"/>
                         <MenuFlyoutItem Text="Delete" Click="Delete_Click"/>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
@@ -46,7 +47,7 @@
 
     <StackPanel Margin="25 0 25 0">
         <TextBlock Text="Servers" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
-        <ListView x:Name="ServerListView" SelectionMode="Single" ItemsSource="{x:Bind Servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Margin="0 0 0 50"/>
+        <ListView x:Name="ServerListView" SelectionMode="Multiple" ItemsSource="{x:Bind Servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Loaded="ServerListView_Loaded" Margin="0 0 0 50"/>
         <TextBox x:Name="Name" Header="Server Name" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Name, Mode=OneWay}" Margin="0 0 0 16"/>
         <TextBox x:Name="URL" Header="Enter the URL of the server." IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Address, Mode=OneWay}" Margin="0 0 0 20"/>
         <TextBox x:Name="Username" Header="Username" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Username, Mode=OneWay}" Margin="0 0 0 16"/>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinSonic.Pages.UnsuccessfulConnectionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:model="using:WinSonic.Model">
+
+    <StackPanel>
+        <TextBlock Text="A connection was not made with the following servers:"/>
+        <ListView x:Name="ServerList" ItemsSource="{x:Bind Servers}" SelectionMode="Multiple" Loaded="ServerList_Loaded">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:Server">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind Address}" Style="{StaticResource BodyTextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</Page>

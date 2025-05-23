@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Linq;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
@@ -28,7 +29,7 @@ public sealed partial class FavouriteArtistPage : Page
     {
         if (!initialized)
         {
-            foreach (var server in serverFile.Servers)
+            foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
             {
                 var rs = await SubsonicApiHelper.GetStarred(server);
                 if (rs != null && rs.Left != null)

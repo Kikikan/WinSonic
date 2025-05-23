@@ -7,9 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Windows.Media.Core;
+using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages;
+using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,6 +42,47 @@ namespace WinSonic
             PlayerPlaylist.Instance.SongRemoved += Playlist_SongRemoved;
             PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
             MediaPlayerElement.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+        }
+
+        private async void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            ShowUnsuccessfulServers(await ((App)Application.Current).ServerFile.Initialize());
+        }
+
+        private async void ShowUnsuccessfulServers(List<Server> servers)
+        {
+            if (servers != null && servers.Count > 0)
+            {
+                ContentDialog dialog = new ContentDialog();
+                dialog.XamlRoot = MainGrid.XamlRoot;
+                dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+                dialog.Title = "Unsuccessful Connection";
+                dialog.PrimaryButtonText = "Retry for selected";
+                dialog.CloseButtonText = "Close";
+                dialog.IsSecondaryButtonEnabled = false;
+                dialog.DefaultButton = ContentDialogButton.Primary;
+                var content = new UnsuccessfulConnectionDialog();
+                foreach (var server in servers)
+                {
+                    content.Servers.Add(server);
+                }
+                dialog.Content = content;
+
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    List<Server> attemptList = new List<Server>();
+                    foreach (var obj in content.ServerListView.SelectedItems)
+                    {
+                        if (obj is Server server)
+                        {
+                            attemptList.Add(server);
+                        }
+                    }
+                    List<Server> attemptResult = await ((App)Application.Current).ServerFile.TryPing(attemptList);
+                    ShowUnsuccessfulServers(attemptResult);
+                }
+            }
         }
 
         private void Playlist_SongIndexChanged(object? sender, int oldIndex)

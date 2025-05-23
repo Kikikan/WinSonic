@@ -15,6 +15,7 @@ namespace WinSonic.Model
         public string Username { get; private set; }
         public string PasswordHash { get; private set; }
         public string Salt { get; private set; }
+        public bool Enabled { get; set; } = true;
 
         private Server()
         {
@@ -39,6 +40,7 @@ namespace WinSonic.Model
             Username = data["username"];
             PasswordHash = data["password"];
             Salt = data["salt"];
+            Enabled = data.ContainsKey("enabled") ? bool.Parse(data["enabled"]) : true;
             Client.BaseAddress = new Uri(Address);
         }
 
@@ -50,6 +52,7 @@ namespace WinSonic.Model
             d["username"] = Username;
             d["password"] = PasswordHash;
             d["salt"] = Salt;
+            d["enabled"] = Enabled.ToString();
             return d;
         }
 

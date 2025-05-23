@@ -24,6 +24,7 @@ namespace WinSonic.Pages
         internal Server SelectedServer { get; set; }
         private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
         internal List<Server> Servers { get; }
+        private bool initialized = false;
         public EditServerPage()
         {
             InitializeComponent();
@@ -33,13 +34,20 @@ namespace WinSonic.Pages
 
         private void ServerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedServer = Servers[ServerListView.SelectedIndex];
-            OnPropertyChanged(nameof(SelectedServer));
+            if (initialized)
+            {
+                foreach (var server in Servers)
+                {
+                    server.Enabled = ServerListView.SelectedItems.Contains(server);
+                }
+                serverFile.Save();
+            }
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-
+            SelectedServer = Servers[ServerListView.SelectedIndex];
+            OnPropertyChanged(nameof(SelectedServer));
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -49,6 +57,18 @@ namespace WinSonic.Pages
             Servers.Remove(server);
             serverFile.Save();
             OnPropertyChanged(nameof(Servers));
+        }
+
+        private void ServerListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            foreach (var element in ServerListView.Items)
+            {
+                if (element is Server server && server.Enabled)
+                {
+                    ServerListView.SelectedItems.Add(server);
+                }
+            }
+            initialized = true;
         }
     }
 }
