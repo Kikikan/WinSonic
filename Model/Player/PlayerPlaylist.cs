@@ -33,6 +33,10 @@ namespace WinSonic.Model.Player
         {
             Songs.Add(song);
             SongAdded?.Invoke(this, song);
+            if (Songs.Count == 1)
+            {
+                SongIndex = 0;
+            }
         }
 
         public bool RemoveSong(int index)

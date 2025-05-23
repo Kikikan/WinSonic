@@ -120,12 +120,6 @@
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
-                <NavigationViewItem Tag="WinSonic.Pages.PlayerPage" Content="Now Playing">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe768;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItemSeparator/>
                 <NavigationViewItem Content="Favourites">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe734;" />
@@ -195,10 +189,27 @@
 
             <Grid>
                 <Frame x:Name="ContentFrame" IsTabStop="True"
-                NavigationFailed="ContentFrame_NavigationFailed"/>
+                NavigationFailed="ContentFrame_NavigationFailed" Navigated="ContentFrame_Navigated"/>
             </Grid>
         </NavigationView>
-        <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Row="2"
-                   AreTransportControlsEnabled="True" AutoPlay="True"/>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" Margin="15 0 0 0" Tapped="SongInfoStackPanel_Tapped">
+                <Image x:Name="CoverImage" MaxHeight="100">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
+                    </Image.Source>
+                </Image>
+                <StackPanel Margin="10" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind Song.Title, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Song.Artist, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" AutoPlay="True" HorizontalAlignment="Center"/>
+        </Grid>
     </Grid>
 </Window>

@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Windows.Media.Core;
 using WinSonic.Model;
@@ -21,9 +23,16 @@ namespace WinSonic
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
         public Frame NavFrame { get { return ContentFrame; } }
+        private Song _song;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
         public ICommand ShowWindowCommand { get; }
         public ICommand CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
@@ -89,8 +98,11 @@ namespace WinSonic
         {
             DispatcherQueue.TryEnqueue(() =>
             {
+                Debug.WriteLine($"Old Song: {Song?.Title}");
+                Debug.WriteLine($"New Song: {PlayerPlaylist.Instance.Song?.Title}");
                 MediaPlayerElement.Source = null;
                 StartSong();
+                Song = PlayerPlaylist.Instance.Song;
             });
         }
 
@@ -182,6 +194,37 @@ namespace WinSonic
         {
             TrayIcon.Dispose();
            Environment.Exit(0);
+        }
+
+        private void SongInfoStackPanel_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var animationService = ConnectedAnimationService.GetForCurrentView();
+
+            // Start animation from the image (you can use any element)
+            animationService.PrepareToAnimate("coverImageAnimation", CoverImage); // CoverImage = your Image control
+
+            // Navigate to the page in the NavigationView Frame
+            NavFrame.Navigate(typeof(PlayerPage));
+            SongInfoStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            // Only play reverse animation when coming back from CurrentlyPlayingPage
+            if (e.SourcePageType != typeof(PlayerPage)) // or whatever your main page is
+            {
+                SongInfoStackPanel.Visibility = Visibility.Visible;
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("coverImageBackAnimation");
+
+                    if (animation != null)
+                    {
+                        animation.Configuration = new DirectConnectedAnimationConfiguration();
+                        animation.TryStart(CoverImage); // CoverImage in MainWindow
+                    }
+                });
+            }
         }
     }
     // Simple RelayCommand implementation

@@ -1,6 +1,8 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -29,6 +31,7 @@ namespace WinSonic.Pages
 
         private Song _song = PlayerPlaylist.Instance.Song;
         private Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
+        private bool animated = false;
         
         public PlayerPage()
         {
@@ -67,6 +70,37 @@ namespace WinSonic.Pages
 
             previousSelectedIndex = currentSelectedIndex;
 
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            // Wait for the UI to load before trying to animate
+            this.Loaded += CurrentlyPlayingPage_Loaded;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                var animationService = ConnectedAnimationService.GetForCurrentView();
+                animationService.PrepareToAnimate("coverImageBackAnimation", Image);
+            }
+        }
+
+        private void CurrentlyPlayingPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("coverImageAnimation");
+
+            if (animation != null)
+            {
+                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                animation.TryStart(Image);
+                animated = true;
+            }
         }
     }
 }
