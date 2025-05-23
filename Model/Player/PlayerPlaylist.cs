@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WinSonic.Model.Api;
+﻿using WinSonic.Model.Api;
 
 namespace WinSonic.Model.Player
 {
@@ -17,7 +11,7 @@ namespace WinSonic.Model.Player
         private PlayerPlaylist() { }
 
         public static PlayerPlaylist Instance { get; private set; } = new();
-        
+
         public delegate void OnSongAddedEventHandler(object? sender, Song song);
         public event OnSongAddedEventHandler SongAdded;
 

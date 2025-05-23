@@ -2,9 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Favourites;
 using WinSonic.ViewModel;
@@ -40,7 +38,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             if (imageAnimation != null)
             {
                 // Connected animation + coordinated animation
-                imageAnimation.TryStart(detailedImage, new UIElement[] {coordinatedPanel});
+                imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
             }
         }
         else

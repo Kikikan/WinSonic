@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using Windows.Media.Core;
 using WinSonic.Model;
@@ -14,7 +13,6 @@ using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages;
 using WinSonic.Pages.Details;
-using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -193,7 +191,7 @@ namespace WinSonic
         private void ExitApplication()
         {
             TrayIcon.Dispose();
-           Environment.Exit(0);
+            Environment.Exit(0);
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)

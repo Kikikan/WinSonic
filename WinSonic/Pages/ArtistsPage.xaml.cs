@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Linq;
-using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;

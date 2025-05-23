@@ -5,11 +5,9 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
-using WinSonic.Model;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -124,7 +122,6 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
         {
             // Stash the clicked item for use later. We'll need it when we connect back from the detailpage.
             _storedObject = container.Content as InfoWithPicture;
-            Debug.WriteLine($"Favourite: {_storedObject.IsFavourite}");
 
 
             // Prepare the connected animation.
@@ -143,7 +140,6 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
     {
         if (_storedObject != null)
         {
-            Debug.WriteLine($"Favourite: {_storedObject.IsFavourite}");
             // If the connected item appears outside the viewport, scroll it into view.
             PictureGridView.ScrollIntoView(_storedObject, ScrollIntoViewAlignment.Default);
             PictureGridView.UpdateLayout();

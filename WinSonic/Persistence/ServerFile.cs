@@ -17,7 +17,7 @@ namespace WinSonic.Persistence
 
         public ServerFile()
         {
-            
+
         }
 
         internal async Task<List<Server>> Initialize()
@@ -43,7 +43,7 @@ namespace WinSonic.Persistence
                                     disabledServers.Add(server);
                                 }
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 server.Enabled = false;
                                 disabledServers.Add(server);

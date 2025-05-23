@@ -1,14 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Player;
@@ -32,7 +26,7 @@ namespace WinSonic.Pages
         private Song _song = PlayerPlaylist.Instance.Song;
         private Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
         private bool animated = false;
-        
+
         public PlayerPage()
         {
             InitializeComponent();

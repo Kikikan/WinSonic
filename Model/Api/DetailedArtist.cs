@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WinSonic.Model.Api
+﻿namespace WinSonic.Model.Api
 {
     public class DetailedArtist : ApiObject
     {
