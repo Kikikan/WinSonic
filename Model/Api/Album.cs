@@ -7,7 +7,7 @@ namespace WinSonic.Model.Api
         public string Title { get; private set; }
         public string Artist { get; private set; }
         public Uri CoverImageUrl { get; private set; }
-        public bool IsFavourite { get; private set; }
+        public bool IsFavourite { get; set; }
 
         public Album(string id, string title, string artist, bool isFavourite, Server server) : base(id, server)
         {

@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="Page_Loaded" SizeChanged="Page_SizeChanged"
-    xmlns:model="using:WinSonic.Model"
+    xmlns:model="using:WinSonic.ViewModel"
     xmlns:converters="using:WinSonic.Pages.Converter">
     
     <Page.Resources>

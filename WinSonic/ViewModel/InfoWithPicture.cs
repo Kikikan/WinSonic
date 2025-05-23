@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using WinSonic.Model.Api;
 
-namespace WinSonic.Model
+namespace WinSonic.ViewModel
 {
-    public class InfoWithPicture
+    public class InfoWithPicture : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public ApiObject ApiObject { get; set; }
         public Uri IconUri { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
-        public bool IsFavourite { get; set; }
+        private bool _isFavourite;
+        public bool IsFavourite { get => _isFavourite; set { _isFavourite = value; OnPropertyChanged(nameof(IsFavourite)); } }
         public Type DetailsType { get; set; }
         public string Key { get; set; }
         public Uri BackIconUri { get; set; }

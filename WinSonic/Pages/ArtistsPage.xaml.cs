@@ -6,6 +6,7 @@ using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
 using WinSonic.Persistence;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,7 +36,7 @@ namespace WinSonic.Pages
                 {
                     foreach (var album in albums)
                     {
-                        AlbumControl.Items.Add(new Model.InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
+                        AlbumControl.Items.Add(new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
                     }
                     result = true;
                 }

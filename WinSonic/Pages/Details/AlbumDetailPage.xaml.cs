@@ -3,10 +3,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Details;
+using WinSonic.Pages.Favourites;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,9 +19,11 @@ namespace WinSonic.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AlbumDetailPage : Page
+    public sealed partial class AlbumDetailPage : Page, INotifyPropertyChanged
     {
-
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public InfoWithPicture DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
 
@@ -34,13 +39,13 @@ namespace WinSonic.Pages
             // Store the item to be used in binding to UI
             DetailedObject = e.Parameter as InfoWithPicture;
 
-            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ForwardConnectedAnimation");
+            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
             if (imageAnimation != null)
             {
                 // Connected animation + coordinated animation
                 imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
 
-                ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackImageAnimation");
+                ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
                 if (backImageAnimation != null && DetailedObject.BackIconUri != null)
                 {
                     backImageAnimation.TryStart(backImage);
@@ -54,12 +59,12 @@ namespace WinSonic.Pages
         {
             base.OnNavigatingFrom(e);
 
-            if (e.SourcePageType == typeof(AlbumsPage) || e.SourcePageType == typeof(ArtistDetailPage))
+            if (e.SourcePageType == typeof(AlbumsPage) || e.SourcePageType == typeof(FavouriteAlbumPage) || e.SourcePageType == typeof(ArtistDetailPage))
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
                 if (e.SourcePageType == typeof(ArtistDetailPage))
                 {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", backImage);
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackFromAlbumArtistAnimation", backImage);
                 }
             }
         }
@@ -87,13 +92,26 @@ namespace WinSonic.Pages
             {
                 PlayerPlaylist.Instance.AddSong(song);
             }
-            
         }
 
         private void AlbumListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             Song? song = e.ClickedItem as Song;
             PlayerPlaylist.Instance.AddSong(song);
+        }
+
+        private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject.ApiObject is Album album)
+            {
+                bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
+                if (success)
+                {
+                    DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
+                    album.IsFavourite = !album.IsFavourite;
+                    OnPropertyChanged(nameof(DetailedObject));
+                }
+            }
         }
     }
 }

@@ -17,8 +17,16 @@
                     <ItemContainer x:Name="SongContainer" DoubleTapped="SongContainer_DoubleTapped" RightTapped="SongContainer_RightTapped">
                         <ItemContainer.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem x:Name="SongPlayItem" Text="Play" Click="SongPlayItem_Click"/>
-                                <MenuFlyoutItem x:Name="SongRemoveItem" Text="Remove" Click="SongRemoveItem_Click"/>
+                                <MenuFlyoutItem x:Name="SongPlayItem" Text="Play" Click="SongPlayItem_Click">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xe768;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Name="SongRemoveItem" Text="Remove" Click="SongRemoveItem_Click">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xe738;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                             </MenuFlyout>
                         </ItemContainer.ContextFlyout>
                         <StackPanel Orientation="Horizontal">

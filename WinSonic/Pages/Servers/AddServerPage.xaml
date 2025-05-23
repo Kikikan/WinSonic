@@ -8,26 +8,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Margin="25 0 25 0">
-        <TextBlock Text="New Subsonic Server" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
-        <TextBox x:Name="Name" Header="Server Name" PlaceholderText="My Subsonic Server" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
-        <TextBox x:Name="URL" Header="Enter the URL of the server." PlaceholderText="http://localhost:8080" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 20"/>
-        <TextBox x:Name="Username" Header="Username" PlaceholderText="Username" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
-        <PasswordBox x:Name="Password" Header="Password" PlaceholderText="Password" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
-        <Button x:Name="TestConnectionButton" Click="Connect_Click" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16">
+    <ScrollViewer>
+        <StackPanel Margin="25 0 25 0">
+            <TextBlock Text="New Subsonic Server" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
+            <TextBox x:Name="Name" Header="Server Name" PlaceholderText="My Subsonic Server" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
+            <TextBox x:Name="URL" Header="Enter the URL of the server." PlaceholderText="http://localhost:8080" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 20"/>
+            <TextBox x:Name="Username" Header="Username" PlaceholderText="Username" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
+            <PasswordBox x:Name="Password" Header="Password" PlaceholderText="Password" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
+            <Button x:Name="TestConnectionButton" Click="Connect_Click" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16">
+                <Grid>
+                    <TextBlock x:Name="TestConnectionText" VerticalAlignment="Center" Text="Test Connection"/>
+                    <ProgressRing x:Name="ConnectionTestRing" IsActive="False"/>
+                </Grid>
+            </Button>
             <Grid>
-                <TextBlock x:Name="TestConnectionText" VerticalAlignment="Center" Text="Test Connection"/>
-                <ProgressRing x:Name="ConnectionTestRing" IsActive="False"/>
-            </Grid>
-        </Button>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click" IsEnabled="{x:Bind IsConnectionSuccessful, Mode=OneWay}" Grid.Column="0"/>
-            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" IsEnabled="{x:Bind IsConnectionSuccessful, Mode=OneWay}" Grid.Column="1"/>
-        </Grid>
-    </StackPanel>
+                <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click" IsEnabled="{x:Bind IsConnectionSuccessful, Mode=OneWay}" Grid.Column="0"/>
+                <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" IsEnabled="{x:Bind IsConnectionSuccessful, Mode=OneWay}" Grid.Column="1"/>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

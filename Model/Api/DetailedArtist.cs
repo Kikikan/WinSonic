@@ -7,7 +7,7 @@ namespace WinSonic.Model.Api
         public string Key { get; private set; }
         public string Name { get; private set; }
         public string Biography { get; private set; }
-        public bool IsFavourite { get; private set; }
+        public bool IsFavourite { get; set; }
         public Uri SmallImageUri { get; private set; }
         public Uri MediumImageUri { get; private set; }
         public Uri LargeImageUri { get; private set; }

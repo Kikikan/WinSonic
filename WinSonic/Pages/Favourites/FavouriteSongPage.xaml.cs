@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using WinSonic.Model.Api;
 using WinSonic.Persistence;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,7 +34,7 @@ public sealed partial class FavouriteSongPage : Page
                 {
                     foreach (var song in rs.Right)
                     {
-                        PictureControl.Items.Add(new Model.InfoWithPicture(song, song.CoverImageUri, song.Title, song.Artist, false, typeof(AlbumDetailPage), song.Title.Substring(0, 1)));
+                        PictureControl.Items.Add(new InfoWithPicture(song, song.CoverImageUri, song.Title, song.Artist, false, typeof(AlbumDetailPage), song.Title.Substring(0, 1)));
                     }
                 }
             }

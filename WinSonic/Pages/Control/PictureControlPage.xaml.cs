@@ -5,10 +5,12 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 using WinSonic.Model;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -122,12 +124,13 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
         {
             // Stash the clicked item for use later. We'll need it when we connect back from the detailpage.
             _storedObject = container.Content as InfoWithPicture;
+            Debug.WriteLine($"Favourite: {_storedObject.IsFavourite}");
 
 
             // Prepare the connected animation.
             // Notice that the stored item is passed in, as well as the name of the connected element.
             // The animation will actually start on the Detailed info page.
-            PictureGridView.PrepareConnectedAnimation("ForwardConnectedAnimation", _storedObject, "Image");
+            PictureGridView.PrepareConnectedAnimation("OpenPictureControlItemAnimation", _storedObject, "Image");
         }
 
         // Navigate to the DetailedInfoPage.
@@ -140,12 +143,13 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
     {
         if (_storedObject != null)
         {
+            Debug.WriteLine($"Favourite: {_storedObject.IsFavourite}");
             // If the connected item appears outside the viewport, scroll it into view.
             PictureGridView.ScrollIntoView(_storedObject, ScrollIntoViewAlignment.Default);
             PictureGridView.UpdateLayout();
 
             // Play the second connected animation.
-            ConnectedAnimation animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackConnectedAnimation");
+            ConnectedAnimation animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ClosePictureControlItemAnimation");
             if (animation != null)
             {
                 // Setup the "back" configuration if the API is present.

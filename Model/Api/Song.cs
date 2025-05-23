@@ -11,6 +11,7 @@ namespace WinSonic.Model.Api
         public Uri StreamUri { get; private set; }
         public int DiskNumber { get; private set; }
         public int Track { get; private set; }
+        public bool IsFavourite { get; private set; }
 
         public Song(Child child, Server server) : base(child.Id, server)
         {
@@ -19,6 +20,7 @@ namespace WinSonic.Model.Api
             Artist = child.Artist;
             DiskNumber = child.DiscNumber;
             Track = child.Track;
+            IsFavourite = child.StarredSpecified;
             CoverImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetParameters()}&id={child.CoverArt}");
             StreamUri = new Uri($"{server.Address}/rest/stream{server.GetParameters()}&id={Id}");
         }

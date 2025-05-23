@@ -111,6 +111,20 @@ namespace WinSonic.Model.Api
             return rs.Status == ResponseStatus.Ok;
         }
 
+        public static async Task<bool> Star(Server server, bool star, StarType type, string id)
+        {
+            string url = "/rest/" + (!star ? "un" : "") + $"star{server.GetParameters()}&";
+            url += type switch
+            {
+                StarType.Artist => "artistId",
+                StarType.Album => "albumId",
+                _ => "id",
+            };
+            url += $"={id}";
+            var rs = await Execute(server, url);
+            return rs.Status == ResponseStatus.Ok;
+        }
+
         private static async Task<Response> Execute(Server server, string url)
         {
             using (HttpResponseMessage response = await server.Client.GetAsync(url))
@@ -133,6 +147,11 @@ namespace WinSonic.Model.Api
         public enum AlbumListType
         {
             random, newest, highest, frequent, recent, alphabeticalByName, alphabeticalByArtist, starred, byYear, byGenre
+        }
+
+        public enum StarType
+        {
+            Song, Album, Artist
         }
     }
 }
