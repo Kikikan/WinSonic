@@ -8,28 +8,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:control="using:WinSonic.Pages.Control"
-    xmlns:api="using:WinSonic.Model.Api"
-    Loaded="Page_Loaded">
+    xmlns:api="using:WinSonic.Model.Api">
 
     <Grid Margin="25 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Now Playing" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
-        <Grid Grid.Row="1" Margin="0 25 0 0">
+        <Grid Grid.Row="1" Margin="0 25 0 20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" x:Name="Image" Height="400" Stretch="Uniform" HorizontalAlignment="Center">
+                <Image Grid.Row="0" x:Name="Image" Stretch="Uniform" HorizontalAlignment="Center">
                     <Image.Source>
                         <BitmapImage UriSource="{x:Bind Song.CoverImageUri}"/>
                     </Image.Source>
@@ -39,20 +36,6 @@
                     <TextBlock Text="{x:Bind Song.Artist}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind Song.Album}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                 </StackPanel>
-                <ListView x:Name="PlaylistView" Grid.Row="2" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" IsItemClickEnabled="True" ItemClick="PlaylistView_ItemClick" CanDragItems="True" CanReorderItems="True" AllowDrop="True" SelectionMode="Single" IsSwipeEnabled="True" ContainerContentChanging="PlaylistView_ContainerContentChanging">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="api:Song">
-                            <ItemContainer>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{x:Bind DiskNumber}"/>
-                                    <TextBlock Text="."/>
-                                    <TextBlock Text="{x:Bind Track}"/>
-                                    <TextBlock Text="{x:Bind Title}" Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </ItemContainer>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -68,7 +51,5 @@
                 <Frame Grid.Row="1" x:Name="ContentFrame" IsNavigationStackEnabled="False" />
             </Grid>
         </Grid>
-        <TextBlock Grid.Row="2" Text="Small info on the bottom left screen" Style="{StaticResource CaptionTextBlockStyle}" Margin="0 25 0 10"/>
-
     </Grid>
 </Page>

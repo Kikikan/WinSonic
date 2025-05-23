@@ -29,7 +29,7 @@ namespace WinSonic.Pages
 
         private Song _song = PlayerPlaylist.Instance.Song;
         private Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
-        public ObservableCollection<Song> Songs { get; set; } = new();
+        
         public PlayerPage()
         {
             InitializeComponent();
@@ -67,24 +67,6 @@ namespace WinSonic.Pages
 
             previousSelectedIndex = currentSelectedIndex;
 
-        }
-
-        private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        {
-            foreach (var song in PlayerPlaylist.Instance.Songs)
-            {
-                Songs.Add(song);
-            }
-        }
-
-        private void PlaylistView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            PlayerPlaylist.Instance.SongIndex = Songs.IndexOf(e.ClickedItem as Song);
-        }
-
-        private void PlaylistView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            PlayerPlaylist.Instance.Songs = PlaylistView.Items.Cast<Song>().ToList();
         }
     }
 }
