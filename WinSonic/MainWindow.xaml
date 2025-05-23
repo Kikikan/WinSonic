@@ -120,7 +120,7 @@
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Favourites">
+                <NavigationViewItem Content="Favourites" FontWeight="Bold" IsExpanded="True">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe734;" />
                     </NavigationViewItem.Icon>
@@ -197,17 +197,20 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" Margin="15 0 0 0" Tapped="SongInfoStackPanel_Tapped">
-                <Image x:Name="CoverImage" MaxHeight="100">
-                    <Image.Source>
-                        <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
-                    </Image.Source>
-                </Image>
-                <StackPanel Margin="10" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind Song.Title, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Song.Artist, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+            <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click" Margin="15 0 0 0">
+                <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" >
+                    <Image x:Name="CoverImage" MaxHeight="100">
+                        <Image.Source>
+                            <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
+                        </Image.Source>
+                    </Image>
+                    <StackPanel Margin="10" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind Song.Title, Mode=OneWay}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind Song.Artist, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Button>
+            
 
             <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" AutoPlay="True" HorizontalAlignment="Center"/>
         </Grid>

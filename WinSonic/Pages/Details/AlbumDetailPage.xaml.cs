@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Details;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,7 +21,7 @@ namespace WinSonic.Pages
 
         public InfoWithPicture DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
-        private bool fromArtist = false;
+
         public AlbumDetailPage()
         {
             InitializeComponent();
@@ -43,7 +44,6 @@ namespace WinSonic.Pages
                 if (backImageAnimation != null && DetailedObject.BackIconUri != null)
                 {
                     backImageAnimation.TryStart(backImage);
-                    fromArtist = true;
                 }
 
             }
@@ -54,11 +54,13 @@ namespace WinSonic.Pages
         {
             base.OnNavigatingFrom(e);
 
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
-
-            if (fromArtist)
+            if (e.SourcePageType == typeof(AlbumsPage) || e.SourcePageType == typeof(ArtistDetailPage))
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", backImage);
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
+                if (e.SourcePageType == typeof(ArtistDetailPage))
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", backImage);
+                }
             }
         }
 

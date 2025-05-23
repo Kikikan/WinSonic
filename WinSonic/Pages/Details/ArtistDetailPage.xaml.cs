@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Pages.Favourites;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -58,12 +59,12 @@ public sealed partial class ArtistDetailPage : Page
         base.OnNavigatingFrom(e);
         
         
-        if (e.NavigationMode == NavigationMode.Back)
+        if (e.SourcePageType == typeof(ArtistsPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackConnectedAnimation", detailedImage);
             NavigationCacheMode = NavigationCacheMode.Disabled;
         }
-        else
+        else if (e.SourcePageType == typeof(FavouriteArtistPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackImageAnimation", detailedImage);
         }
