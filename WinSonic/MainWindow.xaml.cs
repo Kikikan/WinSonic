@@ -27,6 +27,8 @@ namespace WinSonic
         private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
         private Song? _song;
+        private bool _isLoading = true;
+        private bool IsLoading { get => _isLoading; set { _isLoading = value; LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
@@ -92,7 +94,14 @@ namespace WinSonic
                     }
                     List<Server> attemptResult = await ((App)Application.Current).ServerFile.TryPing(attemptList);
                     ShowUnsuccessfulServers(attemptResult);
+                } else
+                {
+                    IsLoading = false;
                 }
+            }
+            else
+            {
+                IsLoading = false;
             }
         }
 
