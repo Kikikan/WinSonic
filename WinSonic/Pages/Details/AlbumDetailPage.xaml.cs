@@ -61,7 +61,7 @@ namespace WinSonic.Pages
         {
             base.OnNavigatingFrom(e);
 
-            if (e.SourcePageType == typeof(AlbumsPage) || e.SourcePageType == typeof(FavouriteAlbumPage) || e.SourcePageType == typeof(ArtistDetailPage))
+            if (e.NavigationMode == NavigationMode.Back)
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
                 if (e.SourcePageType == typeof(ArtistDetailPage))
