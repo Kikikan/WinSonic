@@ -28,13 +28,13 @@
                 </Grid.RowDefinitions>
                 <Image Grid.Row="0" x:Name="Image" Stretch="Uniform" HorizontalAlignment="Center">
                     <Image.Source>
-                        <BitmapImage UriSource="{x:Bind Song.CoverImageUri}"/>
+                        <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
                     </Image.Source>
                 </Image>
                 <StackPanel Grid.Row="1">
-                    <TextBlock Text="{x:Bind Song.Title}" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind Song.Artist}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind Song.Album}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Song.Title, Mode=OneWay}" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Song.Artist, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind Song.Album, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
             <Grid Grid.Column="1">

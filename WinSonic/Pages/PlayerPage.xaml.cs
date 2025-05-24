@@ -17,26 +17,25 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class PlayerPage : Page, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private int previousSelectedIndex = -1;
 
-        private Song _song = PlayerPlaylist.Instance.Song;
-        private Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
-        private bool animated = false;
+        private Song _song;
+        private Song Song { get => _song; set { _song = value; DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(Song))); } }
 
         public PlayerPage()
         {
             InitializeComponent();
             PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
+            Song = PlayerPlaylist.Instance.Song;
         }
 
         private void Playlist_SongIndexChanged(object? sender, int oldIndex)
         {
             Song = PlayerPlaylist.Instance.Song;
-            // TODO: Fix view not updating
         }
 
         private void RightSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -93,7 +92,6 @@ namespace WinSonic.Pages
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                 animation.TryStart(Image);
-                animated = true;
             }
         }
     }
