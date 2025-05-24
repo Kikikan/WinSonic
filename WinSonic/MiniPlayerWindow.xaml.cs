@@ -38,7 +38,7 @@ namespace WinSonic
                 throw new Exception("Application is not an App.");
             }
 
-                this.ExtendsContentIntoTitleBar = true;
+            this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(null);
             AppWindow.SetIcon(null);
             AppWindow.IsShownInSwitchers = false;

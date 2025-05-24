@@ -7,10 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
-using Windows.Media;
-using Windows.Media.Core;
 using Windows.Media.Playback;
-using Windows.Storage.Streams;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
@@ -123,7 +120,8 @@ namespace WinSonic
                     }
                     List<Server> attemptResult = await ((App)Application.Current).ServerFile.TryPing(attemptList);
                     ShowUnsuccessfulServers(attemptResult);
-                } else
+                }
+                else
                 {
                     IsLoading = false;
                 }

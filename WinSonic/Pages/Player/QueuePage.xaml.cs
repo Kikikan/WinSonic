@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Windows.Media.Playback;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;

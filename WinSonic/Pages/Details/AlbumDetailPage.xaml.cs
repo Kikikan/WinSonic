@@ -7,7 +7,6 @@ using System.ComponentModel;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Details;
-using WinSonic.Pages.Favourites;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
