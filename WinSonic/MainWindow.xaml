@@ -55,13 +55,13 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-        </Grid.Resources>
+            </Grid.Resources>
         <tb:TaskbarIcon
         x:Name="TrayIcon"
         x:FieldModifier="public"
         ContextMenuMode="SecondWindow"
         IconSource="Assets/Square44x44Logo.scale-200.ico"
-        LeftClickCommand="{x:Bind ShowWindowCommand}"
+        LeftClickCommand="{x:Bind ShowMiniPlayerCommand}"
         NoLeftClickDelay="True"
         ToolTipText="WinSonic">
             <tb:TaskbarIcon.ContextFlyout>

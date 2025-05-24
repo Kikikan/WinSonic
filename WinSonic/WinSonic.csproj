@@ -16,6 +16,7 @@
     <Compile Remove="Pages\ArtistPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="MiniPlayerWindow.xaml" />
     <None Remove="Pages\AddServerPage.xaml" />
     <None Remove="Pages\AlbumPage.xaml" />
     <None Remove="Pages\ArtistPage.xaml" />
@@ -118,6 +119,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MiniPlayerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\UnsuccessfulConnectionDialog.xaml">

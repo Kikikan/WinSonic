@@ -1,0 +1,55 @@
+<Window  
+    x:Class="WinSonic.MiniPlayerWindow"  
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+    xmlns:local="using:WinSonic"  
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+    mc:Ignorable="d"  
+    Title="Mini Player">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"  
+                   Text="{Binding CurrentSong.Title, Mode=OneWay, FallbackValue='Unknown Title', TargetNullValue='Unknown Title'}"  
+                   FontWeight="Bold"  
+                   FontSize="16"  
+                   TextTrimming="CharacterEllipsis"  
+                   HorizontalAlignment="Center"  
+                   TextAlignment="Center"  
+                   Margin="10,10,10,0" />
+
+        <TextBlock Grid.Row="1"  
+                   Text="{Binding CurrentSong.Artist, Mode=OneWay, FallbackValue='Unknown Artist', TargetNullValue='Unknown Artist'}"  
+                   FontStyle="Italic"  
+                   FontSize="14"  
+                   TextTrimming="CharacterEllipsis"  
+                   HorizontalAlignment="Center"  
+                   TextAlignment="Center"  
+                   Margin="10,0,10,10" />
+
+        <MediaPlayerElement Grid.Row="2"  
+                            x:Name="MiniMediaPlayer"  
+                            Width="300"  
+                            Height="160"  
+                            HorizontalAlignment="Stretch"  
+                            VerticalAlignment="Bottom"  
+                            AreTransportControlsEnabled="True"  
+                            AutoPlay="True">
+            <MediaPlayerElement.TransportControls>
+                <MediaTransportControls  
+                    MinWidth="0"  
+                    MinHeight="0" />
+            </MediaPlayerElement.TransportControls>
+        </MediaPlayerElement>
+    </Grid>
+</Window>

@@ -1,4 +1,4 @@
-using H.NotifyIcon;
+﻿using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -24,6 +24,8 @@ namespace WinSonic
     /// </summary>
     public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public static MainWindow Instance { get; private set; } // Singleton for easy access
+
         private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
         private Song? _song;
@@ -38,9 +40,14 @@ namespace WinSonic
         public ICommand ShowWindowCommand { get; }
         public ICommand? CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
+        public ICommand ShowMiniPlayerCommand => new RelayCommand(ShowMiniPlayerFlyout);
+        private MiniPlayerWindow _miniPlayerWindow;
+
+        public Windows.Media.Playback.MediaPlayer SharedMediaPlayer => MediaPlayerElement.MediaPlayer; // Expose MediaPlayer
 
         public MainWindow()
         {
+            Instance = this; // Set the singleton instance
             InitializeComponent();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
@@ -205,6 +212,20 @@ namespace WinSonic
         private void ShowWindow()
         {
             this.ShowFromTray();
+        }
+
+        private void ShowMiniPlayerFlyout()
+        {
+            if (_miniPlayerWindow == null)
+            {
+                _miniPlayerWindow = new MiniPlayerWindow();
+                _miniPlayerWindow.Closed += (s, e) => _miniPlayerWindow = null;
+                _miniPlayerWindow.Activate();
+            }
+            else
+            {
+                _miniPlayerWindow.Activate();
+            }
         }
 
         private void ExitApplication()
