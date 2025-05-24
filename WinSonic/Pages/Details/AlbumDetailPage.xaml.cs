@@ -23,7 +23,7 @@ namespace WinSonic.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        public InfoWithPicture DetailedObject { get; set; }
+        public InfoWithPicture? DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
 
         public AlbumDetailPage()
@@ -73,17 +73,20 @@ namespace WinSonic.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var albumInfo = await SubsonicApiHelper.GetAlbumInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-            if (albumInfo != null)
+            if (DetailedObject != null)
             {
-                NoteTextBlock.Text = albumInfo.Notes;
-            }
-            var album = await SubsonicApiHelper.GetAlbum(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-            if (album != null)
-            {
-                foreach (var song in album.Song)
+                var albumInfo = await SubsonicApiHelper.GetAlbumInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                if (albumInfo != null)
                 {
-                    Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
+                    NoteTextBlock.Text = albumInfo.Notes;
+                }
+                var album = await SubsonicApiHelper.GetAlbum(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                if (album != null)
+                {
+                    foreach (var song in album.Song)
+                    {
+                        Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
+                    }
                 }
             }
         }
@@ -106,7 +109,7 @@ namespace WinSonic.Pages
 
         private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DetailedObject.ApiObject is Album album)
+            if (DetailedObject != null && DetailedObject.ApiObject is Album album)
             {
                 bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
                 if (success)

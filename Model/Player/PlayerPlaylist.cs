@@ -13,13 +13,13 @@ namespace WinSonic.Model.Player
         public static PlayerPlaylist Instance { get; private set; } = new();
 
         public delegate void OnSongAddedEventHandler(object? sender, Song song);
-        public event OnSongAddedEventHandler SongAdded;
+        public event OnSongAddedEventHandler? SongAdded;
 
         public delegate void OnSongRemovedEventHandler(object? sender, int index);
-        public event OnSongRemovedEventHandler SongRemoved;
+        public event OnSongRemovedEventHandler? SongRemoved;
 
         public delegate void OnSongIndexChangedEventHandler(object? sender, int oldIndex);
-        public event OnSongIndexChangedEventHandler SongIndexChanged;
+        public event OnSongIndexChangedEventHandler? SongIndexChanged;
 
         public Song? Song { get { return SongIndex >= Songs.Count ? null : Songs[SongIndex]; } }
 

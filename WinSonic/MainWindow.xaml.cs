@@ -34,7 +34,7 @@ namespace WinSonic
 
         public Song? Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
         public ICommand ShowWindowCommand { get; }
-        public ICommand CancelCloseCommand { get; }
+        public ICommand? CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
 
         public MainWindow()
@@ -249,12 +249,12 @@ namespace WinSonic
 
         public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return _canExecute?.Invoke() ?? true;
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             _execute();
         }
