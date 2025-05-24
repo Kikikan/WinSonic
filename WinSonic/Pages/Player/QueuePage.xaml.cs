@@ -16,7 +16,7 @@ namespace WinSonic.Pages.Player
     public sealed partial class QueuePage : Page
     {
         public ObservableCollection<Song> Songs { get; set; } = new();
-        private Song SelectedSong { get; set; }
+        private Song? SelectedSong { get; set; }
 
         public QueuePage()
         {
@@ -26,11 +26,6 @@ namespace WinSonic.Pages.Player
         private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             ListSongs();
-        }
-
-        private void PlaylistView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            PlayerPlaylist.Instance.SongIndex = Songs.IndexOf(e.ClickedItem as Song);
         }
 
         private void PlaylistView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -60,12 +55,18 @@ namespace WinSonic.Pages.Player
 
         private void SongPlayItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Play(Songs.IndexOf(SelectedSong));
+            if (SelectedSong != null)
+            {
+                Play(Songs.IndexOf(SelectedSong));
+            }
         }
 
         private void SongRemoveItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Remove(Songs.IndexOf(SelectedSong));
+            if (SelectedSong != null)
+            {
+                Remove(Songs.IndexOf(SelectedSong));
+            }
         }
 
         private void ListSongs()

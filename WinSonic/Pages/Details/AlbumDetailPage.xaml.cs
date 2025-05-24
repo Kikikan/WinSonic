@@ -20,7 +20,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumDetailPage : Page, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public InfoWithPicture DetailedObject { get; set; }
@@ -36,20 +36,23 @@ namespace WinSonic.Pages
             base.OnNavigatedTo(e);
 
             // Store the item to be used in binding to UI
-            DetailedObject = e.Parameter as InfoWithPicture;
-
-            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
-            if (imageAnimation != null)
+            if (e.Parameter is InfoWithPicture info)
             {
-                // Connected animation + coordinated animation
-                imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
+                DetailedObject = info;
 
-                ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
-                if (backImageAnimation != null && DetailedObject.BackIconUri != null)
+                ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
+                if (imageAnimation != null)
                 {
-                    backImageAnimation.TryStart(backImage);
-                }
+                    // Connected animation + coordinated animation
+                    imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
 
+                    ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
+                    if (backImageAnimation != null && DetailedObject?.BackIconUri != null)
+                    {
+                        backImageAnimation.TryStart(backImage);
+                    }
+
+                }
             }
         }
 
@@ -95,8 +98,10 @@ namespace WinSonic.Pages
 
         private void AlbumListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Song? song = e.ClickedItem as Song;
-            PlayerPlaylist.Instance.AddSong(song);
+            if (e.ClickedItem is Song song)
+            {
+                PlayerPlaylist.Instance.AddSong(song);
+            }
         }
 
         private async void FavouriteButton_Click(object sender, RoutedEventArgs e)

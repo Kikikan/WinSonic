@@ -23,8 +23,8 @@ namespace WinSonic.Pages
 
         private int previousSelectedIndex = -1;
 
-        private Song _song;
-        private Song Song { get => _song; set { _song = value; DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(Song))); } }
+        private Song? _song;
+        private Song? Song { get => _song; set { _song = value; DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(Song))); } }
 
         public PlayerPage()
         {

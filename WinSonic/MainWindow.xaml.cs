@@ -24,15 +24,15 @@ namespace WinSonic
     /// </summary>
     public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private static List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
+        private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
-        private Song _song;
+        private Song? _song;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public Song Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
+        public Song? Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
         public ICommand ShowWindowCommand { get; }
         public ICommand CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
@@ -62,14 +62,16 @@ namespace WinSonic
         {
             if (servers != null && servers.Count > 0)
             {
-                ContentDialog dialog = new ContentDialog();
-                dialog.XamlRoot = MainGrid.XamlRoot;
-                dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-                dialog.Title = "Unsuccessful Connection";
-                dialog.PrimaryButtonText = "Retry for selected";
-                dialog.CloseButtonText = "Close";
-                dialog.IsSecondaryButtonEnabled = false;
-                dialog.DefaultButton = ContentDialogButton.Primary;
+                ContentDialog dialog = new()
+                {
+                    XamlRoot = MainGrid.XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    Title = "Unsuccessful Connection",
+                    PrimaryButtonText = "Retry for selected",
+                    CloseButtonText = "Close",
+                    IsSecondaryButtonEnabled = false,
+                    DefaultButton = ContentDialogButton.Primary
+                };
                 var content = new UnsuccessfulConnectionDialog();
                 foreach (var server in servers)
                 {
@@ -78,9 +80,9 @@ namespace WinSonic
                 dialog.Content = content;
 
                 var result = await dialog.ShowAsync();
-                if (result == ContentDialogResult.Primary)
+                if (result == ContentDialogResult.Primary && content.ServerListView != null)
                 {
-                    List<Server> attemptList = new List<Server>();
+                    List<Server> attemptList = [];
                     foreach (var obj in content.ServerListView.SelectedItems)
                     {
                         if (obj is Server server)
@@ -145,8 +147,16 @@ namespace WinSonic
             }
             else if (args.InvokedItemContainer != null && args.InvokedItemContainer.Tag != null)
             {
-                Type navPageType = Type.GetType(args.InvokedItemContainer.Tag.ToString());
-                NavView_Navigate(sender, navPageType, args.RecommendedNavigationTransitionInfo);
+                string? tagString = args.InvokedItemContainer.Tag.ToString();
+                if (tagString != null)
+                {
+                    Type? navPageType = Type.GetType(tagString);
+                    if (navPageType != null)
+                    {
+                        NavView_Navigate(sender, navPageType, args.RecommendedNavigationTransitionInfo);
+                    }
+                }
+
             }
         }
 
@@ -228,16 +238,16 @@ namespace WinSonic
     // Simple RelayCommand implementation
     public class RelayCommand : ICommand
     {
-        private readonly System.Action _execute;
-        private readonly System.Func<bool> _canExecute;
+        private readonly Action _execute;
+        private readonly Func<bool>? _canExecute;
 
-        public RelayCommand(System.Action execute, System.Func<bool> canExecute = null)
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
-            _execute = execute ?? throw new System.ArgumentNullException(nameof(execute));
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
-        public event System.EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         public bool CanExecute(object parameter)
         {
@@ -251,7 +261,7 @@ namespace WinSonic
 
         public void RaiseCanExecuteChanged()
         {
-            CanExecuteChanged?.Invoke(this, System.EventArgs.Empty);
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

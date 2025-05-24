@@ -30,7 +30,7 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                List<InfoWithPicture> list = new();
+                List<InfoWithPicture> list = [];
                 foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
                 {
                     var artists = await SubsonicApiHelper.GetArtists(server);

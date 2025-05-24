@@ -7,19 +7,19 @@ namespace WinSonic.ViewModel
 {
     public class InfoWithPicture : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public ApiObject ApiObject { get; set; }
-        public Uri IconUri { get; set; }
+        public Uri? IconUri { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
         private bool _isFavourite;
         public bool IsFavourite { get => _isFavourite; set { _isFavourite = value; OnPropertyChanged(nameof(IsFavourite)); } }
         public Type DetailsType { get; set; }
         public string Key { get; set; }
-        public Uri BackIconUri { get; set; }
-        public InfoWithPicture(ApiObject apiObject, Uri iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key)
+        public Uri? BackIconUri { get; set; }
+        public InfoWithPicture(ApiObject apiObject, Uri? iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key)
         {
             ApiObject = apiObject;
             IconUri = iconUri;
@@ -29,7 +29,7 @@ namespace WinSonic.ViewModel
             DetailsType = detailsType;
             Key = key;
         }
-        public InfoWithPicture(ApiObject apiObject, Uri iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key, Uri backIconUri) : this(apiObject, iconUri, title, subtitle, isFavourite, detailsType, key)
+        public InfoWithPicture(ApiObject apiObject, Uri iconUri, string title, string subtitle, bool isFavourite, Type detailsType, string key, Uri? backIconUri) : this(apiObject, iconUri, title, subtitle, isFavourite, detailsType, key)
         {
             BackIconUri = backIconUri;
         }
@@ -40,18 +40,9 @@ namespace WinSonic.ViewModel
         }
     }
 
-    public class InfoWithPictureGroup : List<InfoWithPicture>
+    public class InfoWithPictureGroup(string groupName) : List<InfoWithPicture>()
     {
-        public InfoWithPictureGroup(string groupName) : base()
-        {
-            GroupName = groupName;
-        }
-        public InfoWithPictureGroup(IEnumerable<InfoWithPicture> items) : base(items) { }
-        public InfoWithPictureGroup(IEnumerable<InfoWithPicture> items, string groupName) : this(items)
-        {
-            GroupName = groupName;
-        }
-        public string GroupName { get; set; }
+        public string GroupName { get; set; } = groupName;
         public override string ToString()
         {
             return $"InfoWithPictureGroup - {GroupName}";

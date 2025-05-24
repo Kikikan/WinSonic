@@ -56,11 +56,11 @@ namespace WinSonic.Model.Api
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
         }
 
-        public static async Task<ArtistInfo2?> GetArtistInfo(Server server, string id)
+        public static async Task<ArtistInfo2> GetArtistInfo(Server server, string id)
         {
             string parameters = $"/rest/getArtistInfo2{server.GetParameters()}&id={id}";
             var response = await Execute(server, parameters);
-            return response?.ArtistInfo2;
+            return response.ArtistInfo2;
         }
 
         public static async Task<List<DetailedArtist>> GetArtists(Server server)
@@ -134,7 +134,11 @@ namespace WinSonic.Model.Api
             var serializer = new XmlSerializer(typeof(Response));
             using (var reader = new StringReader(xml))
             {
-                return (Response)serializer.Deserialize(reader);
+                if (serializer.Deserialize(reader) is Response response)
+                {
+                    return response;
+                }
+                throw new IllegalResponseException();
             }
         }
 

@@ -13,8 +13,8 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class UnsuccessfulConnectionDialog : Page
     {
-        public ObservableCollection<Server> Servers { get; private set; } = new();
-        public ListView ServerListView { get; private set; }
+        public ObservableCollection<Server> Servers { get; private set; } = [];
+        public ListView? ServerListView { get; private set; }
         public UnsuccessfulConnectionDialog()
         {
             InitializeComponent();

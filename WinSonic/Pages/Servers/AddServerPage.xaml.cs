@@ -46,14 +46,14 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         }
     }
 
-    private Server server = null;
+    private Server? server;
 
     public AddServerPage()
     {
         InitializeComponent();
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -68,15 +68,15 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         string messageText;
         try
         {
-            server = new Server(Name.Text, URL.Text, Username.Text, Password.Password);
+            server = new Server(NameTextBox.Text, URL.Text, Username.Text, Password.Password);
             var rs = await SubsonicApiHelper.Ping(server);
 
-            messageText = rs.Status == Model.Api.ResponseStatus.Ok
+            messageText = rs.Status == ResponseStatus.Ok
                 ? "The connection was successful."
                 : $"Subsonic error: {rs.Error.Message}";
-            IsConnectionSuccessful = rs.Status == Model.Api.ResponseStatus.Ok;
+            IsConnectionSuccessful = rs.Status == ResponseStatus.Ok;
         }
-        catch (TaskCanceledException ex)
+        catch (TaskCanceledException)
         {
             messageText = $"No response was received.";
         }
@@ -95,13 +95,13 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
             }
         }
 
-        TextBlock flyoutText = new TextBlock
+        TextBlock flyoutText = new()
         {
             Text = messageText,
             Padding = new Thickness(10)
         };
 
-        Flyout flyout = new Flyout
+        Flyout flyout = new()
         {
             Content = flyoutText
         };
@@ -125,21 +125,21 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
             {
                 message = "Server is already saved.";
             }
-            Name.Text = "";
+            NameTextBox.Text = "";
             URL.Text = "";
             Username.Text = "";
             Password.Password = "";
             IsServerEditable = true;
             IsConnectionSuccessful = false;
 
-            TextBlock flyoutText = new TextBlock
+            TextBlock flyoutText = new()
             {
                 Text = message,
                 Padding = new Thickness(10)
             };
 
 
-            Flyout flyout = new Flyout
+            Flyout flyout = new()
             {
                 Content = flyoutText
             };

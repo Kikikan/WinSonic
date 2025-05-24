@@ -27,7 +27,7 @@ namespace WinSonic.Pages.Converter
             bool invert = Invert;
             if (parameter != null)
             {
-                string param = parameter.ToString().ToLowerInvariant();
+                string? param = parameter.ToString()?.ToLowerInvariant();
                 if (param == "invert" || param == "true")
                 {
                     invert = true;
@@ -62,7 +62,7 @@ namespace WinSonic.Pages.Converter
             bool invert = Invert;
             if (parameter != null)
             {
-                string param = parameter.ToString().ToLowerInvariant();
+                string? param = parameter.ToString()?.ToLowerInvariant();
                 if (param == "invert" || param == "true")
                 {
                     invert = true;

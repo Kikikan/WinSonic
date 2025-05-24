@@ -17,15 +17,15 @@ namespace WinSonic.Pages.Details;
 /// </summary>
 public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public InfoWithPicture DetailedObject { get; set; }
+    public InfoWithPicture? DetailedObject { get; set; }
     private bool _initialized = false;
     public ArtistDetailPage()
     {
         InitializeComponent();
-        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+        NavigationCacheMode = NavigationCacheMode.Enabled;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -35,23 +35,21 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         if (e.NavigationMode == NavigationMode.Back)
         {
             ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackFromAlbumArtistAnimation");
-            if (imageAnimation != null)
-            {
-                // Connected animation + coordinated animation
-                imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
-            }
+            // Connected animation + coordinated animation
+            imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
         }
         else
         {
-            // Store the item to be used in binding to UI
-            DetailedObject = e.Parameter as InfoWithPicture;
-
-            ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
-            if (imageAnimation != null)
+            if (e.Parameter is InfoWithPicture info)
             {
+                // Store the item to be used in binding to UI
+                DetailedObject = info;
+
+                ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 // Connected animation + coordinated animation
-                imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
+                imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
             }
+
         }
     }
 
@@ -80,18 +78,21 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
     {
         if (!_initialized)
         {
-            var artistInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-            foreach (var album in artistInfo.Album)
+            if (DetailedObject != null)
             {
-                Album albumObj = new Album(album, DetailedObject.ApiObject.Server);
-                var a = new InfoWithPicture(albumObj, albumObj.CoverImageUrl, albumObj.Title, albumObj.Artist, albumObj.IsFavourite, typeof(AlbumDetailPage), "", ((DetailedArtist)DetailedObject.ApiObject).SmallImageUri);
-                AlbumControl.Items.Add(a);
-            }
+                var artistInfo = await SubsonicApiHelper.GetArtist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                foreach (var album in artistInfo.Album)
+                {
+                    Album albumObj = new(album, DetailedObject.ApiObject.Server);
+                    var a = new InfoWithPicture(albumObj, albumObj.CoverImageUrl, albumObj.Title, albumObj.Artist, albumObj.IsFavourite, typeof(AlbumDetailPage), "", ((DetailedArtist)DetailedObject.ApiObject).SmallImageUri);
+                    AlbumControl.Items.Add(a);
+                }
 
-            var artistInfo2 = await SubsonicApiHelper.GetArtistInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-            if (artistInfo2 != null)
-            {
-                NoteTextBlock.Text = artistInfo2.Biography;
+                var artistInfo2 = await SubsonicApiHelper.GetArtistInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                if (artistInfo2 != null)
+                {
+                    NoteTextBlock.Text = artistInfo2.Biography;
+                }
             }
             _initialized = true;
         }
@@ -104,7 +105,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
     {
-        if (DetailedObject.ApiObject is DetailedArtist artist)
+        if (DetailedObject?.ApiObject is DetailedArtist artist)
         {
             bool success = await SubsonicApiHelper.Star(artist.Server, !artist.IsFavourite, SubsonicApiHelper.StarType.Artist, artist.Id);
             if (success)

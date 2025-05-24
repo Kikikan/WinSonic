@@ -14,12 +14,7 @@ namespace WinSonic.Model
         public string Salt { get; private set; }
         public bool Enabled { get; set; } = true;
 
-        private Server()
-        {
-            Client.Timeout = TimeSpan.FromSeconds(10);
-        }
-
-        public Server(string name, string uri, string username, string password) : this()
+        public Server(string name, string uri, string username, string password)
         {
             Name = name;
             Address = uri;
@@ -27,10 +22,10 @@ namespace WinSonic.Model
             var pass = GetPassword(password);
             PasswordHash = pass.Left;
             Salt = pass.Right;
-            Client.BaseAddress = new Uri(Address);
+            InitClient();
         }
 
-        public Server(Dictionary<string, string> data) : this()
+        public Server(Dictionary<string, string> data)
         {
             Name = data["name"];
             Address = data["address"];
@@ -38,18 +33,26 @@ namespace WinSonic.Model
             PasswordHash = data["password"];
             Salt = data["salt"];
             Enabled = data.ContainsKey("enabled") ? bool.Parse(data["enabled"]) : true;
+            InitClient();
+        }
+
+        private void InitClient()
+        {
             Client.BaseAddress = new Uri(Address);
+            Client.Timeout = TimeSpan.FromSeconds(10);
         }
 
         public Dictionary<string, string> ToDictionary()
         {
-            var d = new Dictionary<string, string>();
-            d["name"] = Name;
-            d["address"] = Address;
-            d["username"] = Username;
-            d["password"] = PasswordHash;
-            d["salt"] = Salt;
-            d["enabled"] = Enabled.ToString();
+            var d = new Dictionary<string, string>
+            {
+                ["name"] = Name,
+                ["address"] = Address,
+                ["username"] = Username,
+                ["password"] = PasswordHash,
+                ["salt"] = Salt,
+                ["enabled"] = Enabled.ToString()
+            };
             return d;
         }
 

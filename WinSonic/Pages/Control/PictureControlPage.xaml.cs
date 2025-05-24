@@ -20,17 +20,17 @@ namespace WinSonic.Pages.Control;
 /// </summary>
 public partial class PictureControlPage : Page, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     private bool canBeUpdated = true;
     private bool isLoading = false;
-    private InfoWithPicture _storedObject;
-    public ObservableCollection<InfoWithPicture> Items { get; } = new();
+    private InfoWithPicture? _storedObject;
+    public ObservableCollection<InfoWithPicture> Items { get; } = [];
 
-    private Func<Task<bool>> _updateAction;
-    public Func<Task<bool>> UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
+    private Func<Task<bool>>? _updateAction;
+    public Func<Task<bool>>? UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
     private bool _isGrouped = false;
     public bool IsGrouped
     {
@@ -106,7 +106,7 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
     private async void LoadMoreUntilScrollable(int maxAttempts = 5)
     {
         int attempts = 0;
-        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts && !isLoading)
+        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts && !isLoading && UpdateAction != null)
         {
             isLoading = true;
             canBeUpdated = await UpdateAction.Invoke();
@@ -132,8 +132,10 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
 
         // Navigate to the DetailedInfoPage.
         // Note that we suppress the default animation.
-        ((App)Application.Current).Window.NavFrame.Navigate(_storedObject.DetailsType, _storedObject, new SuppressNavigationTransitionInfo());
-
+        if (Application.Current is App app)
+        {
+            app.Window?.NavFrame.Navigate(_storedObject?.DetailsType, _storedObject, new SuppressNavigationTransitionInfo());
+        }
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)

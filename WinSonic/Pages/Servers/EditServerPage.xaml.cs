@@ -16,12 +16,12 @@ namespace WinSonic.Pages
     public sealed partial class EditServerPage : Page, INotifyPropertyChanged
     {
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         internal bool IsEditing { get; set; } = false;
-        internal Server SelectedServer { get; set; }
+        internal Server? SelectedServer { get; set; }
         private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
         internal List<Server> Servers { get; }
         private bool initialized = false;
@@ -52,11 +52,16 @@ namespace WinSonic.Pages
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var item = (sender as FrameworkElement).DataContext;
-            var server = item as Server;
-            Servers.Remove(server);
-            serverFile.Save();
-            OnPropertyChanged(nameof(Servers));
+            if (sender is FrameworkElement element)
+            {
+                var item = element.DataContext;
+                if (item is Server server)
+                {
+                    Servers.Remove(server);
+                    serverFile.Save();
+                    OnPropertyChanged(nameof(Servers));
+                }
+            }
         }
 
         private void ServerListView_Loaded(object sender, RoutedEventArgs e)

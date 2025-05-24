@@ -43,7 +43,7 @@ namespace WinSonic.Persistence
                                     disabledServers.Add(server);
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 server.Enabled = false;
                                 disabledServers.Add(server);
@@ -73,7 +73,7 @@ namespace WinSonic.Persistence
                         unsuccessfulServers.Add(server);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     unsuccessfulServers.Add(server);
                 }
