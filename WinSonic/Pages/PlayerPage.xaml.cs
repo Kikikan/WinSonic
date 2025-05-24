@@ -2,7 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.ComponentModel;
+using Windows.Media.Playback;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Player;
@@ -19,44 +21,55 @@ namespace WinSonic.Pages
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            DispatcherQueue.TryEnqueue(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+
+        private Song? Song;
 
         private int previousSelectedIndex = -1;
-
-        private Song? _song;
-        private Song? Song { get => _song; set { _song = value; DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(Song))); } }
+        private readonly MediaPlaybackList MediaPlaybackList;
 
         public PlayerPage()
         {
             InitializeComponent();
-            PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
-            Song = PlayerPlaylist.Instance.Song;
+            if (Application.Current is App app)
+            {
+                MediaPlaybackList = app.MediaPlaybackList;
+                MediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
+                if (app.MediaPlaybackList.CurrentItem != null)
+                {
+                    Song = PlayerPlaylist.Instance.Songs[(int)app.MediaPlaybackList.CurrentItemIndex];
+                    OnPropertyChanged(nameof(Song));
+                }
+            }
+            else
+            {
+                throw new Exception("Application is not an App.");
+            }
         }
 
-        private void Playlist_SongIndexChanged(object? sender, int oldIndex)
+        private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            Song = PlayerPlaylist.Instance.Song;
+            if (MediaPlaybackList.CurrentItemIndex < PlayerPlaylist.Instance.Songs.Count)
+            {
+                Song = PlayerPlaylist.Instance.Songs[(int)MediaPlaybackList.CurrentItemIndex];
+            }
+            else
+            {
+                Song = null;
+            }
+            OnPropertyChanged(nameof(Song));
         }
 
         private void RightSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
         {
             SelectorBarItem selectedItem = sender.SelectedItem;
             int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
-            System.Type pageType;
-
-            switch (currentSelectedIndex)
+            Type pageType = currentSelectedIndex switch
             {
-                case 0:
-                    pageType = typeof(QueuePage);
-                    break;
-                case 1:
-                    pageType = typeof(LyricsPage);
-                    break;
-                default:
-                    pageType = typeof(RelatedPage);
-                    break;
-            }
-
+                0 => typeof(QueuePage),
+                1 => typeof(LyricsPage),
+                _ => typeof(RelatedPage),
+            };
             var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
 
             ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });

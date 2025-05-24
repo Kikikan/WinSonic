@@ -121,25 +121,21 @@ namespace WinSonic.Model.Api
 
         private static async Task<Response> Execute(Server server, string url)
         {
-            using (HttpResponseMessage response = await server.Client.GetAsync(url))
-            {
-                response.EnsureSuccessStatusCode();
-                string rs = await response.Content.ReadAsStringAsync();
-                return DeserializeXml(rs);
-            }
+            using HttpResponseMessage response = await server.Client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string rs = await response.Content.ReadAsStringAsync();
+            return DeserializeXml(rs);
         }
 
         private static Response DeserializeXml(string xml)
         {
             var serializer = new XmlSerializer(typeof(Response));
-            using (var reader = new StringReader(xml))
+            using var reader = new StringReader(xml);
+            if (serializer.Deserialize(reader) is Response response)
             {
-                if (serializer.Deserialize(reader) is Response response)
-                {
-                    return response;
-                }
-                throw new IllegalResponseException();
+                return response;
             }
+            throw new IllegalResponseException();
         }
 
         public enum AlbumListType

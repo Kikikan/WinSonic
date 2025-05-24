@@ -212,7 +212,7 @@
             </Button>
             
 
-            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" AutoPlay="True" HorizontalAlignment="Center"/>
+            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" HorizontalAlignment="Center"/>
         </Grid>
 
         <!-- Loading Overlay -->

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Windows.Media.Playback;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 
@@ -20,15 +21,24 @@ namespace WinSonic
         private nint _hwnd;
         private WindowProc _newWndProc;
         private nint _oldWndProc;
-
-        public Song CurrentSong => PlayerPlaylist.Instance.Song;
+        private readonly MediaPlaybackList _mediaPlaybackList;
+        private Song? _currentSong;
+        public Song? CurrentSong { get { return _currentSong; } set { _currentSong = value; DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(CurrentSong))); } }
 
         public MiniPlayerWindow()
         {
             this.InitializeComponent();
+            if (Application.Current is App app)
+            {
+                _mediaPlaybackList = app.MediaPlaybackList;
+                _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackList_CurrentItemChanged;
+            }
+            else
+            {
+                throw new Exception("Application is not an App.");
+            }
 
-
-            this.ExtendsContentIntoTitleBar = true;
+                this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(null);
             AppWindow.SetIcon(null);
             AppWindow.IsShownInSwitchers = false;
@@ -62,9 +72,15 @@ namespace WinSonic
             this.Activate();
             SetForegroundWindow(_hwnd);
 
-            PlayerPlaylist.Instance.SongIndexChanged += (s, e) => DispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(CurrentSong)));
-
             MiniMediaPlayer.SetMediaPlayer(MainWindow.Instance.SharedMediaPlayer);
+        }
+
+        private void _mediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            if (sender.CurrentItemIndex < PlayerPlaylist.Instance.Songs.Count)
+            {
+                CurrentSong = PlayerPlaylist.Instance.Songs[(int)sender.CurrentItemIndex];
+            }
         }
 
         private void HookWindowMessages()

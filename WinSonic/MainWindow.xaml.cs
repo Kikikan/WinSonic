@@ -7,7 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+using Windows.Media;
 using Windows.Media.Core;
+using Windows.Media.Playback;
+using Windows.Storage.Streams;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
@@ -28,15 +31,15 @@ namespace WinSonic
 
         private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
-        private Song? _song;
         private bool _isLoading = true;
         private bool IsLoading { get => _isLoading; set { _isLoading = value; LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            DispatcherQueue.TryEnqueue(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
 
-        public Song? Song { get => _song; set { _song = value; OnPropertyChanged(nameof(Song)); } }
+        public Song? Song { get; private set; }
+        private readonly MediaPlaybackList MediaPlaybackList;
         public ICommand ShowWindowCommand { get; }
         public ICommand? CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
@@ -56,10 +59,29 @@ namespace WinSonic
             ShowWindowCommand = new RelayCommand(ShowWindow);
             ExitApplicationCommand = new RelayCommand(ExitApplication);
 
-            PlayerPlaylist.Instance.SongAdded += Playlist_SongAdded;
-            PlayerPlaylist.Instance.SongRemoved += Playlist_SongRemoved;
-            PlayerPlaylist.Instance.SongIndexChanged += Playlist_SongIndexChanged;
-            MediaPlayerElement.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+            if (Application.Current is App app)
+            {
+                MediaPlayerElement.SetMediaPlayer(app.MediaPlayer);
+                MediaPlaybackList = app.MediaPlaybackList;
+                MediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
+            }
+            else
+            {
+                throw new Exception("Application is not an App.");
+            }
+        }
+
+        private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            if (MediaPlaybackList.CurrentItemIndex < PlayerPlaylist.Instance.Songs.Count)
+            {
+                Song = PlayerPlaylist.Instance.Songs[(int)MediaPlaybackList.CurrentItemIndex];
+            }
+            else
+            {
+                Song = null;
+            }
+            OnPropertyChanged(nameof(Song));
         }
 
         private async void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -112,44 +134,6 @@ namespace WinSonic
             }
         }
 
-        private void Playlist_SongIndexChanged(object? sender, int oldIndex)
-        {
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                MediaPlayerElement.Source = null;
-                StartSong();
-                Song = PlayerPlaylist.Instance.Song;
-            });
-        }
-
-        private void MediaPlayer_MediaEnded(Windows.Media.Playback.MediaPlayer sender, object args)
-        {
-            PlayerPlaylist.Instance.SongIndex++;
-        }
-
-        private void Playlist_SongRemoved(object? sender, int index)
-        {
-            if (PlayerPlaylist.Instance.SongIndex == index)
-            {
-                MediaPlayerElement.Source = null;
-            }
-            StartSong();
-        }
-
-        private void Playlist_SongAdded(object? sender, Song song)
-        {
-            StartSong();
-        }
-
-        private async void StartSong()
-        {
-            if (MediaPlayerElement.Source == null && PlayerPlaylist.Instance.Song != null)
-            {
-                await SubsonicApiHelper.Scrobble(PlayerPlaylist.Instance.Song.Server, PlayerPlaylist.Instance.Song.Id);
-                MediaPlayerElement.Source = MediaSource.CreateFromUri(PlayerPlaylist.Instance.Song.StreamUri);
-            }
-        }
-
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
@@ -172,7 +156,6 @@ namespace WinSonic
                         NavView_Navigate(sender, navPageType, args.RecommendedNavigationTransitionInfo);
                     }
                 }
-
             }
         }
 

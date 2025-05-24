@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.Media.Playback;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 
@@ -15,15 +16,24 @@ namespace WinSonic.Pages.Player
     /// </summary>
     public sealed partial class QueuePage : Page
     {
-        public ObservableCollection<Song> Songs { get; set; } = new();
+        public ObservableCollection<Song> Songs { get; set; } = [];
+        private readonly MediaPlaybackList Playlist;
         private Song? SelectedSong { get; set; }
 
         public QueuePage()
         {
             InitializeComponent();
+            if (Application.Current is App app)
+            {
+                Playlist = app.MediaPlaybackList;
+            }
+            else
+            {
+                throw new System.Exception("Application is not App.");
+            }
         }
 
-        private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ListSongs();
         }
@@ -34,14 +44,14 @@ namespace WinSonic.Pages.Player
             {
                 return;
             }
-            PlayerPlaylist.Instance.Songs = PlaylistView.Items.Cast<Song>().ToList();
+            // TODO: Implement reordering again!
         }
 
         private void SongContainer_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
             if (sender is ItemContainer container && container.DataContext is Song song)
             {
-                PlayerPlaylist.Instance.SongIndex = Songs.IndexOf(song);
+                Playlist.MoveTo((uint)Songs.IndexOf(song));
             }
         }
 
@@ -53,7 +63,7 @@ namespace WinSonic.Pages.Player
             }
         }
 
-        private void SongPlayItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void SongPlayItem_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedSong != null)
             {
@@ -61,7 +71,7 @@ namespace WinSonic.Pages.Player
             }
         }
 
-        private void SongRemoveItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void SongRemoveItem_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedSong != null)
             {
@@ -80,7 +90,7 @@ namespace WinSonic.Pages.Player
 
         private void Play(int index)
         {
-            PlayerPlaylist.Instance.SongIndex = index;
+            Playlist.MoveTo((uint)index);
         }
 
         private void Remove(int index)

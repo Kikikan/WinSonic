@@ -4,8 +4,6 @@ namespace WinSonic.Model.Player
 {
     public class PlayerPlaylist
     {
-        private int _songIndex;
-        public int SongIndex { get => _songIndex; set { int oldIndex = _songIndex; _songIndex = value; SongIndexChanged?.Invoke(this, oldIndex); } }
         public List<Song> Songs { get; set; } = [];
 
         private PlayerPlaylist() { }
@@ -18,19 +16,10 @@ namespace WinSonic.Model.Player
         public delegate void OnSongRemovedEventHandler(object? sender, int index);
         public event OnSongRemovedEventHandler? SongRemoved;
 
-        public delegate void OnSongIndexChangedEventHandler(object? sender, int oldIndex);
-        public event OnSongIndexChangedEventHandler? SongIndexChanged;
-
-        public Song? Song { get { return SongIndex >= Songs.Count ? null : Songs[SongIndex]; } }
-
         public void AddSong(Song song)
         {
             Songs.Add(song);
             SongAdded?.Invoke(this, song);
-            if (Songs.Count == 1)
-            {
-                SongIndex = 0;
-            }
         }
 
         public bool RemoveSong(int index)
