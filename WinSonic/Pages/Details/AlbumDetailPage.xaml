@@ -55,9 +55,19 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Button x:Name="PlayButton" Click="PlayButton_Click">
+                <Button x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
                     <Button.Content>
                         <FontIcon Glyph="&#xE768;" />
+                    </Button.Content>
+                </Button>
+                <Button x:Name="PlayNextButton" Margin="5 0 0 0" Click="PlayNextButton_Click" ToolTipService.ToolTip="Play Next">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE893;" />
+                    </Button.Content>
+                </Button>
+                <Button x:Name="AddToQueueButton" Margin="5 0 0 0" Click="AddToQueueButton_Click" ToolTipService.ToolTip="Add to Queue">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE710;" />
                     </Button.Content>
                 </Button>
                 <Button x:Name="FavouriteButton" Margin="5 0 0 0" Click="FavouriteButton_Click">

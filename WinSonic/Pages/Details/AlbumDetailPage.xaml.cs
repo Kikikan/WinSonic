@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Windows.Media.Playback;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Details;
@@ -23,7 +24,8 @@ namespace WinSonic.Pages
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public InfoWithPicture? DetailedObject { get; set; }
-        public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
+        public ObservableCollection<Song> Songs { get; set; } = [];
+        private readonly App app = (App)Application.Current;
 
         public AlbumDetailPage()
         {
@@ -92,10 +94,8 @@ namespace WinSonic.Pages
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var song in Songs)
-            {
-                PlayerPlaylist.Instance.AddSong(song);
-            }
+            PlayerPlaylist.Instance.ClearSongs();
+            AddToQueueButton_Click(sender, e);
         }
 
         private void AlbumListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -117,6 +117,22 @@ namespace WinSonic.Pages
                     album.IsFavourite = !album.IsFavourite;
                     OnPropertyChanged(nameof(DetailedObject));
                 }
+            }
+        }
+
+        private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var song in Songs)
+            {
+                PlayerPlaylist.Instance.AddSong(song);
+            }
+        }
+
+        private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = Songs.Count - 1; i >= 0; i--)
+            {
+                PlayerPlaylist.Instance.AddSong(Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
             }
         }
     }

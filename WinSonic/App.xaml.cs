@@ -23,6 +23,8 @@ namespace WinSonic
         public MediaPlayer MediaPlayer { get; private set; } = new();
         public MediaPlaybackList MediaPlaybackList { get; private set; } = new();
 
+        private bool autoPlayNext = false;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -33,6 +35,12 @@ namespace WinSonic
             MediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
             PlayerPlaylist.Instance.SongAdded += Instance_SongAdded;
             PlayerPlaylist.Instance.SongRemoved += Instance_SongRemoved;
+            MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+        }
+
+        private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        {
+            autoPlayNext = true;
         }
 
         private async void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
@@ -46,16 +54,38 @@ namespace WinSonic
 
         private void Instance_SongRemoved(object? sender, int index)
         {
+            if (MediaPlaybackList.CurrentItemIndex == index)
+            {
+                if (index < MediaPlaybackList.Items.Count - 1)
+                {
+                    MediaPlaybackList.MoveNext();
+                }
+                else
+                {
+                    MediaPlaybackList.MoveTo(0);
+                    Window?.DispatcherQueue.TryEnqueue(() => MediaPlayer.Pause());
+                }
+            }
             MediaPlaybackList.Items.RemoveAt(index);
+            if (MediaPlaybackList.Items.Count == 0)
+            {
+                autoPlayNext = true;
+            }
         }
 
-        private void Instance_SongAdded(object? sender, Song song)
+        private void Instance_SongAdded(object? sender, Song song, int index)
         {
-            MediaPlaybackList.Items.Add(CreatePlaybackItem(song));
+            MediaPlaybackList.Items.Insert(index, CreatePlaybackItem(song));
             if (MediaPlayer.Source == null)
             {
                 MediaPlayer.Source = MediaPlaybackList;
-                MediaPlayer.Play();
+                Window?.DispatcherQueue.TryEnqueue(() => MediaPlayer.Play());
+            }
+            if (autoPlayNext)
+            {
+                autoPlayNext = false;
+                MediaPlaybackList.MoveTo((uint)index);
+                Window?.DispatcherQueue.TryEnqueue(() => MediaPlayer.Play());
             }
         }
 

@@ -47,7 +47,7 @@ namespace WinSonic
 
         public MainWindow()
         {
-            Instance = this; // Set the singleton instance
+            Instance = this;
             InitializeComponent();
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
@@ -159,11 +159,8 @@ namespace WinSonic
 
         private void NavView_Navigate(NavigationView sender, Type navPageType, NavigationTransitionInfo transitionInfo)
         {
-            // Get the page type before navigation so you can prevent duplicate
-            // entries in the backstack.
             Type preNavPageType = ContentFrame.CurrentSourcePageType;
 
-            // Only navigate if the selected page isn't currently loaded.
             if (navPageType is not null && !Type.Equals(preNavPageType, navPageType))
             {
                 ContentFrame.Navigate(navPageType, null, transitionInfo);
@@ -184,10 +181,7 @@ namespace WinSonic
         }
         private void OnWindowClosing(object sender, WindowEventArgs args)
         {
-            // Prevent window from closing
             args.Handled = true;
-
-            // Hide instead (go to tray)
             this.Hide();
         }
         private void ShowWindow()
@@ -217,8 +211,7 @@ namespace WinSonic
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            // Only play reverse animation when coming back from CurrentlyPlayingPage
-            if (e.SourcePageType != typeof(PlayerPage)) // or whatever your main page is
+            if (e.SourcePageType != typeof(PlayerPage))
             {
                 SongInfoStackPanel.Visibility = Visibility.Visible;
                 this.DispatcherQueue.TryEnqueue(() =>
@@ -228,7 +221,7 @@ namespace WinSonic
                     if (animation != null)
                     {
                         animation.Configuration = new DirectConnectedAnimationConfiguration();
-                        animation.TryStart(CoverImage); // CoverImage in MainWindow
+                        animation.TryStart(CoverImage);
                     }
                 });
             }
@@ -237,11 +230,7 @@ namespace WinSonic
         private void SongInfoButton_Click(object sender, RoutedEventArgs e)
         {
             var animationService = ConnectedAnimationService.GetForCurrentView();
-
-            // Start animation from the image (you can use any element)
-            animationService.PrepareToAnimate("coverImageAnimation", CoverImage); // CoverImage = your Image control
-
-            // Navigate to the page in the NavigationView Frame
+            animationService.PrepareToAnimate("coverImageAnimation", CoverImage);
             NavFrame.Navigate(typeof(PlayerPage));
             SongInfoStackPanel.Visibility = Visibility.Collapsed;
         }
