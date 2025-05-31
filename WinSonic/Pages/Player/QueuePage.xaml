@@ -11,7 +11,25 @@
     Loaded="Page_Loaded">
 
     <Grid>
-        <ListView x:Name="PlaylistView" Grid.Row="2" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" CanDragItems="True" CanReorderItems="True" AllowDrop="True" SelectionMode="Single" IsSwipeEnabled="True" ContainerContentChanging="PlaylistView_ContainerContentChanging">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5 10 0 10">
+            <Button x:Name="ClearButton" Click="ClearButton_Click" ToolTipService.ToolTip="Clear Queue">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE894;" />
+                </Button.Content>
+            </Button>
+            <Button x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle Queue">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE8B1;" />
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        
+        <ListView Grid.Row="1" x:Name="PlaylistView" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" CanDragItems="True" CanReorderItems="True" AllowDrop="True" SelectionMode="Single" IsSwipeEnabled="True" ContainerContentChanging="PlaylistView_ContainerContentChanging">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="api:Song">
                     <ItemContainer x:Name="SongContainer" DoubleTapped="SongContainer_DoubleTapped" RightTapped="SongContainer_RightTapped">

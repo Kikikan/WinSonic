@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.ObjectModel;
 using Windows.Media.Playback;
 using WinSonic.Model.Api;
@@ -96,6 +97,17 @@ namespace WinSonic.Pages.Player
         {
             PlayerPlaylist.Instance.RemoveSong(index);
             ListSongs();
+        }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlayerPlaylist.Instance.ClearSongs();
+            Songs.Clear();
+        }
+
+        private void ShuffleButton_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException(); // TODO
         }
     }
 }

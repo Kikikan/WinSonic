@@ -17,7 +17,7 @@ namespace WinSonic
     /// </summary>
     public partial class App : Application
     {
-        internal ServerFile ServerFile { get; private set; } = new();
+        internal RoamingSettings RoamingSettings { get; private set; } = new();
 
         public MainWindow? Window { get; private set; }
         public MediaPlayer MediaPlayer { get; private set; } = new();
@@ -36,6 +36,14 @@ namespace WinSonic
             PlayerPlaylist.Instance.SongAdded += Instance_SongAdded;
             PlayerPlaylist.Instance.SongRemoved += Instance_SongRemoved;
             MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+            MediaPlayer.VolumeChanged += MediaPlayer_VolumeChanged;
+            MediaPlayer.Volume = RoamingSettings.PlayerSettings.Volume;
+        }
+
+        private void MediaPlayer_VolumeChanged(MediaPlayer sender, object args)
+        {
+            RoamingSettings.PlayerSettings.Volume = sender.Volume;
+            RoamingSettings.SavePlayerSettings();
         }
 
         private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)

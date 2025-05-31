@@ -17,7 +17,7 @@ namespace WinSonic.Pages.Favourites;
 /// </summary>
 public sealed partial class FavouriteArtistPage : Page
 {
-    private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
+    private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
     private bool initialized = false;
     public FavouriteArtistPage()
     {

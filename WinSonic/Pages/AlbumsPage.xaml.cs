@@ -17,7 +17,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumsPage : Page
     {
-        private readonly ServerFile serverFile = ((App)Application.Current).ServerFile;
+        private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
 
         public AlbumsPage()
         {

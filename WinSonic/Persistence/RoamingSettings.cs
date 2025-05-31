@@ -9,20 +9,38 @@ using WinSonic.Model.Api;
 
 namespace WinSonic.Persistence
 {
-    internal class ServerFile
+    internal class RoamingSettings
     {
-        public List<Server> Servers { get; } = new List<Server>();
+        public List<Server> Servers { get; } = [];
 
-        private ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
+        private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
-        public ServerFile()
+        public PlayerSettings PlayerSettings { get; private set; }
+
+        public RoamingSettings()
         {
-
+            var json = roaming.Values["player"] as string;
+            if (json is not null)
+            {
+                var playerConfigs = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (playerConfigs != null)
+                {
+                    PlayerSettings = new PlayerSettings(playerConfigs);
+                }
+                else
+                {
+                    PlayerSettings = new PlayerSettings();
+                }
+            }
+            else
+            {
+                PlayerSettings = new PlayerSettings();
+            }
         }
 
-        internal async Task<List<Server>> Initialize()
+        internal async Task<List<Server>> InitializeServers()
         {
-            List<Server> disabledServers = new List<Server>();
+            List<Server> disabledServers = [];
             var json = roaming.Values["servers"] as string;
             if (json is not null)
             {
@@ -56,9 +74,9 @@ namespace WinSonic.Persistence
             return disabledServers;
         }
 
-        internal async Task<List<Server>> TryPing(List<Server> servers)
+        internal static async Task<List<Server>> TryPing(List<Server> servers)
         {
-            List<Server> unsuccessfulServers = new List<Server>();
+            List<Server> unsuccessfulServers = [];
             foreach (var server in servers)
             {
                 try
@@ -96,7 +114,7 @@ namespace WinSonic.Persistence
             return true;
         }
 
-        public void Save()
+        public void SaveServers()
         {
             var list = new List<Dictionary<string, string>>();
             foreach (var server in Servers)
@@ -105,6 +123,12 @@ namespace WinSonic.Persistence
             }
             string json = JsonSerializer.Serialize(list);
             roaming.Values["servers"] = json;
+        }
+
+        public void SavePlayerSettings()
+        {
+            string json = JsonSerializer.Serialize(PlayerSettings.ToDictionary());
+            roaming.Values["player"] = json;
         }
     }
 }
