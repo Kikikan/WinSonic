@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,12 +19,18 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+        private readonly List<Tuple<string, SubsonicApiHelper.AlbumListType>> SortingMethods = [
+            Tuple.Create("Newest", SubsonicApiHelper.AlbumListType.newest),
+            Tuple.Create("By Name", SubsonicApiHelper.AlbumListType.alphabeticalByName),
+            Tuple.Create("By Artist", SubsonicApiHelper.AlbumListType.alphabeticalByArtist),
+            Tuple.Create("Favourites", SubsonicApiHelper.AlbumListType.starred),
+        ];
+        private bool initialized = false;
 
         public AlbumsPage()
         {
             InitializeComponent();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-            AlbumControl.UpdateAction = Update;
+
         }
 
         private async Task<bool> Update()
@@ -31,7 +38,7 @@ namespace WinSonic.Pages
             bool result = false;
             foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, SubsonicApiHelper.AlbumListType.newest, 10, AlbumControl.Items.Count);
+                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, ((Tuple<string, SubsonicApiHelper.AlbumListType>)OrderByComboBox.SelectedItem).Item2, 10, AlbumControl.Items.Count);
                 if (albums != null && albums.Count > 0)
                 {
                     foreach (var album in albums)
@@ -44,12 +51,39 @@ namespace WinSonic.Pages
             return result;
         }
 
-        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void OrderByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized)
+            {
+                return;
+            }
+            if (OrderByComboBox.SelectedItem is Tuple<string, SubsonicApiHelper.AlbumListType> selected)
+            {
+                serverFile.AlbumSettings.OrderBy = selected.Item2;
+                serverFile.SaveSetting(serverFile.AlbumSettings);
+                Refresh();
+            }
+        }
+
+        private async void Refresh()
         {
             AlbumControl.Items.Clear();
             // Wait until UI updates
             await Task.Delay(100);
             AlbumControl.UpdateAction = Update;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            OrderByComboBox.SelectedItem = SortingMethods.Where(t => t.Item2 == serverFile.AlbumSettings.OrderBy).First();
+            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            AlbumControl.UpdateAction = Update;
+            initialized = true;
         }
     }
 }

@@ -8,22 +8,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:models="using:WinSonic.Model.Api"
-    xmlns:controls="using:WinSonic.Pages.Control">
+    xmlns:controls="using:WinSonic.Pages.Control"
+    Loaded="Page_Loaded">
 
     <Grid Margin="25 25 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="5 0 0 10">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 25 25" VerticalAlignment="Center">
+            <Button x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="0 0 10 0">
                 <Button.Content>
                     <FontIcon Glyph="&#xE72C;" />
                 </Button.Content>
             </Button>
+            <ComboBox x:Name="OrderByComboBox" ItemsSource="{x:Bind SortingMethods}" DisplayMemberPath="Item1" SelectedValuePath="Item2" SelectionChanged="OrderByComboBox_SelectionChanged" ToolTipService.ToolTip="Order by" Width="120"/>
         </StackPanel>
-        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="2"/>
+        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
     </Grid>
 </Page>

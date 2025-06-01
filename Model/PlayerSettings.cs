@@ -1,6 +1,6 @@
 ﻿namespace WinSonic.Model
 {
-    public class PlayerSettings
+    public class PlayerSettings : ISetting
     {
         public double Volume { get; set; } = 1;
 

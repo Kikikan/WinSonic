@@ -43,7 +43,7 @@ namespace WinSonic
         private void MediaPlayer_VolumeChanged(MediaPlayer sender, object args)
         {
             RoamingSettings.PlayerSettings.Volume = sender.Volume;
-            RoamingSettings.SavePlayerSettings();
+            RoamingSettings.SaveSetting(RoamingSettings.PlayerSettings);
         }
 
         private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)

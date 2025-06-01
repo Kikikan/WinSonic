@@ -15,26 +15,50 @@ namespace WinSonic.Persistence
 
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
+        private readonly Dictionary<ISetting, string> KeyPair = [];
+
         public PlayerSettings PlayerSettings { get; private set; }
+
+        public AlbumSettings AlbumSettings { get; private set; }
 
         public RoamingSettings()
         {
-            var json = roaming.Values["player"] as string;
+            PlayerSettings = CreateSettings<PlayerSettings>("player");
+            AlbumSettings = CreateSettings<AlbumSettings>("album");
+
+            KeyPair.Add(PlayerSettings, "player");
+            KeyPair.Add(AlbumSettings, "album");
+        }
+
+        public T CreateSettings<T>(string key) where T : class
+        {
+            var json = roaming.Values[key] as string;
+            Dictionary<string, string>? config = null;
             if (json is not null)
             {
-                var playerConfigs = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (playerConfigs != null)
-                {
-                    PlayerSettings = new PlayerSettings(playerConfigs);
-                }
-                else
-                {
-                    PlayerSettings = new PlayerSettings();
-                }
+                config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            }
+
+            object? obj;
+            if (config != null)
+            {
+                obj = Activator.CreateInstance(typeof(T), [config]);
             }
             else
             {
-                PlayerSettings = new PlayerSettings();
+                obj = Activator.CreateInstance(typeof(T));
+            }
+            if (obj == null)
+            {
+                throw new NullReferenceException($"Could not create type: {typeof(T)}");
+            }
+            if (obj is T t)
+            {
+                return t;
+            }
+            else
+            {
+                throw new InvalidCastException($"Obj '{obj}' is not of type '{typeof(T)}'");
             }
         }
 
@@ -125,10 +149,10 @@ namespace WinSonic.Persistence
             roaming.Values["servers"] = json;
         }
 
-        public void SavePlayerSettings()
+        public void SaveSetting(ISetting setting)
         {
-            string json = JsonSerializer.Serialize(PlayerSettings.ToDictionary());
-            roaming.Values["player"] = json;
+            string json = JsonSerializer.Serialize(setting.ToDictionary());
+            roaming.Values[KeyPair[setting]] = json;
         }
     }
 }
