@@ -19,7 +19,7 @@ namespace WinSonic
     public sealed partial class MiniPlayerWindow : Window, INotifyPropertyChanged
     {
         private nint _hwnd;
-        private WindowProc _newWndProc;
+        private WindowProc? _newWndProc;
         private nint _oldWndProc;
         private readonly MediaPlaybackList _mediaPlaybackList;
         private Song? _currentSong;
@@ -32,6 +32,7 @@ namespace WinSonic
             {
                 _mediaPlaybackList = app.MediaPlaybackList;
                 _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackList_CurrentItemChanged;
+                CurrentSong = PlayerPlaylist.Instance.Songs[(int)_mediaPlaybackList.CurrentItemIndex];
             }
             else
             {
@@ -50,8 +51,11 @@ namespace WinSonic
             var appWindow = AppWindow.GetFromWindowId(windowId);
             appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
             var presenter = appWindow.Presenter as OverlappedPresenter;
-            presenter.SetBorderAndTitleBar(false, false);
-            appWindow.SetPresenter(presenter);
+            if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+            {
+                overlappedPresenter.SetBorderAndTitleBar(false, false);
+                appWindow.SetPresenter(overlappedPresenter);
+            }
             appWindow.IsShownInSwitchers = false;
 
             // Remove window border and caption to make it non-movable
@@ -72,7 +76,7 @@ namespace WinSonic
             this.Activate();
             SetForegroundWindow(_hwnd);
 
-            MiniMediaPlayer.SetMediaPlayer(MainWindow.Instance.SharedMediaPlayer);
+            MiniMediaPlayer.SetMediaPlayer(MainWindow.Instance?.SharedMediaPlayer);
         }
 
         private void _mediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)

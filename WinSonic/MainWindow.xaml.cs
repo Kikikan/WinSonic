@@ -25,7 +25,7 @@ namespace WinSonic
     /// </summary>
     public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public static MainWindow Instance { get; private set; } // Singleton for easy access
+        public static MainWindow? Instance { get; private set; } // Singleton for easy access
 
         private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
@@ -42,9 +42,9 @@ namespace WinSonic
         public ICommand? CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
         public ICommand ShowMiniPlayerCommand => new RelayCommand(ShowMiniPlayerFlyout);
-        private MiniPlayerWindow _miniPlayerWindow;
+        private MiniPlayerWindow? _miniPlayerWindow;
 
-        public Windows.Media.Playback.MediaPlayer SharedMediaPlayer => MediaPlayerElement.MediaPlayer; // Expose MediaPlayer
+        public MediaPlayer SharedMediaPlayer => MediaPlayerElement.MediaPlayer; // Expose MediaPlayer
 
         public MainWindow()
         {
