@@ -30,7 +30,7 @@ namespace WinSonic.Pages
         public AlbumsPage()
         {
             InitializeComponent();
-
+            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
         }
 
         private async Task<bool> Update()
@@ -80,10 +80,12 @@ namespace WinSonic.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            OrderByComboBox.SelectedItem = SortingMethods.Where(t => t.Item2 == serverFile.AlbumSettings.OrderBy).First();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-            AlbumControl.UpdateAction = Update;
-            initialized = true;
+            if (!initialized)
+            {
+                OrderByComboBox.SelectedItem = SortingMethods.Where(t => t.Item2 == serverFile.AlbumSettings.OrderBy).First();
+                AlbumControl.UpdateAction = Update;
+                initialized = true;
+            }
         }
     }
 }
