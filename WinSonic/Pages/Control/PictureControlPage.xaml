@@ -28,8 +28,8 @@
                 <FontIcon x:Name="FavouriteIcon1" Glyph="&#xEB52;" Foreground="Red" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30" Visibility="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"/>
                 <FontIcon x:Name="FavouriteIcon2" Glyph="&#xEB51;" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 5 5" FontSize="30" Visibility="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"/>
                 <StackPanel Grid.Row="1">
-                    <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
-                    <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="TitleTextBlock" Text="{x:Bind Title}" FontWeight="Bold" MaxWidth="200" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="SubtitleTextBlock" Text="{x:Bind Subtitle}" MaxWidth="200" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
