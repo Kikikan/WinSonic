@@ -22,7 +22,7 @@
                     <FontIcon Glyph="&#xE894;" />
                 </Button.Content>
             </Button>
-            <Button x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle Queue">
+            <Button x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle Queue" Margin="5 0 0 0" IsEnabled="False">
                 <Button.Content>
                     <FontIcon Glyph="&#xE8B1;" />
                 </Button.Content>

@@ -13,9 +13,17 @@
     <Grid Margin="25 25 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
-        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="5 0 0 10">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE72C;" />
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="2"/>
     </Grid>
 </Page>

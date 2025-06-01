@@ -43,5 +43,13 @@ namespace WinSonic.Pages
             }
             return result;
         }
+
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            AlbumControl.Items.Clear();
+            // Wait until UI updates
+            await Task.Delay(100);
+            AlbumControl.UpdateAction = Update;
+        }
     }
 }
