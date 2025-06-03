@@ -13,9 +13,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Pages\ArtistPage.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="MiniPlayerWindow.xaml" />
     <None Remove="Pages\AddServerPage.xaml" />
     <None Remove="Pages\AlbumPage.xaml" />

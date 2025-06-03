@@ -32,7 +32,10 @@ namespace WinSonic
             {
                 _mediaPlaybackList = app.MediaPlaybackList;
                 _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackList_CurrentItemChanged;
-                CurrentSong = PlayerPlaylist.Instance.Songs[(int)_mediaPlaybackList.CurrentItemIndex];
+                if (PlayerPlaylist.Instance.Songs.Count > 0)
+                {
+                    CurrentSong = PlayerPlaylist.Instance.Songs[(int)_mediaPlaybackList.CurrentItemIndex];
+                }
             }
             else
             {
