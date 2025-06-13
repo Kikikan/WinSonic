@@ -119,6 +119,12 @@ namespace WinSonic.Model.Api
             return rs.Status == ResponseStatus.Ok;
         }
 
+        public static async Task<List<Song>> Search(Server server, int songCount = 9999, int songOffset = 0)
+        {
+            var rs = await Execute(server, $"/rest/search3{server.GetParameters()}&query=&songCount={songCount}&songOffset={songOffset}");
+            return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
+        }
+
         private static async Task<Response> Execute(Server server, string url)
         {
             using HttpResponseMessage response = await server.Client.GetAsync(url);
