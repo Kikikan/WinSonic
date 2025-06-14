@@ -2,8 +2,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection.Metadata;
+using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Model.Player;
 using WinSonic.Pages.Favourites;
 using WinSonic.ViewModel;
 
@@ -35,25 +40,21 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         if (e.NavigationMode == NavigationMode.Back)
         {
             ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("BackFromAlbumArtistAnimation");
-            // Connected animation + coordinated animation
             imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
         }
         else
         {
             if (e.Parameter is InfoWithPicture info)
             {
-                // Store the item to be used in binding to UI
                 DetailedObject = info;
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
-                // Connected animation + coordinated animation
                 imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
             }
 
         }
     }
 
-    // Create connected animation back to collection page.
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
@@ -68,6 +69,13 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
             }
             else if (e.SourcePageType == typeof(AlbumDetailPage))
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
+            }
+        }
+        else if (e.NavigationMode == NavigationMode.New)
+        {
+            if (e.SourcePageType == typeof(AlbumDetailPage))
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
             }
@@ -98,9 +106,28 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    private async void PlayButton_Click(object sender, RoutedEventArgs e)
     {
+        PlayerPlaylist.Instance.ClearSongs();
+        var albums = AlbumControl.Items
+            .Select(info => info.ApiObject)
+            .Select(api => api as Album)
+            .ToList();
 
+        foreach (var album in albums)
+        {
+            if (album != null)
+            {
+                var rs = await SubsonicApiHelper.GetAlbum(album.Server, album.Id);
+                if (rs != null)
+                {
+                    foreach (var child in rs.Song)
+                    {
+                        PlayerPlaylist.Instance.AddSong(new Song(child, album.Server));
+                    }
+                }
+            }
+        }
     }
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)

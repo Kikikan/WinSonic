@@ -13,6 +13,7 @@
 
     <Page.Resources>
         <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
+        <converters:BooleanToFavLaberConverter x:Key="BoolToFavLabel"/>
     </Page.Resources>
 
     <Grid>
@@ -21,7 +22,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="headerContent" Margin="20 52 20 20">
+        <Grid x:Name="headerContent" Margin="20 52 20 10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -49,17 +50,16 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Button x:Name="PlayButton" Click="PlayButton_Click">
-                    <Button.Content>
+                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
+                    <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
-                    </Button.Content>
-                </Button>
-                <Button x:Name="FavouriteButton" Margin="5 0 0 0" Click="FavouriteButton_Click">
-                    <Button.Content>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton x:Name="FavouriteButton" Margin="5 0 0 0" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}">
+                    <AppBarButton.Icon>
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </Button.Content>
-                </Button>
-                <Button Content="Etc..." Margin="5 0 0 0"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </StackPanel>
             <control:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
         </Grid>

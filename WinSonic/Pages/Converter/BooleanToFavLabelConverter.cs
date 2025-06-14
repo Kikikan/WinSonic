@@ -3,21 +3,20 @@ using System;
 
 namespace WinSonic.Pages.Converter
 {
-    internal partial class BooleanToFavIconConverter : IValueConverter
+    internal partial class BooleanToFavLaberConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             bool boolValue = value is bool val && val;
-            return boolValue ? "\uEA92" : "\uEB51";
+            return boolValue ? "Unfavourite" : "Favourite";
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             if (value == null)
                 return false;
 
             string visibility = (string)value;
-            return visibility == "\uEA92";
+            return visibility == "Unfavourite";
         }
     }
 }

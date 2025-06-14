@@ -5,7 +5,7 @@ using WinSonic.Model.Api;
 
 namespace WinSonic.ViewModel
 {
-    public class InfoWithPicture : INotifyPropertyChanged
+    public partial class InfoWithPicture : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
@@ -40,7 +40,7 @@ namespace WinSonic.ViewModel
         }
     }
 
-    public class InfoWithPictureGroup(string groupName) : List<InfoWithPicture>()
+    public partial class InfoWithPictureGroup(string groupName) : List<InfoWithPicture>()
     {
         public string GroupName { get; set; } = groupName;
         public override string ToString()
