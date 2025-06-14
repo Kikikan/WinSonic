@@ -1,3 +1,4 @@
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -5,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,6 +26,8 @@ namespace WinSonic.Pages.Control
 
         private readonly List<Dictionary<string, string?>> _content = [];
         private readonly List<Dictionary<string, string?>> _orderedContent = [];
+        private readonly Dictionary<int, int> _orderedToRawIndeces = [];
+        private readonly Dictionary<int, int> _rawToOrderedIndeces = [];
 
         private readonly Dictionary<Rectangle, int> rowIndices = [];
         private readonly Dictionary<StackPanel, int> headerIndices = [];
@@ -67,7 +71,6 @@ namespace WinSonic.Pages.Control
             HeaderGrid.ColumnDefinitions.Clear();
             GridTableGrid.Children.Clear();
             GridTableGrid.ColumnDefinitions.Clear();
-            _selectedIndex = -1;
             for (int i = 0; i < _columns.Count; i++)
             {
                 GridTableGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = _columns[i].Item2 });
@@ -98,7 +101,9 @@ namespace WinSonic.Pages.Control
                 headerIndices.Add(header, i);
             }
 
-            for (int i = 0; i < _content.Count; i++)
+            OrderContent();
+
+            for (int i = 0; i < _orderedContent.Count; i++)
             {
                 Rectangle rowBackground = new()
                 {
@@ -125,7 +130,7 @@ namespace WinSonic.Pages.Control
                 {
                     var text = new TextBlock
                     {
-                        Text = _content[i].GetValueOrDefault(_columns[j].Item1, null),
+                        Text = _orderedContent[i].GetValueOrDefault(_columns[j].Item1, null),
                         Padding = new Thickness(10),
                         IsHitTestVisible = false,
                         TextTrimming = TextTrimming.CharacterEllipsis
@@ -133,6 +138,52 @@ namespace WinSonic.Pages.Control
                     GridTableGrid.Children.Add(text);
                     Grid.SetColumn(text, j);
                     Grid.SetRow(text, i);
+                }
+            }
+
+            if (SelectedIndex >= 0)
+            {
+                ChangeSelection(SelectedIndex, this);
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                {
+                    rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView();
+                });
+            }
+        }
+
+        private void OrderContent()
+        {
+            _orderedContent.Clear();
+            if (ascending)
+            {
+                foreach (var item in _content.OrderBy(x => x[_columns[orderByColumn].Item1]))
+                {
+                    _orderedContent.Add(item);
+                }
+            } else
+            {
+                foreach (var item in _content.OrderByDescending(x => x[_columns[orderByColumn].Item1]))
+                {
+                    _orderedContent.Add(item);
+                }
+            }
+            SetupOrderedToRaw();
+        }
+
+        private void SetupOrderedToRaw()
+        {
+            _orderedToRawIndeces.Clear();
+            _rawToOrderedIndeces.Clear();
+            for (int i = 0; i < _orderedContent.Count; i++)
+            {
+                for (int j = 0; j < _content.Count; j++)
+                {
+                    if (_orderedContent[i] == _content[j])
+                    {
+                        _orderedToRawIndeces.Add(i, j);
+                        _rawToOrderedIndeces.Add(j, i);
+                        break;
+                    }
                 }
             }
         }
@@ -184,6 +235,7 @@ namespace WinSonic.Pages.Control
                     ascending = !ascending;
                     CreateOrderIcon(header);
                 }
+                ShowContent();
             }
         }
 
@@ -191,7 +243,7 @@ namespace WinSonic.Pages.Control
         {
             if (sender is Rectangle rect)
             {
-                if (SelectedIndex != rowIndices.GetValueOrDefault(rect, -1))
+                if (SelectedIndex != _orderedToRawIndeces.GetValueOrDefault(rowIndices.GetValueOrDefault(rect, -1), -1))
                 {
                     rect.Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
                 }
@@ -202,7 +254,7 @@ namespace WinSonic.Pages.Control
         {
             if (sender is Rectangle rect)
             {
-                if (SelectedIndex != rowIndices.GetValueOrDefault(rect, -1))
+                if (SelectedIndex != _orderedToRawIndeces.GetValueOrDefault(rowIndices.GetValueOrDefault(rect, -1), -1))
                 {
                     rect.Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
                 }
@@ -213,7 +265,7 @@ namespace WinSonic.Pages.Control
         {
             if (sender is Rectangle rect)
             {
-                ChangeSelection(rowIndices[rect], sender);
+                ChangeSelection(_orderedToRawIndeces[rowIndices[rect]], sender);
             }
         }
 
@@ -221,12 +273,12 @@ namespace WinSonic.Pages.Control
         {
             if (SelectedIndex >= 0)
             {
-                rectangles[SelectedIndex].Stroke = null;
-                rectangles[SelectedIndex].Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
+                rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = null;
+                rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
             }
             _selectedIndex = index;
-            rectangles[SelectedIndex].Stroke = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
-            rectangles[SelectedIndex].Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
+            rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
+            rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
             SelectionChanged?.Invoke(sender, new RowEvent(SelectedIndex));
         }
 
@@ -234,7 +286,7 @@ namespace WinSonic.Pages.Control
         {
             if (sender is Rectangle rect)
             {
-                RowDoubleTapped?.Invoke(sender, new RowEvent(rowIndices[rect]));
+                RowDoubleTapped?.Invoke(sender, new RowEvent(_orderedToRawIndeces[rowIndices[rect]]));
             }
         }
 
@@ -242,19 +294,19 @@ namespace WinSonic.Pages.Control
         {
             if (!e.Handled)
             {
-                if (e.Key == Windows.System.VirtualKey.Down && SelectedIndex < _content.Count - 1)
+                if (e.Key == Windows.System.VirtualKey.Down && _rawToOrderedIndeces[SelectedIndex] < _content.Count - 1)
                 {
-                    SelectedIndex++;
+                    SelectedIndex = _orderedToRawIndeces[_rawToOrderedIndeces[SelectedIndex] + 1];
                     e.Handled = true;
-                    rectangles[SelectedIndex].StartBringIntoView();
+                    rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView();
                 }
-                else if (e.Key == Windows.System.VirtualKey.Up && SelectedIndex > 0)
+                else if (e.Key == Windows.System.VirtualKey.Up && _rawToOrderedIndeces[SelectedIndex] > 0)
                 {
-                    SelectedIndex--;
+                    SelectedIndex = _orderedToRawIndeces[_rawToOrderedIndeces[SelectedIndex] - 1];
                     e.Handled = true;
-                    rectangles[SelectedIndex].StartBringIntoView();
+                    rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView();
                 }
-                else if (e.Key == Windows.System.VirtualKey.Enter && SelectedIndex >= 0 && SelectedIndex < _content.Count)
+                else if (e.Key == Windows.System.VirtualKey.Enter && _rawToOrderedIndeces[SelectedIndex] >= 0 && _rawToOrderedIndeces[SelectedIndex] < _content.Count)
                 {
                     RowDoubleTapped?.Invoke(sender, new RowEvent(SelectedIndex));
                 }

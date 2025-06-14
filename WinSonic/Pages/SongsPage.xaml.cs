@@ -27,7 +27,7 @@ public sealed partial class SongsPage : Page
             new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
             new Tuple<string, GridLength>("Artist", new GridLength(2, GridUnitType.Star)),
             new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
-            new Tuple<string, GridLength>("Time", new GridLength(1, GridUnitType.Star))
+            new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
     }
 
@@ -57,11 +57,16 @@ public sealed partial class SongsPage : Page
         }
         foreach (var song in songList)
         {
+            TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
+
             Dictionary<string, string?> dic = new()
             {
                 ["Title"] = song.Title,
                 ["Artist"] = song.Artist,
-                ["Album"] = song.Album
+                ["Album"] = song.Album,
+                ["Time"] = string.Format("{0:D1}:{1:D2}",
+                            duration.Minutes,
+                            duration.Seconds),
             };
             GridTable.AddRow(dic);
         }
