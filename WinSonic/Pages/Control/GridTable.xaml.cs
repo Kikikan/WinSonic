@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using System;
 using System.Collections.Generic;
 using Windows.UI;
 
@@ -13,8 +14,8 @@ namespace WinSonic.Pages.Control
 {
     public sealed partial class GridTable : UserControl
     {
-        private List<string> _columns = [];
-        public List<string> Columns { get => _columns; set => _columns = value; }
+        private List<Tuple<string, GridLength>> _columns = [];
+        public List<Tuple<string, GridLength>> Columns { get => _columns; set => _columns = value; }
         private int _selectedIndex = -1;
         public int SelectedIndex { get => _selectedIndex; set { ChangeSelection(value, this); } }
 
@@ -69,8 +70,8 @@ namespace WinSonic.Pages.Control
             _selectedIndex = -1;
             for (int i = 0; i < _columns.Count; i++)
             {
-                GridTableGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                GridTableGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = _columns[i].Item2 });
+                HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = _columns[i].Item2 });
             }
             GridTableGrid.RowDefinitions.Clear();
             for (int i = 0; i < _content.Count; i++)
@@ -81,7 +82,7 @@ namespace WinSonic.Pages.Control
             for (int i = 0; i < _columns.Count; i++)
             {
                 var header = new StackPanel { Orientation = Orientation.Horizontal };
-                var headerText = new TextBlock { Text = _columns[i], Padding = new Thickness(10) };
+                var headerText = new TextBlock { Text = _columns[i].Item1, Padding = new Thickness(10) };
                 header.PointerEntered += OnHeaderHover;
                 header.PointerExited += OnHeaderHoverExit;
                 header.Tapped += OnHeaderTap;
@@ -99,9 +100,14 @@ namespace WinSonic.Pages.Control
 
             for (int i = 0; i < _content.Count; i++)
             {
-                Rectangle rowBackground = new Rectangle { Margin = new Thickness(2) };
-
-                rowBackground.Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
+                Rectangle rowBackground = new()
+                {
+                    Margin = new Thickness(2),
+                    Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"],
+                    StrokeThickness = 1,
+                    RadiusX = ((CornerRadius)Application.Current.Resources["ControlCornerRadius"]).TopLeft,
+                    RadiusY = ((CornerRadius)Application.Current.Resources["ControlCornerRadius"]).TopLeft,
+                };
 
                 rowBackground.PointerEntered += OnBackgroundHover;
                 rowBackground.PointerExited += OnBackgroundHoverExit;
@@ -117,7 +123,13 @@ namespace WinSonic.Pages.Control
                 GridTableGrid.Children.Add(rowBackground);
                 for (int j = 0; j < _columns.Count; j++)
                 {
-                    var text = new TextBlock { Text = _content[i].GetValueOrDefault(_columns[j], null), Padding = new Thickness(10), IsHitTestVisible = false };
+                    var text = new TextBlock
+                    {
+                        Text = _content[i].GetValueOrDefault(_columns[j].Item1, null),
+                        Padding = new Thickness(10),
+                        IsHitTestVisible = false,
+                        TextTrimming = TextTrimming.CharacterEllipsis
+                    };
                     GridTableGrid.Children.Add(text);
                     Grid.SetColumn(text, j);
                     Grid.SetRow(text, i);
@@ -127,8 +139,10 @@ namespace WinSonic.Pages.Control
 
         private void CreateOrderIcon(StackPanel header)
         {
-            FontIcon icon = new();
-            icon.Glyph = ascending ? "\uE70D" : "\uE70E";
+            FontIcon icon = new()
+            {
+                Glyph = ascending ? "\uE70D" : "\uE70E"
+            };
             header.Children.Add(icon);
         }
 
@@ -136,9 +150,11 @@ namespace WinSonic.Pages.Control
         {
             if (sender is StackPanel header && orderByColumn != headerIndices[header])
             {
-                FontIcon icon = new();
-                icon.Glyph = "\uE70D";
-                icon.Foreground = new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
+                FontIcon icon = new()
+                {
+                    Glyph = "\uE70D",
+                    Foreground = new SolidColorBrush(Color.FromArgb(100, 100, 100, 100))
+                };
                 header.Children.Add(icon);
             }
         }
@@ -205,10 +221,12 @@ namespace WinSonic.Pages.Control
         {
             if (SelectedIndex >= 0)
             {
+                rectangles[SelectedIndex].Stroke = null;
                 rectangles[SelectedIndex].Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
             }
             _selectedIndex = index;
-            rectangles[SelectedIndex].Fill = (Brush)Application.Current.Resources["AccentFillColorSelectedTextBackgroundBrush"];
+            rectangles[SelectedIndex].Stroke = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
+            rectangles[SelectedIndex].Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
             SelectionChanged?.Invoke(sender, new RowEvent(SelectedIndex));
         }
 
@@ -244,13 +262,8 @@ namespace WinSonic.Pages.Control
         }
     }
 
-    public class RowEvent
+    public class RowEvent(int index)
     {
-        public int Index { get; private set; }
-        
-        public RowEvent(int index)
-        {
-            Index = index;
-        }
+        public int Index { get; private set; } = index;
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
@@ -17,12 +18,17 @@ namespace WinSonic.Pages;
 public sealed partial class SongsPage : Page
 {
     private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
-    private List<Song> songList = [];
+    private readonly List<Song> songList = [];
     public SongsPage()
     {
         InitializeComponent();
         NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-        GridTable.Columns = ["Title", "Artist", "Album", "Time", "Plays"];
+        GridTable.Columns = [
+            new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
+            new Tuple<string, GridLength>("Artist", new GridLength(2, GridUnitType.Star)),
+            new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
+            new Tuple<string, GridLength>("Time", new GridLength(1, GridUnitType.Star))
+            ];
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
