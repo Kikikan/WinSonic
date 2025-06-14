@@ -37,7 +37,6 @@
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
         </CommandBarFlyout>
-
     </Page.Resources>
 
     <Grid Margin="25 25 0 0">

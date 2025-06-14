@@ -302,13 +302,13 @@ namespace WinSonic.Pages.Control
                 var flyout = RowRightTapped?.Invoke(sender, new RowEvent(_orderedToRawIndeces[rowIndices[rect]]));
                 if (flyout != null)
                 {
-                    FlyoutShowOptions myOption = new()
+                    FlyoutShowOptions option = new()
                     {
                         ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
                         Position = e.GetPosition(rect),
                         Placement = FlyoutPlacementMode.RightEdgeAlignedTop
                     };
-                    flyout.ShowAt(rect, myOption);
+                    flyout.ShowAt(rect, option);
                 }
             }
         }

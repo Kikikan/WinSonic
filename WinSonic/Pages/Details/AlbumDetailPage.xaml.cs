@@ -2,10 +2,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
 using WinSonic.ViewModel;
 
@@ -25,10 +28,18 @@ namespace WinSonic.Pages
         public InfoWithPicture? DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = [];
         private readonly App app = (App)Application.Current;
+        private Song? RightClickedSong;
 
         public AlbumDetailPage()
         {
             InitializeComponent();
+            SongGridTable.Columns = [
+                new Tuple<string, GridLength>("Track", new GridLength(80, GridUnitType.Pixel)),
+                new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Artist", new GridLength(2, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
+            ];
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -44,7 +55,7 @@ namespace WinSonic.Pages
                 if (imageAnimation != null)
                 {
                     // Connected animation + coordinated animation
-                    imageAnimation.TryStart(detailedImage, new UIElement[] { coordinatedPanel });
+                    imageAnimation.TryStart(detailedImage, [coordinatedPanel]);
 
                     ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
                     if (backImageAnimation != null && DetailedObject?.BackIconUri != null)
@@ -88,6 +99,20 @@ namespace WinSonic.Pages
                         Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
                     }
                 }
+                foreach (var song in Songs)
+                {
+                    TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
+                    Dictionary<string, string?> dic = new()
+                    {
+                        ["Track"] = string.Format("{0:D1}.{1:D2}", song.DiskNumber, song.Track),
+                        ["Title"] = song.Title,
+                        ["Artist"] = song.Artist,
+                        ["Album"] = song.Album,
+                        ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
+                    };
+                    SongGridTable.AddRow(dic);
+                }
+                SongGridTable.ShowContent();
             }
         }
 
@@ -95,14 +120,6 @@ namespace WinSonic.Pages
         {
             PlayerPlaylist.Instance.ClearSongs();
             AddToQueueButton_Click(sender, e);
-        }
-
-        private void AlbumListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (e.ClickedItem is Song song)
-            {
-                PlayerPlaylist.Instance.AddSong(song);
-            }
         }
 
         private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -132,6 +149,57 @@ namespace WinSonic.Pages
             for (int i = Songs.Count - 1; i >= 0; i--)
             {
                 PlayerPlaylist.Instance.AddSong(Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+            }
+        }
+
+        private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
+        {
+            PlayerPlaylist.Instance.ClearSongs();
+            PlayerPlaylist.Instance.AddSong(Songs[e.Index]);
+        }
+
+        private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
+        {
+            RightClickedSong = Songs[e.Index];
+            OnPropertyChanged(nameof(RightClickedSong));
+            return SongFlyout;
+        }
+
+        private void SongPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RightClickedSong != null)
+            {
+                PlayerPlaylist.Instance.ClearSongs();
+                PlayerPlaylist.Instance.AddSong(RightClickedSong);
+            }
+        }
+
+        private void SongPlayNextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RightClickedSong != null)
+            {
+                PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+            }
+        }
+
+        private void SongAddToQueueButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RightClickedSong != null)
+            {
+                PlayerPlaylist.Instance.AddSong(RightClickedSong);
+            }
+        }
+
+        private async void SongFavouriteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RightClickedSong != null)
+            {
+                bool success = await SubsonicApiHelper.Star(RightClickedSong.Server, !RightClickedSong.IsFavourite, SubsonicApiHelper.StarType.Song, RightClickedSong.Id);
+                if (success)
+                {
+                    RightClickedSong.IsFavourite = !RightClickedSong.IsFavourite;
+                    OnPropertyChanged(nameof(RightClickedSong));
+                }
             }
         }
     }
