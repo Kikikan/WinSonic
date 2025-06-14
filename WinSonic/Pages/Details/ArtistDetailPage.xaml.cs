@@ -62,22 +62,15 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         {
             NavigationCacheMode = NavigationCacheMode.Disabled;
         }
+        else
+        {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
+        }
         if (e.NavigationMode == NavigationMode.Back)
         {
             if (e.SourcePageType == typeof(ArtistsPage) || e.SourcePageType == typeof(FavouriteArtistPage))
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
-            }
-            else if (e.SourcePageType == typeof(AlbumDetailPage))
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
-            }
-        }
-        else if (e.NavigationMode == NavigationMode.New)
-        {
-            if (e.SourcePageType == typeof(AlbumDetailPage))
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
             }
         }
     }

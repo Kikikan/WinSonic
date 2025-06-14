@@ -114,7 +114,7 @@
         </Border>
         <NavigationView x:Name="MainNav"
                         Grid.Row="1"
-                        PaneDisplayMode="Left"
+                        PaneDisplayMode="Top"
                         ItemInvoked="NavView_ItemInvoked"
                         IsBackEnabled="True"
                         IsBackButtonVisible="Visible"

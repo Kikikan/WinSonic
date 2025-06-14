@@ -23,25 +23,36 @@ namespace WinSonic.Pages
         public ArtistsPage()
         {
             InitializeComponent();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!initialized)
             {
-                List<InfoWithPicture> list = [];
-                foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
-                {
-                    var artists = await SubsonicApiHelper.GetArtists(server);
-                    foreach (var artist in artists)
-                    {
-                        ArtistControl.Items.Add(new InfoWithPicture(artist, artist.MediumImageUri, artist.Name, "", artist.IsFavourite, typeof(ArtistDetailPage), artist.Key));
-                    }
-                }
+                Refresh();
                 initialized = true;
-                ArtistControl.IsGrouped = true;
             }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private async void Refresh()
+        {
+            ArtistControl.Items.Clear();
+            List<InfoWithPicture> list = [];
+            foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
+            {
+                var artists = await SubsonicApiHelper.GetArtists(server);
+                foreach (var artist in artists)
+                {
+                    ArtistControl.Items.Add(new InfoWithPicture(artist, artist.MediumImageUri, artist.Name, "", artist.IsFavourite, typeof(ArtistDetailPage), artist.Key));
+                }
+            }
+            ArtistControl.IsGrouped = true;
         }
     }
 }
