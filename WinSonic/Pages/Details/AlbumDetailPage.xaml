@@ -55,29 +55,30 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" IsOpen="False" DefaultLabelPosition="Bottom">
                 <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="PlayNextButton" Margin="5 0 0 0" Click="PlayNextButton_Click" Label="Play Next">
+                <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" Label="Play Next">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE893;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="AddToQueueButton" Margin="5 0 0 0" Click="AddToQueueButton_Click" Label="Add to Queue">
+                <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" Label="Add to Queue">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE710;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="FavouriteButton" Margin="5 0 0 0" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}">
-                    <AppBarButton.Icon>
+                <AppBarSeparator />
+                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
+                    <AppBarToggleButton.Icon>
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-            </StackPanel>
-            <ListView x:Name="AlbumListView" Grid.Row="1" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" Margin="0 20 0 0" IsItemClickEnabled="True" ItemClick="AlbumListView_ItemClick">
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+            </CommandBar>
+            <ListView x:Name="AlbumListView" Grid.Row="1" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" Margin="0 10 0 0" IsItemClickEnabled="True" ItemClick="AlbumListView_ItemClick">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="api:Song">
                         <ItemContainer>

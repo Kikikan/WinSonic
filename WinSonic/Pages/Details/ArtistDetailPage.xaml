@@ -49,18 +49,19 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" IsOpen="False" DefaultLabelPosition="Bottom">
                 <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="FavouriteButton" Margin="5 0 0 0" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}">
-                    <AppBarButton.Icon>
+                <AppBarSeparator />
+                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
+                    <AppBarToggleButton.Icon>
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-            </StackPanel>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+            </CommandBar>
             <control:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
         </Grid>
     </Grid>
