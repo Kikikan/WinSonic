@@ -1,6 +1,7 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
@@ -36,9 +37,11 @@ namespace WinSonic.Pages.Control
         private readonly List<StackPanel> headers = [];
 
         public delegate void RowEventHandler(object sender, RowEvent e);
+        public delegate CommandBarFlyout RowRightTapEventHandler(object sender, RowEvent e);
 
         public event RowEventHandler? SelectionChanged;
         public event RowEventHandler? RowDoubleTapped;
+        public event RowRightTapEventHandler? RowRightTapped;
 
         public GridTable()
         {
@@ -118,6 +121,7 @@ namespace WinSonic.Pages.Control
                 rowBackground.PointerExited += OnBackgroundHoverExit;
                 rowBackground.Tapped += OnRowTap;
                 rowBackground.DoubleTapped += OnRowDoubleTap;
+                rowBackground.RightTapped += OnRowRightTap;
 
                 Grid.SetRow(rowBackground, i);
                 Grid.SetColumn(rowBackground, 0);
@@ -160,7 +164,8 @@ namespace WinSonic.Pages.Control
                 {
                     _orderedContent.Add(item);
                 }
-            } else
+            }
+            else
             {
                 foreach (var item in _content.OrderByDescending(x => x[_columns[orderByColumn].Item1]))
                 {
@@ -212,7 +217,7 @@ namespace WinSonic.Pages.Control
 
         private void OnHeaderHoverExit(object sender, RoutedEventArgs e)
         {
-            if (sender is StackPanel header && orderByColumn != headerIndices[header])
+            if (sender is StackPanel header && orderByColumn != headerIndices[header] && header.Children.Count > 1)
             {
                 header.Children.RemoveAt(1);
             }
@@ -287,6 +292,24 @@ namespace WinSonic.Pages.Control
             if (sender is Rectangle rect)
             {
                 RowDoubleTapped?.Invoke(sender, new RowEvent(_orderedToRawIndeces[rowIndices[rect]]));
+            }
+        }
+
+        private void OnRowRightTap(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (sender is Rectangle rect)
+            {
+                var flyout = RowRightTapped?.Invoke(sender, new RowEvent(_orderedToRawIndeces[rowIndices[rect]]));
+                if (flyout != null)
+                {
+                    FlyoutShowOptions myOption = new()
+                    {
+                        ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
+                        Position = e.GetPosition(rect),
+                        Placement = FlyoutPlacementMode.RightEdgeAlignedTop
+                    };
+                    flyout.ShowAt(rect, myOption);
+                }
             }
         }
 

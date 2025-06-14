@@ -9,7 +9,7 @@
         public Uri StreamUri { get; private set; }
         public int DiskNumber { get; private set; }
         public int Track { get; private set; }
-        public bool IsFavourite { get; private set; }
+        public bool IsFavourite { get; set; }
         public int Duration { get; private set; }
 
         public Song(Child child, Server server) : base(child.Id, server)

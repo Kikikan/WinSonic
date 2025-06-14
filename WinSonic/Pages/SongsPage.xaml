@@ -8,7 +8,37 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:control="using:WinSonic.Pages.Control"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    xmlns:converters="using:WinSonic.Pages.Converter">
+
+    <Page.Resources>
+        <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
+        <converters:BooleanToFavLaberConverter x:Key="BoolToFavLabel"/>
+        <CommandBarFlyout x:Name="SongFlyout" AlwaysExpanded="True">
+            <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE768;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" Label="Play Next">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE893;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" Label="Add to Queue">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE710;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarSeparator />
+            <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" Label="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay}">
+                <AppBarToggleButton.Icon>
+                    <FontIcon x:Name="FavIcon" Glyph="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+        </CommandBarFlyout>
+
+    </Page.Resources>
 
     <Grid Margin="25 25 0 0">
         <Grid.RowDefinitions>
