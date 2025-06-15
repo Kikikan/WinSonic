@@ -36,8 +36,7 @@ namespace WinSonic.Pages
             SongGridTable.Columns = [
                 new Tuple<string, GridLength>("Track", new GridLength(80, GridUnitType.Pixel)),
                 new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Artist", new GridLength(2, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Artist", new GridLength(3, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
         }
@@ -107,7 +106,6 @@ namespace WinSonic.Pages
                         ["Track"] = string.Format("{0:D1}.{1:D2}", song.DiskNumber, song.Track),
                         ["Title"] = song.Title,
                         ["Artist"] = song.Artist,
-                        ["Album"] = song.Album,
                         ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
                     };
                     SongGridTable.AddRow(dic);
