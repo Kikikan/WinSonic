@@ -68,7 +68,7 @@ namespace WinSonic
             DisableCloseButton(_hwnd);
 
             // Position at bottom-right above the taskbar
-            PositionBottomRight(_hwnd);
+            PositionAtCursor(_hwnd);
 
             // Try to make it truly borderless
             MakeWindowTrulyBorderless(_hwnd);
@@ -170,20 +170,42 @@ namespace WinSonic
         private const uint MF_BYCOMMAND = 0x00000000;
         private const uint MF_GRAYED = 0x00000001;
 
-        // Helper to position window at bottom-right above the taskbar
-        private void PositionBottomRight(nint hwnd)
-        {
-            var displayInfo = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(
-                Win32Interop.GetWindowIdFromWindow(hwnd),
-                Microsoft.UI.Windowing.DisplayAreaFallback.Primary
-            );
-            int windowWidth = 300;
-            int windowHeight = 180;
-            int x = displayInfo.WorkArea.X + displayInfo.WorkArea.Width - windowWidth;
-            int y = displayInfo.WorkArea.Y + displayInfo.WorkArea.Height - windowHeight;
+        //// Helper to position window at bottom-right above the taskbar
+        //private void PositionBottomRight(nint hwnd)
+        //{
+        //    var displayInfo = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(
+        //        Win32Interop.GetWindowIdFromWindow(hwnd),
+        //        Microsoft.UI.Windowing.DisplayAreaFallback.Primary
+        //    );
+        //    int windowWidth = 300;
+        //    int windowHeight = 180;
+        //    int x = displayInfo.WorkArea.X + displayInfo.WorkArea.Width - windowWidth;
+        //    int y = displayInfo.WorkArea.Y + displayInfo.WorkArea.Height - windowHeight -30;
 
-            SetWindowPos(hwnd, IntPtr.Zero, x, y, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+        //    SetWindowPos(hwnd, new IntPtr(-1), x, y, windowWidth, windowHeight, SWP_NOACTIVATE);
+        //}
+
+        private void PositionAtCursor(nint hwnd)
+        {
+            // Get current cursor position
+            if (GetCursorPos(out POINT cursorPos))
+            {
+                int windowWidth = 300;
+                int windowHeight = 180;
+
+                // Adjust position so the window appears *above* the cursor,
+                // and offset a bit to avoid overlap with the mouse
+                int x = cursorPos.X - windowWidth + 20;
+                int y = cursorPos.Y - windowHeight - 10;
+
+                // Optional: Clamp to screen bounds if needed
+
+                SetWindowPos(hwnd, new IntPtr(-1), x, y, windowWidth, windowHeight, SWP_NOACTIVATE);
+            }
         }
+
+
+
 
         #region Win32 Interop
         private delegate nint WindowProc(nint hWnd, uint msg, nint wParam, nint lParam);
@@ -212,6 +234,16 @@ namespace WinSonic
 
         private const uint SWP_NOZORDER = 0x0004;
         private const uint SWP_NOACTIVATE = 0x0010;
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetCursorPos(out POINT lpPoint);
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
