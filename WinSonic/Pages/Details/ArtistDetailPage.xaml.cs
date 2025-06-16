@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Linq;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
-using WinSonic.Pages.Favourites;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -65,7 +64,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         }
         if (e.NavigationMode == NavigationMode.Back)
         {
-            if (e.SourcePageType == typeof(ArtistsPage) || e.SourcePageType == typeof(FavouriteArtistPage))
+            if (e.SourcePageType == typeof(ArtistsPage))
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
             }

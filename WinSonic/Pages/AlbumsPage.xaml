@@ -11,20 +11,41 @@
     xmlns:controls="using:WinSonic.Pages.Control"
     Loaded="Page_Loaded">
 
-    <Grid Margin="25 25 0 0">
+    <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 25 25" VerticalAlignment="Center">
-            <Button x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="0 0 10 0">
-                <Button.Content>
+        <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
+        <CommandBar Grid.Row="0" Margin="0 40 0 36" OverflowButtonVisibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh">
+                <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE72C;" />
-                </Button.Content>
-            </Button>
-            <ComboBox x:Name="OrderByComboBox" ItemsSource="{x:Bind SortingMethods}" DisplayMemberPath="Item1" SelectedValuePath="Item2" SelectionChanged="OrderByComboBox_SelectionChanged" ToolTipService.ToolTip="Order by" Width="120"/>
-        </StackPanel>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton ToolTipService.ToolTip="Filters">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE71C;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem x:Name="FavouritesFilterCheckBox" Text="Favourites" Click="FavouritesFilterCheckBox_Click"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton ToolTipService.ToolTip="Order by">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE8CB;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem x:Name="NewestRadioItem" Click="RadioItem_Click" Text="Newest" GroupName="OrderByGroup"/>
+                        <RadioMenuFlyoutItem x:Name="NameRadioItem" Click="RadioItem_Click" Text="By Name" GroupName="OrderByGroup"/>
+                        <RadioMenuFlyoutItem x:Name="ArtistRadioItem" Click="RadioItem_Click" Text="By Artist" GroupName="OrderByGroup"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
         <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
     </Grid>
 </Page>

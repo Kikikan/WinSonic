@@ -19,18 +19,14 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
-        private readonly List<Tuple<string, SubsonicApiHelper.AlbumListType>> SortingMethods = [
-            Tuple.Create("Newest", SubsonicApiHelper.AlbumListType.newest),
-            Tuple.Create("By Name", SubsonicApiHelper.AlbumListType.alphabeticalByName),
-            Tuple.Create("By Artist", SubsonicApiHelper.AlbumListType.alphabeticalByArtist),
-            Tuple.Create("Favourites", SubsonicApiHelper.AlbumListType.starred),
-        ];
+        private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
 
         public AlbumsPage()
         {
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            OrderBy = serverFile.AlbumSettings.OrderBy;
         }
 
         private async Task<bool> Update()
@@ -38,7 +34,7 @@ namespace WinSonic.Pages
             bool result = false;
             foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, ((Tuple<string, SubsonicApiHelper.AlbumListType>)OrderByComboBox.SelectedItem).Item2, 10, AlbumControl.Items.Count);
+                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 10, AlbumControl.Items.Count);
                 if (albums != null && albums.Count > 0)
                 {
                     foreach (var album in albums)
@@ -56,20 +52,6 @@ namespace WinSonic.Pages
             Refresh();
         }
 
-        private void OrderByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-            if (OrderByComboBox.SelectedItem is Tuple<string, SubsonicApiHelper.AlbumListType> selected)
-            {
-                serverFile.AlbumSettings.OrderBy = selected.Item2;
-                serverFile.SaveSetting(serverFile.AlbumSettings);
-                Refresh();
-            }
-        }
-
         private async void Refresh()
         {
             AlbumControl.Items.Clear();
@@ -82,10 +64,46 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                OrderByComboBox.SelectedItem = SortingMethods.Where(t => t.Item2 == serverFile.AlbumSettings.OrderBy).First();
+                switch (serverFile.AlbumSettings.OrderBy)
+                {
+                    case SubsonicApiHelper.AlbumListType.newest:
+                        NewestRadioItem.IsChecked = true;
+                        break;
+                    case SubsonicApiHelper.AlbumListType.alphabeticalByName:
+                        NameRadioItem.IsChecked = true;
+                        break;
+                    case SubsonicApiHelper.AlbumListType.alphabeticalByArtist:
+                        ArtistRadioItem.IsChecked = true;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
                 AlbumControl.UpdateAction = Update;
                 initialized = true;
             }
+        }
+        private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RadioItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (NewestRadioItem.IsChecked)
+            {
+                OrderBy = SubsonicApiHelper.AlbumListType.newest;
+            }
+            else if (NameRadioItem.IsChecked)
+            {
+                OrderBy = SubsonicApiHelper.AlbumListType.alphabeticalByName;
+            }
+            else
+            {
+                OrderBy = SubsonicApiHelper.AlbumListType.alphabeticalByArtist;
+            }
+            serverFile.AlbumSettings.OrderBy = OrderBy;
+            serverFile.SaveSetting(serverFile.AlbumSettings);
+            Refresh();
         }
     }
 }

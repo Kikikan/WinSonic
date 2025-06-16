@@ -49,14 +49,14 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" IsOpen="False" DefaultLabelPosition="Bottom">
-                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
+            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" OverflowButtonVisibility="Collapsed" DefaultLabelPosition="Bottom">
+                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator />
-                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
+                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
                     <AppBarToggleButton.Icon>
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
                     </AppBarToggleButton.Icon>

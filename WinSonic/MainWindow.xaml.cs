@@ -67,7 +67,7 @@ namespace WinSonic
             {
                 throw new Exception("Application is not an App.");
             }
-            AppWindow.Resize(new Windows.Graphics.SizeInt32(950, 900));
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(975, 900));
         }
 
         private void MediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)

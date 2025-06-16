@@ -9,10 +9,10 @@
     mc:Ignorable="d">
 
     <ScrollViewer>
-        <StackPanel Margin="25 0 25 0">
-            <TextBlock Text="New Subsonic Server" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
+        <StackPanel Margin="36 40 36 0">
+            <TextBlock Text="New Subsonic Server" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 36"/>
             <TextBox x:Name="NameTextBox" Header="Server Name" PlaceholderText="My Subsonic Server" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
-            <TextBox x:Name="URL" Header="Enter the URL of the server." PlaceholderText="http://localhost:8080" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 20"/>
+            <TextBox x:Name="URL" Header="Enter the URL of the server." PlaceholderText="http://localhost:8080" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
             <TextBox x:Name="Username" Header="Username" PlaceholderText="Username" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
             <PasswordBox x:Name="Password" Header="Password" PlaceholderText="Password" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16"/>
             <Button x:Name="TestConnectionButton" Click="Connect_Click" IsEnabled="{x:Bind IsServerEditable, Mode=OneWay}" Margin="0 0 0 16">

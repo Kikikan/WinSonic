@@ -120,28 +120,6 @@
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Favourites" FontWeight="Bold" IsExpanded="True">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe734;" />
-                    </NavigationViewItem.Icon>
-                    <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Albums" Tag="WinSonic.Pages.Favourites.FavouriteAlbumPage">
-                            <NavigationViewItem.Icon>
-                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe93c;" />
-                            </NavigationViewItem.Icon>
-                        </NavigationViewItem>
-                        <NavigationViewItem Content="Artists" Tag="WinSonic.Pages.Favourites.FavouriteArtistPage">
-                            <NavigationViewItem.Icon>
-                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe716;" />
-                            </NavigationViewItem.Icon>
-                        </NavigationViewItem>
-                        <NavigationViewItem Content="Songs" Tag="WinSonic.Pages.Favourites.FavouriteSongPage">
-                            <NavigationViewItem.Icon>
-                                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xec4f;" />
-                            </NavigationViewItem.Icon>
-                        </NavigationViewItem>
-                    </NavigationViewItem.MenuItems>
-                </NavigationViewItem>
                 <NavigationViewItem Tag="WinSonic.Pages.AlbumsPage" Content="Albums">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe93c;" />

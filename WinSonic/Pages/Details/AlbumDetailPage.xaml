@@ -76,24 +76,24 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" IsOpen="False" DefaultLabelPosition="Bottom">
-                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" Label="Play Now">
+            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" OverflowButtonVisibility="Collapsed" DefaultLabelPosition="Bottom">
+                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" Label="Play Next">
+                <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" ToolTipService.ToolTip="Play Next">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE893;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" Label="Add to Queue">
+                <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" ToolTipService.ToolTip="Add to Queue">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE710;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator />
-                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" Label="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
+                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
                     <AppBarToggleButton.Icon>
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
                     </AppBarToggleButton.Icon>

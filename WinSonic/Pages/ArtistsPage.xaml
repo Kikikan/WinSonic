@@ -11,19 +11,32 @@
     xmlns:control="using:WinSonic.Pages.Control"
     Loaded="Page_Loaded">
 
-    <Grid Margin="25 0 0 0">
+    <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Artists" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
-        <Button x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh" Margin="0 0 25 0" VerticalAlignment="Center" HorizontalAlignment="Right">
-            <Button.Content>
-                <FontIcon Glyph="&#xE72C;" />
-            </Button.Content>
-        </Button>
-
+        <TextBlock Grid.Row="0" Text="Artists" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
+        <CommandBar Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" OverflowButtonVisibility="Collapsed">
+            <AppBarButton ToolTipService.ToolTip="Filters">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE71C;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <CheckBox x:Name="FavouritesFilterCheckBox" Content="Favourites" Checked="FavouritesFilterCheckBox_Checked" Unchecked="FavouritesFilterCheckBox_Unchecked"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE72C;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
         <control:PictureControlPage x:Name="ArtistControl" Grid.Row="1"/>
     </Grid>
 </Page>

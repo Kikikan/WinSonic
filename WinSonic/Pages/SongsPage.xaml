@@ -39,17 +39,17 @@
         </CommandBarFlyout>
     </Page.Resources>
 
-    <Grid Margin="25 25 0 0">
+    <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Songs" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 25"/>
-        <Button x:Name="RefreshButton" Grid.Row="0" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="0 0 25 25" VerticalAlignment="Center" HorizontalAlignment="Right">
+        <TextBlock Grid.Row="0" Text="Songs" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
+        <Button x:Name="RefreshButton" Grid.Row="0" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="0 40 0 36" VerticalAlignment="Center" HorizontalAlignment="Right">
             <Button.Content>
                 <FontIcon Glyph="&#xE72C;" />
             </Button.Content>
         </Button>
-        <control:GridTable x:Name="GridTable" Grid.Row="1" RowDoubleTapped="GridTable_RowDoubleTapped" Margin="0 0 25 0"/>
+        <control:GridTable x:Name="GridTable" Grid.Row="1" RowDoubleTapped="GridTable_RowDoubleTapped" Margin="0 0 20 0"/>
     </Grid>
 </Page>

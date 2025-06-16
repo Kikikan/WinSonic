@@ -15,12 +15,12 @@
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <CollectionViewSource x:Name="ItemsCVS"/>
         <DataTemplate x:Key="InfoWithPictureTemplate" x:DataType="model:InfoWithPicture">
-            <Grid x:Name="ControlGrid" Padding="8">
+            <Grid x:Name="ControlGrid" Margin="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" x:Name="Image" Height="200" Stretch="Uniform">
+                <Image Grid.Row="0" x:Name="Image" Width="200" Stretch="Uniform">
                     <Image.Source>
                         <BitmapImage UriSource="{x:Bind IconUri}"/>
                     </Image.Source>
