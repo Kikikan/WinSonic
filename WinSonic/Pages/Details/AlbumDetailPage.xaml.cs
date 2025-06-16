@@ -170,6 +170,7 @@ namespace WinSonic.Pages
                 PlayerPlaylist.Instance.ClearSongs();
                 PlayerPlaylist.Instance.AddSong(RightClickedSong);
             }
+            SongFlyout.Hide();
         }
 
         private void SongPlayNextButton_Click(object sender, RoutedEventArgs e)
@@ -178,6 +179,7 @@ namespace WinSonic.Pages
             {
                 PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
             }
+            SongFlyout.Hide();
         }
 
         private void SongAddToQueueButton_Click(object sender, RoutedEventArgs e)
@@ -186,6 +188,7 @@ namespace WinSonic.Pages
             {
                 PlayerPlaylist.Instance.AddSong(RightClickedSong);
             }
+            SongFlyout.Hide();
         }
 
         private async void SongFavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -199,6 +202,7 @@ namespace WinSonic.Pages
                     OnPropertyChanged(nameof(RightClickedSong));
                 }
             }
+            SongFlyout.Hide();
         }
     }
 }

@@ -97,6 +97,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             PlayerPlaylist.Instance.ClearSongs();
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
+        SongFlyout.Hide();
     }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
@@ -105,6 +106,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
         }
+        SongFlyout.Hide();
     }
 
     private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +115,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
+        SongFlyout.Hide();
     }
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -126,5 +129,6 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
                 OnPropertyChanged(nameof(RightClickedSong));
             }
         }
+        SongFlyout.Hide();
     }
 }
