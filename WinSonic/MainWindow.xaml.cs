@@ -211,7 +211,8 @@ namespace WinSonic
             this.ShowFromTray();
         }
 
-        private void DoubleClick() {
+        private void DoubleClick()
+        {
             _doubleClicked = true;
 
             // Cancel any pending single-click show
