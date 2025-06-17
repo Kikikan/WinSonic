@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,8 +20,10 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
 {
     private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
     private readonly List<Song> songList = [];
+    private readonly List<Song> shownSongs = [];
     private bool initialized = false;
     private Song? RightClickedSong;
+    private int? rightClickedIndex;
     private readonly App app = (App)Application.Current;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -43,6 +46,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
     {
         RightClickedSong = songList[e.Index];
+        rightClickedIndex = e.Index;
         OnPropertyChanged(nameof(RightClickedSong));
         return SongFlyout;
     }
@@ -58,6 +62,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             }
             Refresh();
             initialized = true;
+            RefreshButton.IsEnabled = true;
         }
     }
 
@@ -69,16 +74,19 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
 
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
+        RefreshButton.IsEnabled = false;
         songList.Clear();
         foreach (var server in serverFile.Servers)
         {
             songList.AddRange(await SubsonicApiHelper.Search(server));
         }
         Refresh();
+        RefreshButton.IsEnabled = true;
     }
 
     private void Refresh()
     {
+        shownSongs.Clear();
         GridTable.Clear();
         foreach (var song in songList)
         {
@@ -93,6 +101,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
                     ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
                 };
                 GridTable.AddRow(dic);
+                shownSongs.Add(song);
             }
         }
         GridTable.ShowContent();
@@ -134,6 +143,13 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             if (success)
             {
                 RightClickedSong.IsFavourite = !RightClickedSong.IsFavourite;
+                if (rightClickedIndex != null)
+                {
+                    var rect = GridTable.GetRectangle((int)rightClickedIndex);
+                    GridTable.RectangleColors[rect] = RightClickedSong.IsFavourite;
+                    rect.Fill = GridTable.Colors[RightClickedSong.IsFavourite].Fill;
+                }
+                
                 OnPropertyChanged(nameof(RightClickedSong));
             }
         }
@@ -143,5 +159,14 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
     {
         Refresh();
+    }
+
+    private void GridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, Control.RowEvent e)
+    {
+        if (shownSongs[e.Index].IsFavourite)
+        {
+            GridTable.RectangleColors[row] = true;
+            GridTable.GetRectangle(e.Index).Fill = GridTable.Colors[true].Fill;
+        }
     }
 }

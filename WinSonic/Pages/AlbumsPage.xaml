@@ -41,7 +41,7 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
             <AppBarSeparator/>
-            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh">
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE72C;" />
                 </AppBarButton.Icon>

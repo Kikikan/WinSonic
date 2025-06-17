@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
@@ -28,21 +29,24 @@ namespace WinSonic.Pages
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!initialized)
             {
-                Refresh();
+                await Refresh();
                 initialized = true;
+                RefreshButton.IsEnabled = true;
             }
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            RefreshButton.IsEnabled = false;
+            await Refresh();
+            RefreshButton.IsEnabled = true;
         }
 
-        private async void Refresh()
+        private async Task<bool> Refresh()
         {
             artists.Clear();
             ArtistControl.Items.Clear();
@@ -57,6 +61,7 @@ namespace WinSonic.Pages
                 }
             }
             ArtistControl.IsGrouped = true;
+            return true;
         }
 
         private static InfoWithPicture ToInfoWithPicture(DetailedArtist artist)

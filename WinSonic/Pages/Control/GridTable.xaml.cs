@@ -34,14 +34,22 @@ namespace WinSonic.Pages.Control
         private readonly Dictionary<StackPanel, int> headerIndices = [];
 
         private readonly List<Rectangle> rectangles = [];
+        public Dictionary<Rectangle, bool> RectangleColors { get; private set; } = [];
+        public Dictionary<bool, IGridTableRowBrush> Colors { get; private set; } = new()
+        {
+            { false, new NormalBrush() },
+            { true, new AccentBrush() }
+        };
         private readonly List<StackPanel> headers = [];
 
         public delegate void RowEventHandler(object sender, RowEvent e);
         public delegate CommandBarFlyout RowRightTapEventHandler(object sender, RowEvent e);
+        public delegate void RowAddedHandler(Rectangle row, RowEvent e);
 
         public event RowEventHandler? SelectionChanged;
         public event RowEventHandler? RowDoubleTapped;
         public event RowRightTapEventHandler? RowRightTapped;
+        public event RowAddedHandler? RowAdded;
 
         public GridTable()
         {
@@ -70,6 +78,7 @@ namespace WinSonic.Pages.Control
             rowIndices.Clear();
             headerIndices.Clear();
             rectangles.Clear();
+            RectangleColors.Clear();
             headers.Clear();
             HeaderGrid.Children.Clear();
             HeaderGrid.ColumnDefinitions.Clear();
@@ -130,6 +139,7 @@ namespace WinSonic.Pages.Control
 
                 rowIndices[rowBackground] = i;
                 rectangles.Add(rowBackground);
+                RectangleColors.Add(rowBackground, false);
                 GridTableGrid.Children.Add(rowBackground);
                 for (int j = 0; j < _columns.Count; j++)
                 {
@@ -144,6 +154,7 @@ namespace WinSonic.Pages.Control
                     Grid.SetColumn(text, j);
                     Grid.SetRow(text, i);
                 }
+                RowAdded?.Invoke(rowBackground, new RowEvent(_orderedToRawIndeces[i]));
             }
 
             if (SelectedIndex >= 0)
@@ -154,6 +165,11 @@ namespace WinSonic.Pages.Control
                     rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView();
                 });
             }
+        }
+
+        public Rectangle GetRectangle(int index)
+        {
+            return rectangles[_rawToOrderedIndeces[index]];
         }
 
         private void OrderContent()
@@ -251,7 +267,7 @@ namespace WinSonic.Pages.Control
             {
                 if (SelectedIndex != _orderedToRawIndeces.GetValueOrDefault(rowIndices.GetValueOrDefault(rect, -1), -1))
                 {
-                    rect.Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
+                    rect.Fill = Colors[RectangleColors[rect]].HoverFill;
                 }
             }
         }
@@ -262,7 +278,7 @@ namespace WinSonic.Pages.Control
             {
                 if (SelectedIndex != _orderedToRawIndeces.GetValueOrDefault(rowIndices.GetValueOrDefault(rect, -1), -1))
                 {
-                    rect.Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
+                    rect.Fill = Colors[RectangleColors[rect]].Fill;
                 }
             }
         }
@@ -280,11 +296,11 @@ namespace WinSonic.Pages.Control
             if (SelectedIndex >= 0)
             {
                 rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = null;
-                rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
+                rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = Colors[RectangleColors[rectangles[_rawToOrderedIndeces[SelectedIndex]]]].Fill;
             }
             _selectedIndex = index;
-            rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
-            rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
+            rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = Colors[RectangleColors[rectangles[_rawToOrderedIndeces[SelectedIndex]]]].Stroke;
+            rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = Colors[RectangleColors[rectangles[_rawToOrderedIndeces[SelectedIndex]]]].HoverFill;
             SelectionChanged?.Invoke(sender, new RowEvent(SelectedIndex));
         }
 
@@ -338,8 +354,29 @@ namespace WinSonic.Pages.Control
         }
     }
 
-    public class RowEvent(int index)
+    public sealed class RowEvent(int index)
     {
         public int Index { get; private set; } = index;
+    }
+
+    public interface IGridTableRowBrush
+    {
+        Brush Fill { get; }
+        Brush HoverFill { get; }
+        Brush Stroke { get; }
+    }
+
+    public sealed class NormalBrush : IGridTableRowBrush
+    {
+        public Brush Fill { get; } = (Brush)Application.Current.Resources["SubtleFillColorTransparentBrush"];
+        public Brush HoverFill { get; } = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
+        public Brush Stroke { get; } = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
+    }
+
+    public sealed class AccentBrush : IGridTableRowBrush
+    {
+        public Brush Fill { get; } = (Brush)Application.Current.Resources["AccentFillColorDefaultBrush"];
+        public Brush HoverFill { get; } = (Brush)Application.Current.Resources["AccentFillColorSecondaryBrush"];
+        public Brush Stroke { get; } = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
     }
 }

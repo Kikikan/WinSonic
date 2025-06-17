@@ -57,12 +57,12 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
             <AppBarSeparator/>
-            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh">
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh" IsEnabled="false">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE72C;" />
                 </AppBarButton.Icon>
             </AppBarButton>
         </CommandBar>
-        <control:GridTable x:Name="GridTable" Grid.Row="1" RowDoubleTapped="GridTable_RowDoubleTapped" Margin="0 0 20 0"/>
+        <control:GridTable x:Name="GridTable" Grid.Row="1" RowDoubleTapped="GridTable_RowDoubleTapped" RowAdded="GridTable_RowAdded" Margin="0 0 20 0"/>
     </Grid>
 </Page>
