@@ -62,6 +62,7 @@ namespace WinSonic.Pages.Control
         {
             _content.Clear();
             _orderedContent.Clear();
+            _selectedIndex = -1;
         }
 
         public void ShowContent()
