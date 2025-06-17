@@ -94,23 +94,18 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
 
     private void CheckAndLoadMoreIfNeeded()
     {
-        // If there's no scrollbar yet (ScrollableHeight is 0 or very small)
-        // and we're not currently loading, load more items
         if (GridViewScrollViewer.ScrollableHeight < 10)
         {
-            // Load more in a loop until scrollbar appears or max attempts reached
             LoadMoreUntilScrollable();
         }
     }
 
-    private async void LoadMoreUntilScrollable(int maxAttempts = 5)
+    private async void LoadMoreUntilScrollable()
     {
-        int attempts = 0;
-        while (GridViewScrollViewer.ScrollableHeight < 10 && attempts < maxAttempts && !isLoading && UpdateAction != null)
+        while (GridViewScrollViewer.ScrollableHeight < 10 && canBeUpdated && !isLoading && UpdateAction != null)
         {
             isLoading = true;
             canBeUpdated = await UpdateAction.Invoke();
-            attempts++;
             isLoading = false;
         }
     }

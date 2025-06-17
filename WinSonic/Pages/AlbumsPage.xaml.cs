@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
@@ -21,6 +22,7 @@ namespace WinSonic.Pages
         private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
+        private readonly List<Album> albums = [];
 
         public AlbumsPage()
         {
@@ -31,18 +33,28 @@ namespace WinSonic.Pages
 
         private async Task<bool> Update()
         {
+            bool added = false;
             bool result = false;
             foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 10, AlbumControl.Items.Count);
+                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
+                this.albums.AddRange(albums);
                 if (albums != null && albums.Count > 0)
                 {
                     foreach (var album in albums)
                     {
-                        AlbumControl.Items.Add(new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title.Substring(0, 1)));
+                        if (!FavouritesFilterCheckBox.IsChecked || album.IsFavourite)
+                        {
+                            AlbumControl.Items.Add(new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title[..1]));
+                            added = true;
+                        }
                     }
                     result = true;
                 }
+            }
+            if (result && !added)
+            {
+                await Update();
             }
             return result;
         }
@@ -54,6 +66,7 @@ namespace WinSonic.Pages
 
         private async void Refresh()
         {
+            albums.Clear();
             AlbumControl.Items.Clear();
             // Wait until UI updates
             await Task.Delay(100);
@@ -84,7 +97,7 @@ namespace WinSonic.Pages
         }
         private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
         {
-
+            Refresh();
         }
 
         private void RadioItem_Click(object sender, RoutedEventArgs e)
