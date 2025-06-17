@@ -59,31 +59,33 @@ namespace WinSonic.Pages
             ArtistControl.IsGrouped = true;
         }
 
-        private void FavouritesFilterCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            foreach (var control in ArtistControl.Items.ToImmutableList())
-            {
-                if (!control.IsFavourite)
-                {
-                    ArtistControl.Items.Remove(control);
-                }
-            }
-            ArtistControl.IsGrouped = true;
-        }
-
-        private void FavouritesFilterCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ArtistControl.Items.Clear();
-            foreach (var artist in artists)
-            {
-                ArtistControl.Items.Add(ToInfoWithPicture(artist));
-            }
-            ArtistControl.IsGrouped = true;
-        }
-
         private static InfoWithPicture ToInfoWithPicture(DetailedArtist artist)
         {
             return new InfoWithPicture(artist, artist.MediumImageUri, artist.Name, "", artist.IsFavourite, typeof(ArtistDetailPage), artist.Key);
+        }
+
+        private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (FavouritesFilterCheckBox.IsChecked)
+            {
+                foreach (var control in ArtistControl.Items.ToImmutableList())
+                {
+                    if (!control.IsFavourite)
+                    {
+                        ArtistControl.Items.Remove(control);
+                    }
+                }
+                ArtistControl.IsGrouped = true;
+            }
+            else
+            {
+                ArtistControl.Items.Clear();
+                foreach (var artist in artists)
+                {
+                    ArtistControl.Items.Add(ToInfoWithPicture(artist));
+                }
+                ArtistControl.IsGrouped = true;
+            }
         }
     }
 }

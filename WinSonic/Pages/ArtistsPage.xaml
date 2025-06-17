@@ -24,11 +24,9 @@
                     <FontIcon Glyph="&#xE71C;" />
                 </AppBarButton.Icon>
                 <AppBarButton.Flyout>
-                    <Flyout>
-                        <StackPanel>
-                            <CheckBox x:Name="FavouritesFilterCheckBox" Content="Favourites" Checked="FavouritesFilterCheckBox_Checked" Unchecked="FavouritesFilterCheckBox_Unchecked"/>
-                        </StackPanel>
-                    </Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem x:Name="FavouritesFilterCheckBox" Text="Favourites" Click="FavouritesFilterCheckBox_Click"/>
+                    </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
             <AppBarSeparator/>
