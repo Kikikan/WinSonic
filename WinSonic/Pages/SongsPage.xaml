@@ -45,11 +45,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Songs" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
-        <Button x:Name="RefreshButton" Grid.Row="0" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh" Margin="0 40 0 36" VerticalAlignment="Center" HorizontalAlignment="Right">
-            <Button.Content>
-                <FontIcon Glyph="&#xE72C;" />
-            </Button.Content>
-        </Button>
+        <CommandBar Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" OverflowButtonVisibility="Collapsed">
+            <AppBarButton ToolTipService.ToolTip="Filters">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE71C;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem x:Name="FavouritesFilterCheckBox" Text="Favourites" Click="FavouritesFilterCheckBox_Click"/>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarSeparator/>
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE72C;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
         <control:GridTable x:Name="GridTable" Grid.Row="1" RowDoubleTapped="GridTable_RowDoubleTapped" Margin="0 0 20 0"/>
     </Grid>
 </Page>

@@ -47,10 +47,15 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         return SongFlyout;
     }
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
         if (!initialized)
         {
+            songList.Clear();
+            foreach (var server in serverFile.Servers)
+            {
+                songList.AddRange(await SubsonicApiHelper.Search(server));
+            }
             Refresh();
             initialized = true;
         }
@@ -62,30 +67,33 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         PlayerPlaylist.Instance.AddSong(songList[e.Index]);
     }
 
-    private void RefreshButton_Click(object sender, RoutedEventArgs e)
-    {
-        Refresh();
-    }
-
-    private async void Refresh()
+    private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         songList.Clear();
-        GridTable.Clear();
         foreach (var server in serverFile.Servers)
         {
             songList.AddRange(await SubsonicApiHelper.Search(server));
         }
+        Refresh();
+    }
+
+    private void Refresh()
+    {
+        GridTable.Clear();
         foreach (var song in songList)
         {
-            TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
-            Dictionary<string, string?> dic = new()
+            if (!FavouritesFilterCheckBox.IsChecked || song.IsFavourite)
             {
-                ["Title"] = song.Title,
-                ["Artist"] = song.Artist,
-                ["Album"] = song.Album,
-                ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
-            };
-            GridTable.AddRow(dic);
+                TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
+                Dictionary<string, string?> dic = new()
+                {
+                    ["Title"] = song.Title,
+                    ["Artist"] = song.Artist,
+                    ["Album"] = song.Album,
+                    ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
+                };
+                GridTable.AddRow(dic);
+            }
         }
         GridTable.ShowContent();
     }
@@ -130,5 +138,10 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             }
         }
         SongFlyout.Hide();
+    }
+
+    private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
+    {
+        Refresh();
     }
 }

@@ -20,7 +20,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" x:Name="Image" Width="200" Stretch="Uniform">
+                <Image Grid.Row="0" x:Name="Image" Width="200" MaxHeight="200" Stretch="Uniform">
                     <Image.Source>
                         <BitmapImage UriSource="{x:Bind IconUri}"/>
                     </Image.Source>
