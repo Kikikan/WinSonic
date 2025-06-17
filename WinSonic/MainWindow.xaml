@@ -63,6 +63,7 @@
         IconSource="Assets/Square44x44Logo.scale-200.ico"
         LeftClickCommand="{x:Bind ShowMiniPlayerCommand}"
         NoLeftClickDelay="True"
+        DoubleClickCommand="{x:Bind DoubleClickCommand}"
         ToolTipText="WinSonic">
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout AreOpenCloseAnimationsEnabled="False">

@@ -107,7 +107,7 @@ namespace WinSonic
                 int LOWORD = (int)(wParam.ToInt64() & 0xFFFF);
                 if (LOWORD == 0) // WA_INACTIVE
                 {
-                    Close();
+                    DispatcherQueue.TryEnqueue(() => Close());
                 }
             }
             else if (msg == WM_NCHITTEST)

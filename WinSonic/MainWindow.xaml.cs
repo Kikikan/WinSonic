@@ -6,8 +6,10 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Windows.Media.Playback;
+using WinRT.Interop;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
@@ -39,6 +41,7 @@ namespace WinSonic
         public Song? Song { get; private set; }
         private readonly MediaPlaybackList MediaPlaybackList;
         public ICommand ShowWindowCommand { get; }
+        public ICommand DoubleClickCommand { get; }
         public ICommand? CancelCloseCommand { get; }
         public ICommand ExitApplicationCommand { get; }
         public ICommand ShowMiniPlayerCommand => new RelayCommand(ShowMiniPlayerFlyout);
@@ -56,6 +59,7 @@ namespace WinSonic
 
             ShowWindowCommand = new RelayCommand(ShowWindow);
             ExitApplicationCommand = new RelayCommand(ExitApplication);
+            DoubleClickCommand = new RelayCommand(DoubleClick);
 
             if (Application.Current is App app)
             {
@@ -178,9 +182,22 @@ namespace WinSonic
         }
         public void ShowFromTray()
         {
-            this.Show();
-            this.Activate();
+            this.Show();         // Show window if hidden
+            this.Activate();     // Bring to foreground and give focus
+                                 // Try to bring window to foreground
+            var hwnd = WindowNative.GetWindowHandle(this);
+
+            SetForegroundWindow(hwnd);
+            SetFocus(hwnd);
         }
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetFocus(IntPtr hWnd);
+
+
         private void OnWindowClosing(object sender, WindowEventArgs args)
         {
             args.Handled = true;
@@ -188,21 +205,56 @@ namespace WinSonic
         }
         private void ShowWindow()
         {
+            // Close mini player if open
+            DispatcherQueue.TryEnqueue(() => _miniPlayerWindow?.Close());
+            DispatcherQueue.TryEnqueue(() => _miniPlayerWindow = null);
             this.ShowFromTray();
         }
 
+        private void DoubleClick() {
+            _doubleClicked = true;
+
+            // Cancel any pending single-click show
+            _clickTimer?.Dispose();
+            _clickTimer = null;
+
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                ShowWindow();
+            });
+        }
+
+        private System.Threading.Timer? _clickTimer;
+        private readonly int DoubleClickDelay = 300; // milliseconds
+
+        private bool _doubleClicked = false;
         private void ShowMiniPlayerFlyout()
         {
-            if (_miniPlayerWindow == null)
+            _doubleClicked = false;
+
+            _clickTimer = new System.Threading.Timer(_ =>
             {
-                _miniPlayerWindow = new MiniPlayerWindow();
-                _miniPlayerWindow.Closed += (s, e) => _miniPlayerWindow = null;
-                _miniPlayerWindow.Activate();
-            }
-            else
-            {
-                _miniPlayerWindow.Activate();
-            }
+                if (!_doubleClicked)
+                {
+                    // Show mini player on UI thread
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        if (_miniPlayerWindow == null)
+                        {
+                            _miniPlayerWindow = new MiniPlayerWindow();
+                            _miniPlayerWindow.Closed += (s, e) => _miniPlayerWindow = null;
+                            _miniPlayerWindow.Activate();
+                        }
+                        else
+                        {
+                            _miniPlayerWindow.Activate();
+                        }
+                    });
+                }
+                _clickTimer?.Dispose();
+                _clickTimer = null;
+            }, null, DoubleClickDelay, System.Threading.Timeout.Infinite);
+
         }
 
         private void ExitApplication()
