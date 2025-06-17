@@ -18,11 +18,6 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Albums" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
         <CommandBar Grid.Row="0" Margin="0 40 0 36" OverflowButtonVisibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Right">
-            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xE72C;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
             <AppBarButton ToolTipService.ToolTip="Filters">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE71C;" />
@@ -44,6 +39,12 @@
                         <RadioMenuFlyoutItem x:Name="ArtistRadioItem" Click="RadioItem_Click" Text="By Artist" GroupName="OrderByGroup"/>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarSeparator/>
+            <AppBarButton x:Name="RefreshButton" Click="RefreshButton_Click"  ToolTipService.ToolTip="Refresh">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE72C;" />
+                </AppBarButton.Icon>
             </AppBarButton>
         </CommandBar>
         <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
