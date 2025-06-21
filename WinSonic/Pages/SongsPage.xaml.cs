@@ -39,7 +39,6 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
             new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
-        GridTable.RowRightTapped += GridTable_RowRightTapped;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -55,7 +54,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         if (!initialized)
         {
             songList.Clear();
-            foreach (var server in serverFile.Servers)
+            foreach (var server in serverFile.ActiveServers)
             {
                 songList.AddRange(await SubsonicApiHelper.Search(server));
             }
@@ -75,7 +74,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     {
         RefreshButton.IsEnabled = false;
         songList.Clear();
-        foreach (var server in serverFile.Servers)
+        foreach (var server in serverFile.ActiveServers)
         {
             songList.AddRange(await SubsonicApiHelper.Search(server));
         }

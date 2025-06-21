@@ -46,12 +46,8 @@ namespace WinSonic.Model.Api
             if (response != null && response.Starred2 != null)
             {
                 artists.AddRange(response.Starred2.Artist);
-                albums.AddRange(response.Starred2.Album
-                    .Select(c => new Album(c, server))
-                    .ToImmutableList());
-                songs.AddRange(response.Starred2.Song
-                    .Select(c => new Song(c, server))
-                    .ToImmutableList());
+                albums.AddRange([.. response.Starred2.Album.Select(c => new Album(c, server))]);
+                songs.AddRange([.. response.Starred2.Song.Select(c => new Song(c, server))]);
             }
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
         }
@@ -123,6 +119,12 @@ namespace WinSonic.Model.Api
         {
             var rs = await Execute(server, $"/rest/search3{server.GetParameters()}&query=&songCount={songCount}&songOffset={songOffset}");
             return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
+        }
+
+        public static async Task<List<Playlist>> GetPlaylists(Server server)
+        {
+            var rs = await Execute(server, $"/rest/getPlaylists{server.GetParameters()}");
+            return [.. rs.Playlists];
         }
 
         private static async Task<Response> Execute(Server server, string url)
