@@ -41,7 +41,7 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 
 ## 💾 Installation
 
-1. Download the latest release from the Releases.
+1. Download the latest release from the [Releases](https://github.com/Kikikan/WinSonic/releases).
 2. Extract the appropriate `.zip` archive for your architecture (WinSonic_x.y.z.w_ARM64.zip or WinSonic_x.y.z.w_x64.zip).
 3. Inside the extracted folder, right-click `Install.ps1` and select Run with PowerShell to install the app.
   - If not working, use these PowerShell commands:
