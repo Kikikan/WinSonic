@@ -11,6 +11,7 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 * **Playlists & Queue Management**: Listen to playlists and queue tracks on the fly.
 * **Gapless Playback**: Experience uninterrupted listening between tracks.
 * **Media Controls**: System media transport controls, global hotkeys, and taskbar integration.
+* **Themes**: Light and dark theme based on system preference.
 
 ---
 
