@@ -11,13 +11,23 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 * **Playlists & Queue Management**: Listen to playlists and queue tracks on the fly.
 * **Gapless Playback**: Experience uninterrupted listening between tracks.
 * **Media Controls**: System media transport controls, global hotkeys, and taskbar integration.
-* **Themes**: Light and dark theme based on system preference.
+* **Themes**: Light and dark themes based on system preference.
 
 ---
 
 ## 🎨 Screenshots
 
-//TODO
+### Add new server connection
+![image](https://github.com/user-attachments/assets/8a81a0ab-79c6-4b47-b982-b108f61db683)
+
+### Albums view
+![image](https://github.com/user-attachments/assets/03f9d11b-c2a5-4fb6-92b3-83becdd380a3)
+
+### Songs view
+![image](https://github.com/user-attachments/assets/5f80ebe0-8084-4c12-942d-aaf839f04e8c)
+
+### Now playing queue
+![image](https://github.com/user-attachments/assets/c38a2c68-765d-4c56-83c5-3c4e47a0c007)
 
 ---
 
@@ -34,13 +44,13 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 1. Download the latest release from the Releases.
 2. Extract the appropriate `.zip` archive for your architecture (WinSonic_x.y.z.w_ARM64.zip or WinSonic_x.y.z.w_x64.zip).
 3. Inside the extracted folder, right-click `Install.ps1` and select Run with PowerShell to install the app.
-  - If not working use these PowerShell commands:
+  - If not working, use these PowerShell commands:
     - `Import-Certificate -FilePath .\WinSonic_x.y.z.w_arc.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople`
     - `Add-AppPackage .\WinSonic_x.y.z.w_arc.msix -DependencyPath .\Dependencies\arc\Microsoft.WindowsAppRuntime.1.7.msix`
 4. Follow any prompts to allow the script to run and confirm certificate installation.
 5. Launch WinSonic from the Start menu.
 
-Alternatively, clone and build from source. Use VisualStudio for development.
+Alternatively, clone and build from source. Use Visual Studio for development.
 
 ---
 
@@ -68,7 +78,7 @@ If you're new to open source, check out the issues labeled `good first issue` to
 
 ## 🛡️ License
 
-This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE.txt) file for details.
+This project is licensed under the GNU General Public License v3.0. Please take a look at the [LICENSE](LICENSE.txt) file for details.
 
 ---
 
