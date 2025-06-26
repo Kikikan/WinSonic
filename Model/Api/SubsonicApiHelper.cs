@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using WinSonic.Model.Util;
 
 namespace WinSonic.Model.Api
@@ -158,7 +156,7 @@ namespace WinSonic.Model.Api
         {
             await Execute(server, $"/rest/deletePlaylist{server.GetParameters()}&id={id}");
         }
-            
+
         private static async Task<Response> Execute(Server server, string url)
         {
             using HttpResponseMessage response = await server.Client.GetAsync(url);
