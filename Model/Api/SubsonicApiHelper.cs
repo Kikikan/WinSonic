@@ -128,6 +128,12 @@ namespace WinSonic.Model.Api
             return [.. rs.Playlists];
         }
 
+        public static async Task<PlaylistWithSongs> GetPlaylist(Server server, string id)
+        {
+            var rs = await Execute(server, $"/rest/getPlaylist{server.GetParameters()}&id={id}");
+            return rs.Playlist;
+        }
+
         public static async Task<Playlist> CreatePlaylist(Server server, string name, string songId)
         {
             var rs = await Execute(server, $"/rest/createPlaylist{server.GetParameters()}&name={name}&songId={songId}");

@@ -1,28 +1,36 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
-using WinSonic.Pages.Details;
 using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace WinSonic.Pages
+namespace WinSonic.Pages.Details
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AlbumDetailPage : Page, INotifyPropertyChanged
+    public sealed partial class PlaylistDetailPage : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
@@ -33,13 +41,13 @@ namespace WinSonic.Pages
         private Song? RightClickedSong;
         private CommandBarFlyout? _songFlyout;
 
-        public AlbumDetailPage()
+        public PlaylistDetailPage()
         {
             InitializeComponent();
             SongGridTable.Columns = [
-                new Tuple<string, GridLength>("Track", new GridLength(80, GridUnitType.Pixel)),
                 new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Artist", new GridLength(3, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
         }
@@ -47,40 +55,9 @@ namespace WinSonic.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            // Store the item to be used in binding to UI
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
-
-                ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
-                if (imageAnimation != null)
-                {
-                    // Connected animation + coordinated animation
-                    imageAnimation.TryStart(detailedImage, [coordinatedPanel]);
-
-                    ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
-                    if (backImageAnimation != null && DetailedObject?.BackIconUri != null)
-                    {
-                        backImageAnimation.TryStart(backImage);
-                    }
-
-                }
-            }
-        }
-
-        // Create connected animation back to collection page.
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            base.OnNavigatingFrom(e);
-
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
-                if (e.SourcePageType == typeof(ArtistDetailPage))
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackFromAlbumArtistAnimation", backImage);
-                }
             }
         }
 
@@ -88,27 +65,24 @@ namespace WinSonic.Pages
         {
             if (DetailedObject != null)
             {
-                var albumInfo = await SubsonicApiHelper.GetAlbumInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-                if (albumInfo != null)
+                var playlist = await SubsonicApiHelper.GetPlaylist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                if (playlist != null)
                 {
-                    NoteTextBlock.Text = albumInfo.Notes;
-                }
-                var album = await SubsonicApiHelper.GetAlbum(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-                if (album != null)
-                {
-                    foreach (var song in album.Song)
+                    NoteTextBlock.Text = playlist.Comment;
+                    foreach (var song in playlist.Entry)
                     {
                         Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
                     }
                 }
+                
                 foreach (var song in Songs)
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
                     Dictionary<string, string?> dic = new()
                     {
-                        ["Track"] = string.Format("{0:D1}.{1:D2}", song.DiskNumber, song.Track),
                         ["Title"] = song.Title,
                         ["Artist"] = song.Artist,
+                        ["Album"] = song.Album,
                         ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
                     };
                     SongGridTable.AddRow(dic);
@@ -121,20 +95,6 @@ namespace WinSonic.Pages
         {
             PlayerPlaylist.Instance.ClearSongs();
             AddToQueueButton_Click(sender, e);
-        }
-
-        private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject != null && DetailedObject.ApiObject is Album album)
-            {
-                bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
-                if (success)
-                {
-                    DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
-                    album.IsFavourite = !album.IsFavourite;
-                    OnPropertyChanged(nameof(DetailedObject));
-                }
-            }
         }
 
         private void AddToQueueButton_Click(object sender, RoutedEventArgs e)

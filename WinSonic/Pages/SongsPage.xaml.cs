@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Dialog;
@@ -24,6 +25,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     private bool initialized = false;
     private Song? RightClickedSong;
     private int? rightClickedIndex;
+    private CommandBarFlyout? _songFlyout;
     private readonly App app = (App)Application.Current;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -47,7 +49,8 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         RightClickedSong = songList[e.Index];
         rightClickedIndex = e.Index;
         OnPropertyChanged(nameof(RightClickedSong));
-        return SongFlyout;
+        _songFlyout = SongCommandBarFlyout.Create(RightClickedSong, PlayButton_Click, PlayNextButton_Click, AddToQueueButton_Click, FavouriteButton_Click, SongAddToPlaylistButton_Click);
+        return _songFlyout;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -113,7 +116,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             PlayerPlaylist.Instance.ClearSongs();
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
@@ -122,7 +125,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
@@ -131,7 +134,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -152,7 +155,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
                 OnPropertyChanged(nameof(RightClickedSong));
             }
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
@@ -171,7 +174,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
 
     private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
     {
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
         if (RightClickedSong != null)
         {
             var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);

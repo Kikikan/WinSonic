@@ -14,35 +14,7 @@
 
     <Page.Resources>
         <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
-        <converters:BooleanToFavLaberConverter x:Key="BoolToFavLabel"/>
-        <CommandBarFlyout x:Name="SongFlyout" AlwaysExpanded="True">
-            <AppBarButton x:Name="SongPlayButton" Click="SongPlayButton_Click" Label="Play Now">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xE768;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-            <AppBarButton x:Name="SongPlayNextButton" Click="SongPlayNextButton_Click" Label="Play Next">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xE893;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-            <AppBarButton x:Name="SongAddToQueueButton" Click="SongAddToQueueButton_Click" Label="Add to Queue">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xE710;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-            <AppBarSeparator />
-            <AppBarToggleButton x:Name="SongFavouriteButton" Click="SongFavouriteButton_Click" Label="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay}">
-                <AppBarToggleButton.Icon>
-                    <FontIcon x:Name="SongFavIcon" Glyph="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                </AppBarToggleButton.Icon>
-            </AppBarToggleButton>
-            <AppBarButton x:Name="SongAddToPlaylistButton" Click="SongAddToPlaylistButton_Click" Label="Add to Playlist">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xEA37;" />
-                </AppBarButton.Icon>
-            </AppBarButton>
-        </CommandBarFlyout>
+        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
     </Page.Resources>
 
     <Grid>

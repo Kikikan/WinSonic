@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="WinSonic.Pages.Details.ArtistDetailPage"
+    x:Class="WinSonic.Pages.Details.PlaylistDetailPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:WinSonic.Pages.Details"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="using:WinSonic.Pages.Control"
     mc:Ignorable="d"
-    Loaded="Page_Loaded"
-    xmlns:converters="using:WinSonic.Pages.Converter">
-
-    <Page.Resources>
-        <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
-        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
-    </Page.Resources>
+    xmlns:controls="using:WinSonic.Pages.Control"
+    Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,14 +22,18 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Connected image -->
             <Image x:Name="detailedImage" MaxHeight="300" VerticalAlignment="Top" Stretch="Uniform">
                 <Image.Source>
                     <BitmapImage UriSource="{x:Bind DetailedObject.IconUri}"/>
                 </Image.Source>
             </Image>
 
-            <!-- Panel to be coordinated with connected animation -->
+            <Image x:Name="backImage" Grid.Column="0"  MaxHeight="1" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Image.Source>
+                    <BitmapImage UriSource="{x:Bind DetailedObject.BackIconUri}"/>
+                </Image.Source>
+            </Image>
+
             <StackPanel x:Name="coordinatedPanel" Grid.Column="1" VerticalAlignment="Top" Margin="20 0">
                 <TextBlock Text="{x:Bind DetailedObject.Title}" Style="{ThemeResource SubheaderTextBlockStyle}" Margin="0 0 0 10" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                 <TextBlock Text="{x:Bind DetailedObject.Subtitle}" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
@@ -43,8 +41,7 @@
             </StackPanel>
         </Grid>
 
-        <!-- Panel containing more info, to be shown after the connected animation. -->
-        <Grid x:Name="moreInfoPanel" Grid.Row="1" Margin="20 0 0 0">
+        <Grid x:Name="moreInfoPanel" Grid.Row="1" Margin="20 0 20 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -55,14 +52,20 @@
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" ToolTipService.ToolTip="Play Next">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE893;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" ToolTipService.ToolTip="Add to Queue">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE710;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
                 <AppBarSeparator />
-                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
+                <!-- TODO: Add edit button(s)? -->
             </CommandBar>
-            <control:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
+            <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0" RowDoubleTapped="SongGridTable_RowDoubleTapped" RowRightTapped="SongGridTable_RowRightTapped"/>
         </Grid>
     </Grid>
 </Page>

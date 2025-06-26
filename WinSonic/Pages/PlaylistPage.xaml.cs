@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Control;
+using WinSonic.Pages.Details;
 using WinSonic.Persistence;
 using WinSonic.ViewModel;
 
@@ -38,7 +39,12 @@ namespace WinSonic.Pages
 
         private void PlaylistGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-            
+            if (Application.Current is App app)
+            {
+                var selected = playlists[e.Index];
+                InfoWithPicture playlistInfo = new(new ApiObject(selected.Id, playlistServerMap[selected]), null, selected.Name, selected.Owner, false, typeof(AlbumDetailPage), selected.Name[..1]);
+                app.Window?.NavFrame.Navigate(typeof(PlaylistDetailPage), playlistInfo, new DrillInNavigationTransitionInfo());
+            }
         }
 
         private void PlaylistGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)

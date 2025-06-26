@@ -29,7 +29,7 @@ namespace WinSonic
     {
         public static MainWindow? Instance { get; private set; } // Singleton for easy access
 
-        private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlayerPage)];
+        private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlaylistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
         private bool _isLoading = true;
         private bool IsLoading { get => _isLoading; set { _isLoading = value; LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
