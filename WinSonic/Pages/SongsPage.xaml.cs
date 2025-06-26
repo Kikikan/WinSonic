@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Dialog;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -165,6 +166,16 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             GridTable.RectangleColors[row] = true;
             GridTable.GetRectangle(e.Index).Fill = GridTable.Colors[true].Fill;
+        }
+    }
+
+    private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        SongFlyout.Hide();
+        if (RightClickedSong != null)
+        {
+            var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
+            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
         }
     }
 }

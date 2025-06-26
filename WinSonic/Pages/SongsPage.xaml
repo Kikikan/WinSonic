@@ -36,6 +36,11 @@
                     <FontIcon x:Name="FavIcon" Glyph="{x:Bind RightClickedSong.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
+            <AppBarButton x:Name="SongAddToPlaylistButton" Click="SongAddToPlaylistButton_Click" Label="Add to Playlist">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xEA37;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
         </CommandBarFlyout>
     </Page.Resources>
 

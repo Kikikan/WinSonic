@@ -16,9 +16,9 @@
             Name = name;
             Biography = biography;
             IsFavourite = isFavourite;
-            SmallImageUri = smallImageUri != null ? new Uri(smallImageUri) : null;
-            MediumImageUri = mediumImageUri != null ? new Uri(mediumImageUri) : null;
-            LargeImageUri = largeImageUri != null ? new Uri(largeImageUri) : null;
+            SmallImageUri = !string.IsNullOrEmpty(smallImageUri) ? new Uri(smallImageUri) : null;
+            MediumImageUri = !string.IsNullOrEmpty(mediumImageUri) ? new Uri(mediumImageUri) : null;
+            LargeImageUri = !string.IsNullOrEmpty(largeImageUri) ? new Uri(largeImageUri) : null;
         }
     }
 }

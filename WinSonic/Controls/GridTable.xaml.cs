@@ -375,8 +375,8 @@ namespace WinSonic.Pages.Control
 
     public sealed class AccentBrush : IGridTableRowBrush
     {
-        public Brush Fill { get; } = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark2"]);
-        public Brush HoverFill { get; } = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark1"]);
-        public Brush Stroke { get; } = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
+        public Brush Fill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark2"]); }
+        public Brush HoverFill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark1"]); }
+        public Brush Stroke { get => (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"]; }
     }
 }

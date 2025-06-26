@@ -10,6 +10,7 @@ using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
+using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -203,6 +204,16 @@ namespace WinSonic.Pages
                 }
             }
             SongFlyout.Hide();
+        }
+
+        private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+        {
+            SongFlyout.Hide();
+            if (RightClickedSong != null)
+            {
+                var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
+                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
+            }
         }
     }
 }

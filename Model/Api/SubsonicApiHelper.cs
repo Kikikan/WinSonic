@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using WinSonic.Model.Util;
 
@@ -127,6 +128,26 @@ namespace WinSonic.Model.Api
             return [.. rs.Playlists];
         }
 
+        public static async Task<Playlist> CreatePlaylist(Server server, string name, string songId)
+        {
+            var rs = await Execute(server, $"/rest/createPlaylist{server.GetParameters()}&name={name}&songId={songId}");
+            return rs.Playlist;
+        }
+
+        public static async Task UpdatePlaylist(Server server, string playlistId, string songId, bool isAdd)
+        {
+            var url = $"/rest/updatePlaylist{server.GetParameters()}&playlistId={playlistId}&";
+            if (isAdd)
+            {
+                url += $"songIdToAdd={songId}";
+            }
+            else
+            {
+                url += $"songIndexToRemove={songId}";
+            }
+            await Execute(server, url);
+        }
+            
         private static async Task<Response> Execute(Server server, string url)
         {
             using HttpResponseMessage response = await server.Client.GetAsync(url);

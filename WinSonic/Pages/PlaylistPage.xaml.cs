@@ -1,11 +1,14 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Control;
 using WinSonic.Persistence;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,12 +38,12 @@ namespace WinSonic.Pages
 
         private void PlaylistGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-
+            
         }
 
         private void PlaylistGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)
         {
-            if (playlists[e.Index].Owner.ToLower() == playlistServerMap[playlists[e.Index]].Username.ToLower())
+            if (string.Equals(playlists[e.Index].Owner, playlistServerMap[playlists[e.Index]].Username, StringComparison.OrdinalIgnoreCase))
             {
                 PlaylistGridTable.RectangleColors[row] = true;
                 PlaylistGridTable.GetRectangle(e.Index).Fill = PlaylistGridTable.Colors[true].Fill;
@@ -56,16 +59,7 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                playlistServerMap.Clear();
-                playlists.Clear();
-                foreach (var server in roamingSettings.ActiveServers)
-                {
-                    foreach (var playlist in await SubsonicApiHelper.GetPlaylists(server))
-                    {
-                        playlists.Add(playlist);
-                        playlistServerMap.Add(playlist, server);
-                    }
-                }
+                await InitializeCollections();
                 Refresh();
                 initialized = true;
                 RefreshButton.IsEnabled = true;
@@ -75,13 +69,23 @@ namespace WinSonic.Pages
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshButton.IsEnabled = false;
+            await InitializeCollections();
+            Refresh();
+            RefreshButton.IsEnabled = true;
+        }
+
+        private async Task InitializeCollections()
+        {
+            playlistServerMap.Clear();
             playlists.Clear();
             foreach (var server in roamingSettings.ActiveServers)
             {
-                playlists.AddRange(await SubsonicApiHelper.GetPlaylists(server));
+                foreach (var playlist in await SubsonicApiHelper.GetPlaylists(server))
+                {
+                    playlists.Add(playlist);
+                    playlistServerMap.Add(playlist, server);
+                }
             }
-            Refresh();
-            RefreshButton.IsEnabled = true;
         }
 
         private void Refresh()
@@ -89,7 +93,6 @@ namespace WinSonic.Pages
             PlaylistGridTable.Clear();
             foreach (var playlist in playlists)
             {
-                TimeSpan duration = TimeSpan.FromSeconds(playlist.Duration);
                 Dictionary<string, string?> dic = new()
                 {
                     ["Name"] = playlist.Name,
