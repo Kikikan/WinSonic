@@ -153,6 +153,11 @@ namespace WinSonic.Model.Api
             }
             await Execute(server, url);
         }
+
+        public static async Task DeletePlaylist(Server server, string id)
+        {
+            await Execute(server, $"/rest/deletePlaylist{server.GetParameters()}&id={id}");
+        }
             
         private static async Task<Response> Execute(Server server, string url)
         {

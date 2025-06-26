@@ -63,6 +63,16 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator />
+                <AppBarButton x:Name="EditButton" Click="EditButton_Click" ToolTipService.ToolTip="Edit">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE70F;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton x:Name="DeleteButton" Click="DeleteButton_Click" ToolTipService.ToolTip="Edit">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE74D;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
                 <!-- TODO: Add edit button(s)? -->
             </CommandBar>
             <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0" RowDoubleTapped="SongGridTable_RowDoubleTapped" RowRightTapped="SongGridTable_RowRightTapped"/>

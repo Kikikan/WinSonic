@@ -178,5 +178,20 @@ namespace WinSonic.Pages.Details
                 AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
             }
         }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject != null)
+            {
+                await SubsonicApiHelper.DeletePlaylist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                app?.Window?.NavFrame.GoBack();
+            }
+            
+        }
     }
 }
