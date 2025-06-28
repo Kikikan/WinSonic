@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using WinSonic.Model.Util;
 
 namespace WinSonic.Model.Api
@@ -46,12 +45,8 @@ namespace WinSonic.Model.Api
             if (response != null && response.Starred2 != null)
             {
                 artists.AddRange(response.Starred2.Artist);
-                albums.AddRange(response.Starred2.Album
-                    .Select(c => new Album(c, server))
-                    .ToImmutableList());
-                songs.AddRange(response.Starred2.Song
-                    .Select(c => new Song(c, server))
-                    .ToImmutableList());
+                albums.AddRange([.. response.Starred2.Album.Select(c => new Album(c, server))]);
+                songs.AddRange([.. response.Starred2.Song.Select(c => new Song(c, server))]);
             }
             return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
         }
@@ -123,6 +118,83 @@ namespace WinSonic.Model.Api
         {
             var rs = await Execute(server, $"/rest/search3{server.GetParameters()}&query=&songCount={songCount}&songOffset={songOffset}");
             return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
+        }
+
+        public static async Task<List<Playlist>> GetPlaylists(Server server)
+        {
+            var rs = await Execute(server, $"/rest/getPlaylists{server.GetParameters()}");
+            return [.. rs.Playlists];
+        }
+
+        public static async Task<DetailedPlaylist> GetPlaylist(Server server, string id)
+        {
+            var rs = await Execute(server, $"/rest/getPlaylist{server.GetParameters()}&id={id}");
+
+            if (rs.Playlist != null)
+            {
+                var playlist = rs.Playlist;
+                List<Song> songs = [];
+                foreach (var song in playlist.Entry)
+                {
+                    songs.Add(new Song(song, server));
+                }
+                return new DetailedPlaylist(server, playlist.Id, playlist.Name, playlist.Comment, playlist.Owner, playlist.Public, songs);
+            }
+            else
+            {
+                throw new ArgumentException($"Playlist with id '{id}' was not found.");
+            }
+        }
+
+        public static async Task<Playlist> CreatePlaylist(Server server, string name, List<string> songIds)
+        {
+            var url = $"/rest/createPlaylist{server.GetParameters()}&name={name}";
+            foreach (var id in songIds)
+            {
+                url += $"&songId={id}";
+            }
+            return (await Execute(server, url)).Playlist;
+        }
+
+        public static async Task UpdatePlaylist(DetailedPlaylist playlist)
+        {
+            DetailedPlaylist currPlaylist = await GetPlaylist(playlist.Server, playlist.Id);
+            List<string> songIndices = [];
+            for (int i = currPlaylist.Songs.Count - 1; i >= 0; i--)
+            {
+                songIndices.Add(i.ToString());
+            }
+            await UpdatePlaylist(playlist.Server, playlist.Id, playlist.Name, playlist.Description, playlist.IsPublic, songIndices, playlist.Songs.Select(s => s.Id).ToList());
+        }
+
+        public static async Task UpdatePlaylist(Server server, string playlistId, string? name, string? comment, bool? isPublic, List<string> songIndicesToRemove, List<string> songIdsToAdd)
+        {
+            var url = $"/rest/updatePlaylist{server.GetParameters()}&playlistId={playlistId}";
+            if (name != null)
+            {
+                await Execute(server, $"{url}&name={name}");
+            }
+            if (comment != null)
+            {
+                await Execute(server, $"{url}&comment={comment}");
+            }
+            if (isPublic != null)
+            {
+                await Execute(server, $"{url}&public={((bool)isPublic ? "true" : "false")}");
+            }
+            foreach (var songIndex in songIndicesToRemove)
+            {
+                await Execute(server, $"{url}&songIndexToRemove={songIndex}");
+            }
+            foreach (var songId in songIdsToAdd)
+            {
+                await Execute(server, $"{url}&songIdToAdd={songId}");
+            }
+        }
+
+        public static async Task DeletePlaylist(Server server, string id)
+        {
+            await Execute(server, $"/rest/deletePlaylist{server.GetParameters()}&id={id}");
         }
 
         private static async Task<Response> Execute(Server server, string url)

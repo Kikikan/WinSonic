@@ -3,7 +3,7 @@ using System;
 
 namespace WinSonic.Pages.Converter
 {
-    internal partial class BooleanToFavLaberConverter : IValueConverter
+    internal partial class BooleanToFavLabelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Dialog;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,6 +25,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     private bool initialized = false;
     private Song? RightClickedSong;
     private int? rightClickedIndex;
+    private CommandBarFlyout? _songFlyout;
     private readonly App app = (App)Application.Current;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -39,7 +42,6 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
             new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
-        GridTable.RowRightTapped += GridTable_RowRightTapped;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -47,7 +49,8 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         RightClickedSong = songList[e.Index];
         rightClickedIndex = e.Index;
         OnPropertyChanged(nameof(RightClickedSong));
-        return SongFlyout;
+        _songFlyout = SongCommandBarFlyout.Create(RightClickedSong, PlayButton_Click, PlayNextButton_Click, AddToQueueButton_Click, FavouriteButton_Click, SongAddToPlaylistButton_Click);
+        return _songFlyout;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -55,7 +58,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         if (!initialized)
         {
             songList.Clear();
-            foreach (var server in serverFile.Servers)
+            foreach (var server in serverFile.ActiveServers)
             {
                 songList.AddRange(await SubsonicApiHelper.Search(server));
             }
@@ -75,7 +78,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     {
         RefreshButton.IsEnabled = false;
         songList.Clear();
-        foreach (var server in serverFile.Servers)
+        foreach (var server in serverFile.ActiveServers)
         {
             songList.AddRange(await SubsonicApiHelper.Search(server));
         }
@@ -113,7 +116,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             PlayerPlaylist.Instance.ClearSongs();
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void PlayNextButton_Click(object sender, RoutedEventArgs e)
@@ -122,7 +125,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
@@ -131,7 +134,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             PlayerPlaylist.Instance.AddSong(RightClickedSong);
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -152,7 +155,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
                 OnPropertyChanged(nameof(RightClickedSong));
             }
         }
-        SongFlyout.Hide();
+        _songFlyout?.Hide();
     }
 
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
@@ -166,6 +169,16 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         {
             GridTable.RectangleColors[row] = true;
             GridTable.GetRectangle(e.Index).Fill = GridTable.Colors[true].Fill;
+        }
+    }
+
+    private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        _songFlyout?.Hide();
+        if (RightClickedSong != null)
+        {
+            var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
+            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
         }
     }
 }

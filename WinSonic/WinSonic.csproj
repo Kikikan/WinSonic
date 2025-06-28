@@ -13,12 +13,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\UpdatePlaylistDialog.xaml" />
     <None Remove="MiniPlayerWindow.xaml" />
     <None Remove="Pages\AddServerPage.xaml" />
     <None Remove="Pages\AlbumPage.xaml" />
     <None Remove="Pages\ArtistPage.xaml" />
     <None Remove="Pages\Control\PictureControlPage.xaml" />
     <None Remove="Pages\Details\ArtistDetailPage.xaml" />
+    <None Remove="Pages\Details\PlaylistDetailPage.xaml" />
+    <None Remove="Pages\Dialog\AddToPlaylistDialog.xaml" />
     <None Remove="Pages\GenrePage.xaml" />
     <None Remove="Pages\Player\LyricsPage.xaml" />
     <None Remove="Pages\Player\QueuePage.xaml" />
@@ -98,6 +101,21 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\UpdatePlaylistDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Details\PlaylistDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Dialog\AddToPlaylistDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\Control\GridTable.xaml">

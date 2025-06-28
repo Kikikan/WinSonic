@@ -13,7 +13,7 @@
 
     <Page.Resources>
         <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
-        <converters:BooleanToFavLaberConverter x:Key="BoolToFavLabel"/>
+        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
     </Page.Resources>
 
     <Grid>
@@ -61,6 +61,11 @@
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
+                <AppBarButton x:Name="AddToPlaylistButton" Click="AddToPlaylistButton_Click" ToolTipService.ToolTip="Add to Playlist">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xEA37;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </CommandBar>
             <control:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
         </Grid>

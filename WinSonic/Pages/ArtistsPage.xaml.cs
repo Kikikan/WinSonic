@@ -51,7 +51,7 @@ namespace WinSonic.Pages
             artists.Clear();
             ArtistControl.Items.Clear();
             List<InfoWithPicture> list = [];
-            foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
+            foreach (var server in serverFile.ActiveServers.ToList())
             {
                 var artists = await SubsonicApiHelper.GetArtists(server);
                 foreach (var artist in artists)

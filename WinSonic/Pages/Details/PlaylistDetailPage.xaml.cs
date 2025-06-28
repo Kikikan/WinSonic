@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -11,36 +10,37 @@ using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
-using WinSonic.Pages.Details;
 using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace WinSonic.Pages
+namespace WinSonic.Pages.Details
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AlbumDetailPage : Page, INotifyPropertyChanged
+    public sealed partial class PlaylistDetailPage : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public InfoWithPicture? DetailedObject { get; set; }
-        public ObservableCollection<Song> Songs { get; set; } = [];
+        public DetailedPlaylistAdapter Playlist { get; private set; }
         private readonly App app = (App)Application.Current;
         private Song? RightClickedSong;
         private CommandBarFlyout? _songFlyout;
+        private bool IsOwner;
 
-        public AlbumDetailPage()
+        public PlaylistDetailPage()
         {
             InitializeComponent();
             SongGridTable.Columns = [
                 new Tuple<string, GridLength>("Track", new GridLength(80, GridUnitType.Pixel)),
                 new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Artist", new GridLength(3, GridUnitType.Star)),
+                new Tuple<string, GridLength>("Album", new GridLength(3, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
             ];
         }
@@ -48,40 +48,9 @@ namespace WinSonic.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            // Store the item to be used in binding to UI
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
-
-                ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
-                if (imageAnimation != null)
-                {
-                    // Connected animation + coordinated animation
-                    imageAnimation.TryStart(detailedImage, [coordinatedPanel]);
-
-                    ConnectedAnimation backImageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("ArtistToAlbumAnimation");
-                    if (backImageAnimation != null && DetailedObject?.BackIconUri != null)
-                    {
-                        backImageAnimation.TryStart(backImage);
-                    }
-
-                }
-            }
-        }
-
-        // Create connected animation back to collection page.
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            base.OnNavigatingFrom(e);
-
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
-                if (e.SourcePageType == typeof(ArtistDetailPage))
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("BackFromAlbumArtistAnimation", backImage);
-                }
             }
         }
 
@@ -89,30 +58,24 @@ namespace WinSonic.Pages
         {
             if (DetailedObject != null)
             {
-                var albumInfo = await SubsonicApiHelper.GetAlbumInfo(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-                if (albumInfo != null)
-                {
-                    NoteTextBlock.Text = albumInfo.Notes;
-                }
-                var album = await SubsonicApiHelper.GetAlbum(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
-                if (album != null)
-                {
-                    foreach (var song in album.Song)
-                    {
-                        Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
-                    }
-                }
-                foreach (var song in Songs)
+                Playlist = new(await SubsonicApiHelper.GetPlaylist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id));
+                OnPropertyChanged(nameof(Playlist));
+                IsOwner = string.Equals(Playlist.Playlist.Owner, Playlist.Playlist.Server.Username, StringComparison.OrdinalIgnoreCase);
+                OnPropertyChanged(nameof(IsOwner));
+                int i = 1;
+                foreach (var song in Playlist.Songs)
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(song.Duration);
                     Dictionary<string, string?> dic = new()
                     {
-                        ["Track"] = string.Format("{0:D1}.{1:D2}", song.DiskNumber, song.Track),
+                        ["Track"] = string.Format("{0:D" + Playlist.Songs.Count.ToString().Length + "}", i),
                         ["Title"] = song.Title,
                         ["Artist"] = song.Artist,
+                        ["Album"] = song.Album,
                         ["Time"] = string.Format("{0:D1}:{1:D2}", duration.Minutes, duration.Seconds),
                     };
                     SongGridTable.AddRow(dic);
+                    i++;
                 }
                 SongGridTable.ShowContent();
             }
@@ -124,23 +87,9 @@ namespace WinSonic.Pages
             AddToQueueButton_Click(sender, e);
         }
 
-        private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject != null && DetailedObject.ApiObject is Album album)
-            {
-                bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
-                if (success)
-                {
-                    DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
-                    album.IsFavourite = !album.IsFavourite;
-                    OnPropertyChanged(nameof(DetailedObject));
-                }
-            }
-        }
-
         private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var song in Songs)
+            foreach (var song in Playlist.Songs)
             {
                 PlayerPlaylist.Instance.AddSong(song);
             }
@@ -148,21 +97,21 @@ namespace WinSonic.Pages
 
         private void PlayNextButton_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = Songs.Count - 1; i >= 0; i--)
+            for (int i = Playlist.Songs.Count - 1; i >= 0; i--)
             {
-                PlayerPlaylist.Instance.AddSong(Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+                PlayerPlaylist.Instance.AddSong(Playlist.Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
             }
         }
 
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
             PlayerPlaylist.Instance.ClearSongs();
-            PlayerPlaylist.Instance.AddSong(Songs[e.Index]);
+            PlayerPlaylist.Instance.AddSong(Playlist.Songs[e.Index]);
         }
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
         {
-            RightClickedSong = Songs[e.Index];
+            RightClickedSong = Playlist.Songs[e.Index];
             OnPropertyChanged(nameof(RightClickedSong));
             _songFlyout = SongCommandBarFlyout.Create(RightClickedSong, SongPlayButton_Click, SongPlayNextButton_Click, SongAddToQueueButton_Click, SongFavouriteButton_Click, SongAddToPlaylistButton_Click);
             return _songFlyout;
@@ -220,12 +169,54 @@ namespace WinSonic.Pages
             }
         }
 
-        private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+        private async void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DetailedObject?.ApiObject is Album album)
+            if (DetailedObject != null)
             {
-                var result = AddToPlaylistDialog.CreateDialog(this, album, Songs.ToList());
-                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
+                ContentDialog dialog = new()
+                {
+                    Title = "Editing playlist",
+                    Content = new UpdatePlaylistDialog(Playlist),
+                    PrimaryButtonText = "Update",
+                    CloseButtonText = "Cancel",
+                    XamlRoot = XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    DefaultButton = ContentDialogButton.Primary
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Playlist.SaveChanges();
+                    await SubsonicApiHelper.UpdatePlaylist(Playlist.Playlist);
+                    app?.Window?.NavFrame.GoBack();
+                }
+                else
+                {
+                    Playlist.UndoChanges();
+                }
+            }
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject != null)
+            {
+                ContentDialog dialog = new()
+                {
+                    Title = "Are you sure?",
+                    Content = "This action cannot be undone.",
+                    PrimaryButtonText = "Delete",
+                    CloseButtonText = "Cancel",
+                    XamlRoot = XamlRoot,
+                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
+                    DefaultButton = ContentDialogButton.Close
+                };
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    await SubsonicApiHelper.DeletePlaylist(DetailedObject.ApiObject.Server, DetailedObject.ApiObject.Id);
+                    app?.Window?.NavFrame.GoBack();
+                }
             }
         }
     }

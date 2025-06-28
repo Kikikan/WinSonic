@@ -47,7 +47,7 @@
 
     <StackPanel Margin="36 40 36 0">
         <TextBlock Text="Servers" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 36"/>
-        <ListView x:Name="ServerListView" SelectionMode="Multiple" ItemsSource="{x:Bind Servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Loaded="ServerListView_Loaded" Margin="0 0 0 50"/>
+        <ListView x:Name="ServerListView" SelectionMode="Multiple" ItemsSource="{x:Bind servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Loaded="ServerListView_Loaded" Margin="0 0 0 50"/>
         <TextBox x:Name="NameTextBox" Header="Server Name" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Name, Mode=OneWay}" Margin="0 0 0 16"/>
         <TextBox x:Name="URL" Header="Enter the URL of the server." IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Address, Mode=OneWay}" Margin="0 0 0 16"/>
         <TextBox x:Name="UsernameTextBox" Header="Username" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Username, Mode=OneWay}" Margin="0 0 0 16"/>
