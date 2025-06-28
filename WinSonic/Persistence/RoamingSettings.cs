@@ -14,6 +14,7 @@ namespace WinSonic.Persistence
     {
         private readonly List<Server> _servers = [];
         public ImmutableList<Server> ActiveServers { get { return _servers.Where(s => s.Enabled).ToImmutableList(); } }
+        public ImmutableList<Server> Servers { get => _servers.ToImmutableList(); }
 
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 

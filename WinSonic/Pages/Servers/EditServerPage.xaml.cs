@@ -28,7 +28,7 @@ namespace WinSonic.Pages
         public EditServerPage()
         {
             InitializeComponent();
-            servers.AddRange(serverFile.ActiveServers);
+            servers.AddRange(serverFile.Servers);
             OnPropertyChanged(nameof(servers));
         }
 
