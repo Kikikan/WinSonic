@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
@@ -215,6 +216,15 @@ namespace WinSonic.Pages
             if (RightClickedSong != null)
             {
                 var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
+                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
+            }
+        }
+
+        private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject?.ApiObject is Album album)
+            {
+                var result = AddToPlaylistDialog.CreateDialog(this, album, Songs.ToList());
                 AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
             }
         }

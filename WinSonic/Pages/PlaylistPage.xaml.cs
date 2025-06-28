@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,6 +36,15 @@ namespace WinSonic.Pages
                 new Tuple<string, GridLength>("Owner", new GridLength(2, GridUnitType.Star)),
                 new Tuple<string, GridLength>("Tracks", new GridLength(80, GridUnitType.Pixel))
             ];
+        }
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                await InitializeCollections();
+                Refresh();
+            }
         }
 
         private void PlaylistGridTable_RowDoubleTapped(object sender, RowEvent e)

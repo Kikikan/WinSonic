@@ -16,7 +16,6 @@ namespace WinSonic.Controls
         {
             var flyout = new CommandBarFlyout { AlwaysExpanded = true };
 
-            // Play Now
             var playNowButton = new AppBarButton
             {
                 Label = "Play Now",
@@ -24,7 +23,6 @@ namespace WinSonic.Controls
             };
             playNowButton.Click += playNowClick;
 
-            // Play Next
             var playNextButton = new AppBarButton
             {
                 Label = "Play Next",
@@ -32,7 +30,6 @@ namespace WinSonic.Controls
             };
             playNextButton.Click += playNextClick;
 
-            // Add to Queue
             var addToQueueButton = new AppBarButton
             {
                 Label = "Add to Queue",
@@ -40,10 +37,8 @@ namespace WinSonic.Controls
             };
             addToQueueButton.Click += addToQueueClick;
 
-            // Separator
             var separator = new AppBarSeparator();
 
-            // Favourite Toggle
             var favouriteToggleButton = new AppBarToggleButton
             {
                 Label = song.IsFavourite ? "Unfavourite" : "Favourite",
@@ -55,7 +50,6 @@ namespace WinSonic.Controls
             };
             favouriteToggleButton.Click += favouriteClick;
 
-            // Add to Playlist
             var addToPlaylistButton = new AppBarButton
             {
                 Label = "Add to Playlist",
@@ -63,7 +57,6 @@ namespace WinSonic.Controls
             };
             addToPlaylistButton.Click += addToPlaylistClick;
 
-            // Add everything to the flyout
             flyout.PrimaryCommands.Add(playNowButton);
             flyout.PrimaryCommands.Add(playNextButton);
             flyout.PrimaryCommands.Add(addToQueueButton);

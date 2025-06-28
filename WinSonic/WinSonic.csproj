@@ -13,6 +13,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\UpdatePlaylistDialog.xaml" />
     <None Remove="MiniPlayerWindow.xaml" />
     <None Remove="Pages\AddServerPage.xaml" />
     <None Remove="Pages\AlbumPage.xaml" />
@@ -100,6 +101,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\UpdatePlaylistDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\Details\PlaylistDetailPage.xaml">

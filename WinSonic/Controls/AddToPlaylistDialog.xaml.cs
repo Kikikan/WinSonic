@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WinSonic.Model.Api;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,21 +15,36 @@ namespace WinSonic.Pages.Dialog
     /// </summary>
     public sealed partial class AddToPlaylistDialog : UserControl
     {
-        public Song Song { get; private set; }
-        public AddToPlaylistDialog(Song song)
+        public List<Song> Songs { get; private set; }
+        public AddToPlaylistDialog(List<Song> songs)
         {
             InitializeComponent();
-            this.Song = song;
+            Songs = songs;
         }
 
         public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, Song song)
         {
-            var content = new AddToPlaylistDialog(song);
+            return CreateDialog("song", page, [song]);
+        }
+
+        public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, DetailedArtist artist, List<Song> songs)
+        {
+            return CreateDialog($"{artist.Name}'s currently available songs", page, songs);
+        }
+
+        public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, Album album, List<Song> songs)
+        {
+            return CreateDialog($"currently available songs of {album.Title}", page, songs);
+        }
+
+        private static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(string obj, Page page, List<Song> songs)
+        {
+            var content = new AddToPlaylistDialog(songs);
             ContentDialog dialog = new()
             {
                 XamlRoot = page.XamlRoot,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                Title = "Add song to playlist",
+                Title = $"Add {obj} to playlist",
                 PrimaryButtonText = "Add",
                 CloseButtonText = "Cancel",
                 DefaultButton = ContentDialogButton.Primary,
@@ -43,13 +59,13 @@ namespace WinSonic.Pages.Dialog
             {
                 if (!string.IsNullOrWhiteSpace(dialog.NewNameTextBox.Text))
                 {
-                    await SubsonicApiHelper.CreatePlaylist(dialog.Song.Server, dialog.NewNameTextBox.Text, dialog.Song.Id);
+                    await SubsonicApiHelper.CreatePlaylist(dialog.Songs[0].Server, dialog.NewNameTextBox.Text, [.. dialog.Songs.Select(s => s.Id)]);
                 }
                 foreach (var obj in dialog.PlaylistList.SelectedItems)
                 {
                     if (obj is Playlist playlist)
                     {
-                        await SubsonicApiHelper.UpdatePlaylist(dialog.Song.Server, playlist.Id, dialog.Song.Id, true);
+                        await SubsonicApiHelper.UpdatePlaylist(dialog.Songs[0].Server, playlist.Id, null, null, null, [], [.. dialog.Songs.Select(s => s.Id)]);
                     }
                 }
             }
@@ -58,9 +74,9 @@ namespace WinSonic.Pages.Dialog
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             List<Playlist> ownerPlaylists = [];
-            foreach (var playlist in await SubsonicApiHelper.GetPlaylists(Song.Server))
+            foreach (var playlist in await SubsonicApiHelper.GetPlaylists(Songs[0].Server))
             {
-                if (string.Equals(playlist.Owner, Song.Server.Username, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(playlist.Owner, Songs[0].Server.Username, StringComparison.OrdinalIgnoreCase))
                 {
                     ownerPlaylists.Add(playlist);
                 }

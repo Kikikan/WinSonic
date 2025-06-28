@@ -75,6 +75,11 @@
                         <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
+                <AppBarButton x:Name="AddToPlaylistButton" Click="AddToPlaylistButton_Click" ToolTipService.ToolTip="Add to Playlist">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xEA37;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </CommandBar>
             <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0" RowDoubleTapped="SongGridTable_RowDoubleTapped" RowRightTapped="SongGridTable_RowRightTapped"/>
         </Grid>

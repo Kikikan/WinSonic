@@ -2,10 +2,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -98,6 +102,16 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
     private async void PlayButton_Click(object sender, RoutedEventArgs e)
     {
         PlayerPlaylist.Instance.ClearSongs();
+        var songs = await GetSongs();
+        foreach (var song in songs)
+        {
+            PlayerPlaylist.Instance.AddSong(song);
+        }
+    }
+
+    private async Task<List<Song>> GetSongs()
+    {
+        var list = new List<Song>();
         var albums = AlbumControl.Items
             .Select(info => info.ApiObject)
             .Select(api => api as Album)
@@ -112,11 +126,12 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
                 {
                     foreach (var child in rs.Song)
                     {
-                        PlayerPlaylist.Instance.AddSong(new Song(child, album.Server));
+                        list.Add(new Song(child, album.Server));
                     }
                 }
             }
         }
+        return list;
     }
 
     private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -130,6 +145,15 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
                 artist.IsFavourite = !artist.IsFavourite;
                 OnPropertyChanged(nameof(DetailedObject));
             }
+        }
+    }
+
+    private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DetailedObject?.ApiObject is DetailedArtist artist)
+        {
+            var result = AddToPlaylistDialog.CreateDialog(this, artist, await GetSongs());
+            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
         }
     }
 }
