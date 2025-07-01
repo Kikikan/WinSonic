@@ -57,9 +57,16 @@ Alternatively, clone and build from source. Use Visual Studio for development.
 
 ## ▶️ Usage
 
-1. **Add Server**: Go to **Servers** → **Add**. Enter your Subsonic server URL, username, and password.
-2. **Browse Library**: Navigate your music by Albums, Artists, or Genres.
-3. **Play Music**: Double-click on track or right-click then use the ▶️ button to start playback.
+1. **Server Management**:
+   * Go to **Servers** → **Add**. Enter your Subsonic server URL, username, and password.
+   * Use **Servers** → **Edit** to manage added servers.
+3. **Browse Library**:
+   * Navigate your music by Albums, Artists, or Genres.
+   * "Organize and modify your favorite songs."
+5. **Play Music**:
+   * Double-click on the track or right-click, then use the ▶️ button to start playback.
+   * Create a music queue on the fly; insert the next song or append it to the end of the queue.
+   * To view the **Now Playing** queue, click on the currently playing song next to the media controls.
 
 ---
 
