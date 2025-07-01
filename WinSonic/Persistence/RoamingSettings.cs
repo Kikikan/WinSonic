@@ -128,7 +128,7 @@ namespace WinSonic.Persistence
 
         public bool AddServer(Server server)
         {
-            bool found = ActiveServers
+            bool found = _servers
                 .Where(s => s.Address == server.Address)
                 .Where(s => s.Username == server.Username)
                 .Any();
@@ -144,7 +144,7 @@ namespace WinSonic.Persistence
         public void SaveServers()
         {
             var list = new List<Dictionary<string, string>>();
-            foreach (var server in ActiveServers)
+            foreach (var server in _servers)
             {
                 list.Add(server.ToDictionary());
             }
