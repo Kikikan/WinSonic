@@ -188,7 +188,6 @@ namespace WinSonic.Pages.Details
                 {
                     Playlist.SaveChanges();
                     await SubsonicApiHelper.UpdatePlaylist(Playlist.Playlist);
-                    app?.Window?.NavFrame.GoBack();
                 }
                 else
                 {
