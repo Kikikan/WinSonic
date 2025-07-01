@@ -62,7 +62,7 @@ Alternatively, clone and build from source. Use Visual Studio for development.
    * Use **Servers** → **Edit** to manage added servers.
 3. **Browse Library**:
    * Navigate your music by Albums, Artists, or Genres.
-   * "Organize and modify your favorite songs."
+   * Organize and modify your favorite songs.
 5. **Play Music**:
    * Double-click on the track or right-click, then use the ▶️ button to start playback.
    * Create a music queue on the fly; insert the next song or append it to the end of the queue.
