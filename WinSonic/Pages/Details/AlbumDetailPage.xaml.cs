@@ -31,7 +31,6 @@ namespace WinSonic.Pages
         public InfoWithPicture? DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = [];
         private readonly App app = (App)Application.Current;
-        private Song? RightClickedSong;
         private CommandBarFlyout? _songFlyout;
 
         public AlbumDetailPage()
@@ -162,62 +161,44 @@ namespace WinSonic.Pages
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
         {
-            RightClickedSong = Songs[e.Index];
-            OnPropertyChanged(nameof(RightClickedSong));
-            _songFlyout = SongCommandBarFlyout.Create(RightClickedSong, SongPlayButton_Click, SongPlayNextButton_Click, SongAddToQueueButton_Click, SongFavouriteButton_Click, SongAddToPlaylistButton_Click);
+            _songFlyout = SongCommandBarFlyout.Create(Songs[e.Index], SongPlayButton_Click, SongPlayNextButton_Click, SongAddToQueueButton_Click, SongFavouriteButton_Click, SongAddToPlaylistButton_Click);
             return _songFlyout;
         }
 
-        private void SongPlayButton_Click(object sender, RoutedEventArgs e)
+        private void SongPlayButton_Click(object sender, RoutedEventArgs e, Song song)
         {
-            if (RightClickedSong != null)
+            PlayerPlaylist.Instance.ClearSongs();
+            PlayerPlaylist.Instance.AddSong(song);
+            _songFlyout?.Hide();
+        }
+
+        private void SongPlayNextButton_Click(object sender, RoutedEventArgs e, Song song)
+        {
+            PlayerPlaylist.Instance.AddSong(song, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+            _songFlyout?.Hide();
+        }
+
+        private void SongAddToQueueButton_Click(object sender, RoutedEventArgs e, Song song)
+        {
+            PlayerPlaylist.Instance.AddSong(song);
+            _songFlyout?.Hide();
+        }
+
+        private async void SongFavouriteButton_Click(object sender, RoutedEventArgs e, Song song)
+        {
+            bool success = await SubsonicApiHelper.Star(song.Server, !song.IsFavourite, SubsonicApiHelper.StarType.Song, song.Id);
+            if (success)
             {
-                PlayerPlaylist.Instance.ClearSongs();
-                PlayerPlaylist.Instance.AddSong(RightClickedSong);
+                song.IsFavourite = !song.IsFavourite;
             }
             _songFlyout?.Hide();
         }
 
-        private void SongPlayNextButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (RightClickedSong != null)
-            {
-                PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
-            }
-            _songFlyout?.Hide();
-        }
-
-        private void SongAddToQueueButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (RightClickedSong != null)
-            {
-                PlayerPlaylist.Instance.AddSong(RightClickedSong);
-            }
-            _songFlyout?.Hide();
-        }
-
-        private async void SongFavouriteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (RightClickedSong != null)
-            {
-                bool success = await SubsonicApiHelper.Star(RightClickedSong.Server, !RightClickedSong.IsFavourite, SubsonicApiHelper.StarType.Song, RightClickedSong.Id);
-                if (success)
-                {
-                    RightClickedSong.IsFavourite = !RightClickedSong.IsFavourite;
-                    OnPropertyChanged(nameof(RightClickedSong));
-                }
-            }
-            _songFlyout?.Hide();
-        }
-
-        private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+        private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e, Song song)
         {
             _songFlyout?.Hide();
-            if (RightClickedSong != null)
-            {
-                var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
-                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
-            }
+            var result = AddToPlaylistDialog.CreateDialog(this, song);
+            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
         }
 
         private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)

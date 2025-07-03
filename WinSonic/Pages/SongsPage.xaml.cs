@@ -23,8 +23,6 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
-    private Song? RightClickedSong;
-    private int? rightClickedIndex;
     private CommandBarFlyout? _songFlyout;
     private readonly App app = (App)Application.Current;
 
@@ -46,10 +44,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
     {
-        RightClickedSong = songList[e.Index];
-        rightClickedIndex = e.Index;
-        OnPropertyChanged(nameof(RightClickedSong));
-        _songFlyout = SongCommandBarFlyout.Create(RightClickedSong, PlayButton_Click, PlayNextButton_Click, AddToQueueButton_Click, FavouriteButton_Click, SongAddToPlaylistButton_Click);
+        _songFlyout = SongCommandBarFlyout.Create(songList[e.Index], PlayButton_Click, PlayNextButton_Click, AddToQueueButton_Click, FavouriteButton_Click, SongAddToPlaylistButton_Click);
         return _songFlyout;
     }
 
@@ -109,50 +104,37 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         GridTable.ShowContent();
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e, Song song)
     {
-        if (RightClickedSong != null)
-        {
-            PlayerPlaylist.Instance.ClearSongs();
-            PlayerPlaylist.Instance.AddSong(RightClickedSong);
-        }
+        PlayerPlaylist.Instance.ClearSongs();
+        PlayerPlaylist.Instance.AddSong(song);
         _songFlyout?.Hide();
     }
 
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+    private void PlayNextButton_Click(object sender, RoutedEventArgs e, Song song)
     {
-        if (RightClickedSong != null)
-        {
-            PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
-        }
+        PlayerPlaylist.Instance.AddSong(song, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
         _songFlyout?.Hide();
     }
 
-    private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
+    private void AddToQueueButton_Click(object sender, RoutedEventArgs e, Song song)
     {
-        if (RightClickedSong != null)
-        {
-            PlayerPlaylist.Instance.AddSong(RightClickedSong);
-        }
+        PlayerPlaylist.Instance.AddSong(song);
         _songFlyout?.Hide();
     }
 
-    private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
+    private async void FavouriteButton_Click(object sender, RoutedEventArgs e, Song song)
     {
-        if (RightClickedSong != null)
+        bool success = await SubsonicApiHelper.Star(song.Server, !song.IsFavourite, SubsonicApiHelper.StarType.Song, song.Id);
+        if (success)
         {
-            bool success = await SubsonicApiHelper.Star(RightClickedSong.Server, !RightClickedSong.IsFavourite, SubsonicApiHelper.StarType.Song, RightClickedSong.Id);
-            if (success)
+            song.IsFavourite = !song.IsFavourite;
+            var index = songList.IndexOf(song);
+            if (index != -1)
             {
-                RightClickedSong.IsFavourite = !RightClickedSong.IsFavourite;
-                if (rightClickedIndex != null)
-                {
-                    var rect = GridTable.GetRectangle((int)rightClickedIndex);
-                    GridTable.RectangleColors[rect] = RightClickedSong.IsFavourite;
-                    rect.Fill = GridTable.Colors[RightClickedSong.IsFavourite].Fill;
-                }
-
-                OnPropertyChanged(nameof(RightClickedSong));
+                var rect = GridTable.GetRectangle(index);
+                GridTable.RectangleColors[rect] = song.IsFavourite;
+                rect.Fill = GridTable.Colors[song.IsFavourite].Fill;
             }
         }
         _songFlyout?.Hide();
@@ -172,13 +154,10 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         }
     }
 
-    private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e)
+    private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e, Song song)
     {
         _songFlyout?.Hide();
-        if (RightClickedSong != null)
-        {
-            var result = AddToPlaylistDialog.CreateDialog(this, RightClickedSong);
-            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
-        }
+        var result = AddToPlaylistDialog.CreateDialog(this, song);
+        AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
     }
 }
