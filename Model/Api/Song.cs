@@ -21,8 +21,8 @@
             Track = child.Track;
             IsFavourite = child.StarredSpecified;
             Duration = child.Duration;
-            CoverImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetParameters()}&id={child.CoverArt}");
-            StreamUri = new Uri($"{server.Address}/rest/stream{server.GetParameters()}&id={Id}");
+            CoverImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={child.CoverArt}");
+            StreamUri = new Uri($"{server.Address}/rest/stream{server.GetStringParameters()}&id={Id}");
         }
     }
 }

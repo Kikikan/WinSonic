@@ -5,25 +5,26 @@ namespace WinSonic.Model.Api
 {
     public class SubsonicApiHelper
     {
+        private static readonly int URL_LIMIT = 2000;
         private SubsonicApiHelper() { }
 
         public static Task<Response> Ping(Server server)
         {
-            return Execute(server, $"/rest/ping{server.GetParameters()}");
+            return Execute(server, "/rest/ping", []);
         }
 
         public static async Task<List<Album>> GetAlbumList(Server server, AlbumListType type, int size = 10, int offset = 0, int fromYear = -1, int toYear = -1, string genre = "")
         {
-            string parameters = $"/rest/getAlbumList2{server.GetParameters()}&type={type}&size={size}&offset={offset}";
+            List<Tuple<string, string>> parameters = [Tuple.Create("type", type.ToString()), Tuple.Create("size", size.ToString()), Tuple.Create("offset", offset.ToString())];
             if (type == AlbumListType.byYear)
             {
-                parameters += $"&fromYear={fromYear}&toYear={toYear}";
+                parameters.AddRange([Tuple.Create("fromYear", fromYear.ToString()), Tuple.Create("toYear", toYear.ToString())]);
             }
             else if (type == AlbumListType.byGenre)
             {
-                parameters += $"&genre={genre}";
+                parameters.Add(Tuple.Create("genre", genre));
             }
-            var response = await Execute(server, parameters);
+            var response = await Execute(server, "/rest/getAlbumList2", parameters);
             var albums = new List<Album>();
             if (response != null && response.AlbumList2 != null && response.AlbumList2.Count > 0)
             {
@@ -40,8 +41,7 @@ namespace WinSonic.Model.Api
             var artists = new List<ArtistId3>();
             var albums = new List<Album>();
             var songs = new List<Song>();
-            string parameters = $"/rest/getStarred2{server.GetParameters()}";
-            var response = await Execute(server, parameters);
+            var response = await Execute(server, "/rest/getStarred2", []);
             if (response != null && response.Starred2 != null)
             {
                 artists.AddRange(response.Starred2.Artist);
@@ -53,14 +53,13 @@ namespace WinSonic.Model.Api
 
         public static async Task<ArtistInfo2> GetArtistInfo(Server server, string id)
         {
-            string parameters = $"/rest/getArtistInfo2{server.GetParameters()}&id={id}";
-            var response = await Execute(server, parameters);
+            var response = await Execute(server, "/rest/getArtistInfo2", [Tuple.Create("id", id)]);
             return response.ArtistInfo2;
         }
 
         public static async Task<List<DetailedArtist>> GetArtists(Server server)
         {
-            var rs = await Execute(server, $"/rest/getArtists{server.GetParameters()}");
+            var rs = await Execute(server, "/rest/getArtists", []);
             var artists = new List<DetailedArtist>();
             if (rs != null && rs.Artists != null)
             {
@@ -78,57 +77,55 @@ namespace WinSonic.Model.Api
 
         public static async Task<ArtistWithAlbumsId3> GetArtist(Server server, string id)
         {
-            var rs = await Execute(server, $"/rest/getArtist{server.GetParameters()}&id={id}");
+            var rs = await Execute(server, "/rest/getArtist", [Tuple.Create("id", id)]);
             return rs.Artist;
         }
 
         public static async Task<AlbumInfo> GetAlbumInfo(Server server, string id)
         {
-            var rs = await Execute(server, $"/rest/getAlbumInfo2{server.GetParameters()}&id={id}");
+            var rs = await Execute(server, "/rest/getAlbumInfo2", [Tuple.Create("id", id)]);
             return rs.AlbumInfo;
         }
 
         public static async Task<AlbumWithSongsId3> GetAlbum(Server server, string id)
         {
-            var rs = await Execute(server, $"/rest/getAlbum{server.GetParameters()}&id={id}");
+            var rs = await Execute(server, "/rest/getAlbum", [Tuple.Create("id", id)]);
             return rs.Album;
         }
 
         public static async Task<bool> Scrobble(Server server, string id)
         {
-            var rs = await Execute(server, $"/rest/scrobble{server.GetParameters()}&id={id}&submission=false");
+            var rs = await Execute(server, "/rest/scrobble", [Tuple.Create("id", id), Tuple.Create("submission", "false")]);
             return rs.Status == ResponseStatus.Ok;
         }
 
         public static async Task<bool> Star(Server server, bool star, StarType type, string id)
         {
-            string url = "/rest/" + (!star ? "un" : "") + $"star{server.GetParameters()}&";
-            url += type switch
+            string paramName = type switch
             {
                 StarType.Artist => "artistId",
                 StarType.Album => "albumId",
                 _ => "id",
             };
-            url += $"={id}";
-            var rs = await Execute(server, url);
+            var rs = await Execute(server, "/rest/" + (!star ? "un" : "") + "star", [Tuple.Create(paramName, id)]);
             return rs.Status == ResponseStatus.Ok;
         }
 
         public static async Task<List<Song>> Search(Server server, int songCount = 9999, int songOffset = 0)
         {
-            var rs = await Execute(server, $"/rest/search3{server.GetParameters()}&query=&songCount={songCount}&songOffset={songOffset}");
+            var rs = await Execute(server, "/rest/search3", [Tuple.Create("query", ""), Tuple.Create("songCount", songCount.ToString()), Tuple.Create("songOffset", songOffset.ToString())]);
             return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
         }
 
         public static async Task<List<Playlist>> GetPlaylists(Server server)
         {
-            var rs = await Execute(server, $"/rest/getPlaylists{server.GetParameters()}");
+            var rs = await Execute(server, "/rest/getPlaylists", []);
             return [.. rs.Playlists];
         }
 
         public static async Task<DetailedPlaylist> GetPlaylist(Server server, string id)
         {
-            var rs = await Execute(server, $"/rest/getPlaylist{server.GetParameters()}&id={id}");
+            var rs = await Execute(server, "/rest/getPlaylist", [Tuple.Create("id", id)]);
 
             if (rs.Playlist != null)
             {
@@ -148,12 +145,7 @@ namespace WinSonic.Model.Api
 
         public static async Task<Playlist> CreatePlaylist(Server server, string name, List<string> songIds)
         {
-            var url = $"/rest/createPlaylist{server.GetParameters()}&name={name}";
-            foreach (var id in songIds)
-            {
-                url += $"&songId={id}";
-            }
-            return (await Execute(server, url)).Playlist;
+            return (await Execute(server, "/rest/createPlaylist", [Tuple.Create("name", name), ..songIds.Select(s => Tuple.Create("songId", s))])).Playlist;
         }
 
         public static async Task UpdatePlaylist(DetailedPlaylist playlist)
@@ -164,42 +156,111 @@ namespace WinSonic.Model.Api
             {
                 songIndices.Add(i.ToString());
             }
-            await UpdatePlaylist(playlist.Server, playlist.Id, playlist.Name, playlist.Description, playlist.IsPublic, songIndices, playlist.Songs.Select(s => s.Id).ToList());
+            await UpdatePlaylist(playlist.Server, playlist.Id, playlist.Name, playlist.Description, playlist.IsPublic, songIndices, [.. playlist.Songs.Select(s => s.Id)]);
         }
 
         public static async Task UpdatePlaylist(Server server, string playlistId, string? name, string? comment, bool? isPublic, List<string> songIndicesToRemove, List<string> songIdsToAdd)
         {
-            var url = $"/rest/updatePlaylist{server.GetParameters()}&playlistId={playlistId}";
+            List<Tuple<string, string>> parameters = [Tuple.Create("playlistId", playlistId)];
             if (name != null)
             {
-                await Execute(server, $"{url}&name={name}");
+                parameters.Add(Tuple.Create("name", name));
             }
             if (comment != null)
             {
-                await Execute(server, $"{url}&comment={comment}");
+                parameters.Add(Tuple.Create("comment", comment));
             }
             if (isPublic != null)
             {
-                await Execute(server, $"{url}&public={((bool)isPublic ? "true" : "false")}");
+                parameters.Add(Tuple.Create("public", ((bool)isPublic ? "true" : "false")));
             }
-            foreach (var songIndex in songIndicesToRemove)
-            {
-                await Execute(server, $"{url}&songIndexToRemove={songIndex}");
-            }
-            foreach (var songId in songIdsToAdd)
-            {
-                await Execute(server, $"{url}&songIdToAdd={songId}");
-            }
+            parameters.AddRange([..songIndicesToRemove.Select(index => Tuple.Create("songIndexToRemove", index))]);
+            parameters.AddRange([..songIdsToAdd.Select(index => Tuple.Create("songIdToAdd", index))]);
+            await ExecuteLongUrl(server, "/rest/updatePlaylist", parameters, ["playlistId"]);
         }
 
         public static async Task DeletePlaylist(Server server, string id)
         {
-            await Execute(server, $"/rest/deletePlaylist{server.GetParameters()}&id={id}");
+            await Execute(server, "/rest/deletePlaylist", [Tuple.Create("id", id)]);
         }
 
-        private static async Task<Response> Execute(Server server, string url)
+        private static async Task<Response> Execute(Server server, string baseUrl, List<Tuple<string, string>> parameters)
         {
-            using HttpResponseMessage response = await server.Client.GetAsync(url);
+            var clientParams = server.GetParameters();
+            parameters.AddRange(clientParams);
+            var urls = GetUrls(baseUrl, parameters, [.. clientParams.Select(p => p.Item1)]);
+            if (urls.Count > 1)
+            {
+                string urlStrings = string.Join(";", urls);
+                throw new ArgumentException($"Url must be less than or equal to {URL_LIMIT} characters. '{urlStrings}'");
+            }
+            else
+            {
+                return await Execute(server.Client, urls[0]);
+            }
+        }
+
+        private static async Task<List<Response>> ExecuteLongUrl(Server server, string baseUrl, List<Tuple<string, string>> parameters, List<string> requiredParameters)
+        {
+            var clientParams = server.GetParameters();
+            parameters.AddRange(clientParams);
+            requiredParameters.AddRange([.. clientParams.Select(p => p.Item1)]);
+            var urls = GetUrls(baseUrl, parameters, requiredParameters);
+            if (urls.Count > 1)
+            {
+                var tasks = urls.Select(url => Execute(server.Client, url));
+                return [.. await Task.WhenAll(tasks)];
+            }
+            else
+            {
+                return [await Execute(server.Client, urls[0])];
+            }
+        }
+
+        private static List<string> GetUrls(string baseUrl, List<Tuple<string, string>> parameters, List<string> requiredParameters)
+        {
+            string baseUrlWithRequiredParams = $"{baseUrl}?";
+            List<string> usedParameters = [];
+            foreach (var parameter in requiredParameters)
+            {
+                var paramTuple = parameters.Where(p => string.Equals(p.Item1, parameter)).First();
+                baseUrlWithRequiredParams += GetParameterString(paramTuple) + "&";
+                usedParameters.Add(paramTuple.Item1);
+            }
+            baseUrlWithRequiredParams = baseUrlWithRequiredParams[..baseUrlWithRequiredParams.LastIndexOf('&')];
+
+            List<string> urls = [];
+            string currentUrl = $"{baseUrlWithRequiredParams}";
+            int i = 0;
+            while (usedParameters.Count < parameters.Count)
+            {
+                var param = parameters[i++];
+                if (!usedParameters.Contains(param.Item1))
+                {
+                    usedParameters.Add(param.Item1);
+                    string newUrl = $"{currentUrl}&{GetParameterString(param)}";
+                    if (newUrl.Length >= URL_LIMIT)
+                    {
+                        urls.Add(currentUrl);
+                        currentUrl = $"{baseUrlWithRequiredParams}&{GetParameterString(param)}";
+                    } else
+                    {
+                        currentUrl = newUrl;
+                    }
+                }
+            }
+            urls.Add(currentUrl);
+            return urls;
+        }
+
+        internal static string GetParameterString(Tuple<string, string> parameter)
+        {
+            return $"{parameter.Item1}={parameter.Item2}";
+        }
+
+        private static async Task<Response> Execute(HttpClient client, string url)
+        {
+            using HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             string rs = await response.Content.ReadAsStringAsync();
             return DeserializeXml(rs);

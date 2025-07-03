@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using WinSonic.Model.Api;
 using WinSonic.Model.Util;
 
 namespace WinSonic.Model
@@ -56,9 +57,14 @@ namespace WinSonic.Model
             return d;
         }
 
-        public string GetParameters()
+        public List<Tuple<string, string>> GetParameters()
         {
-            return $"?c=winsonic&u={Username}&t={PasswordHash}&s={Salt}&v=1.16.1";
+            return [Tuple.Create("c", "winsonic"), Tuple.Create("u", Username), Tuple.Create("t", PasswordHash), Tuple.Create("s", Salt), Tuple.Create("v", "1.16.1")];
+        }
+
+        public string GetStringParameters()
+        {
+            return $"?{string.Join('&', GetParameters().Select(SubsonicApiHelper.GetParameterString))}";
         }
 
         private Pair<string, string> GetPassword(string password)
