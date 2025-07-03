@@ -17,18 +17,12 @@ namespace WinSonic.Pages;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class SongsPage : Page, INotifyPropertyChanged
+public sealed partial class SongsPage : Page
 {
     private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
-    private CommandBarFlyout? _songFlyout;
-    private readonly App app = (App)Application.Current;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public SongsPage()
     {
@@ -44,8 +38,7 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
     {
-        _songFlyout = SongCommandBarFlyout.Create(songList[e.Index], PlayButton_Click, PlayNextButton_Click, AddToQueueButton_Click, FavouriteButton_Click, SongAddToPlaylistButton_Click);
-        return _songFlyout;
+        return SongCommandBarFlyout.Create(songList, songList[e.Index], GridTable, this);
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -104,42 +97,6 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
         GridTable.ShowContent();
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e, Song song)
-    {
-        PlayerPlaylist.Instance.ClearSongs();
-        PlayerPlaylist.Instance.AddSong(song);
-        _songFlyout?.Hide();
-    }
-
-    private void PlayNextButton_Click(object sender, RoutedEventArgs e, Song song)
-    {
-        PlayerPlaylist.Instance.AddSong(song, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
-        _songFlyout?.Hide();
-    }
-
-    private void AddToQueueButton_Click(object sender, RoutedEventArgs e, Song song)
-    {
-        PlayerPlaylist.Instance.AddSong(song);
-        _songFlyout?.Hide();
-    }
-
-    private async void FavouriteButton_Click(object sender, RoutedEventArgs e, Song song)
-    {
-        bool success = await SubsonicApiHelper.Star(song.Server, !song.IsFavourite, SubsonicApiHelper.StarType.Song, song.Id);
-        if (success)
-        {
-            song.IsFavourite = !song.IsFavourite;
-            var index = songList.IndexOf(song);
-            if (index != -1)
-            {
-                var rect = GridTable.GetRectangle(index);
-                GridTable.RectangleColors[rect] = song.IsFavourite;
-                rect.Fill = GridTable.Colors[song.IsFavourite].Fill;
-            }
-        }
-        _songFlyout?.Hide();
-    }
-
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
     {
         Refresh();
@@ -152,12 +109,5 @@ public sealed partial class SongsPage : Page, INotifyPropertyChanged
             GridTable.RectangleColors[row] = true;
             GridTable.GetRectangle(e.Index).Fill = GridTable.Colors[true].Fill;
         }
-    }
-
-    private async void SongAddToPlaylistButton_Click(object sender, RoutedEventArgs e, Song song)
-    {
-        _songFlyout?.Hide();
-        var result = AddToPlaylistDialog.CreateDialog(this, song);
-        AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
     }
 }

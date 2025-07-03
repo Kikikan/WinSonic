@@ -220,12 +220,12 @@ namespace WinSonic.Model.Api
         private static List<string> GetUrls(string baseUrl, List<Tuple<string, string>> parameters, List<string> requiredParameters)
         {
             string baseUrlWithRequiredParams = $"{baseUrl}?";
-            List<string> usedParameters = [];
+            List<Tuple<string, string>> usedParameters = [];
             foreach (var parameter in requiredParameters)
             {
                 var paramTuple = parameters.Where(p => string.Equals(p.Item1, parameter)).First();
                 baseUrlWithRequiredParams += GetParameterString(paramTuple) + "&";
-                usedParameters.Add(paramTuple.Item1);
+                usedParameters.Add(paramTuple);
             }
             baseUrlWithRequiredParams = baseUrlWithRequiredParams[..baseUrlWithRequiredParams.LastIndexOf('&')];
 
@@ -235,9 +235,9 @@ namespace WinSonic.Model.Api
             while (usedParameters.Count < parameters.Count)
             {
                 var param = parameters[i++];
-                if (!usedParameters.Contains(param.Item1))
+                if (!usedParameters.Contains(param))
                 {
-                    usedParameters.Add(param.Item1);
+                    usedParameters.Add(param);
                     string newUrl = $"{currentUrl}&{GetParameterString(param)}";
                     if (newUrl.Length >= URL_LIMIT)
                     {
