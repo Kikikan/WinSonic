@@ -170,5 +170,14 @@ namespace WinSonic.Pages
                 AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
             }
         }
+
+        private void SongGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)
+        {
+            if (Songs[e.Index].IsFavourite)
+            {
+                SongGridTable.RectangleColors[row] = true;
+                SongGridTable.GetRectangle(e.Index).Fill = SongGridTable.Colors[true].Fill;
+            }
+        }
     }
 }

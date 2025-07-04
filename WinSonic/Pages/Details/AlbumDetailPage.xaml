@@ -81,7 +81,10 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
             </CommandBar>
-            <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0" RowDoubleTapped="SongGridTable_RowDoubleTapped" RowRightTapped="SongGridTable_RowRightTapped"/>
+            <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0"
+                                RowDoubleTapped="SongGridTable_RowDoubleTapped"
+                                RowRightTapped="SongGridTable_RowRightTapped"
+                                RowAdded="SongGridTable_RowAdded"/>
         </Grid>
     </Grid>
 </Page>

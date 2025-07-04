@@ -160,5 +160,14 @@ namespace WinSonic.Pages.Details
                 }
             }
         }
+
+        private void SongGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)
+        {
+            if (Playlist.Songs[e.Index].IsFavourite)
+            {
+                SongGridTable.RectangleColors[row] = true;
+                SongGridTable.GetRectangle(e.Index).Fill = SongGridTable.Colors[true].Fill;
+            }
+        }
     }
 }
