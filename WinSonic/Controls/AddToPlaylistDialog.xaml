@@ -10,9 +10,10 @@
     xmlns:api="using:WinSonic.Model.Api"
     Loaded="UserControl_Loaded">
 
-    <StackPanel>
+    <StackPanel Width="300">
+        <InfoBar x:Name="NameExistsInfoBar" IsOpen="False" Severity="Warning" Title="Playlist with a similar name already exists."/>
         <TextBlock Text="Create new playlist" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 24 0 16"/>
-        <TextBox x:Name="NewNameTextBox" PlaceholderText="If you want a new playlist, type its name here." Margin="0 0 0 24"/>
+        <TextBox x:Name="NewNameTextBox" TextChanged="NewNameTextBox_TextChanged" PlaceholderText="If you want a new playlist, type its name here." Margin="0 0 0 24"/>
         <TextBlock Text="Add to existing" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 0 0 16"/>
         <ScrollViewer MaxHeight="300">
             <ListView x:Name="PlaylistList" SelectionMode="Multiple" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">

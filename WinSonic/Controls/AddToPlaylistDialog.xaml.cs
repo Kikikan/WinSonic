@@ -16,6 +16,9 @@ namespace WinSonic.Pages.Dialog
     public sealed partial class AddToPlaylistDialog : UserControl
     {
         public List<Song> Songs { get; private set; }
+        private bool playlistsQueried = false;
+        private bool nameAlreadyExistsShown = false;
+        public List<Playlist> Playlists { get; private set; } = [];
         public AddToPlaylistDialog(List<Song> songs)
         {
             InitializeComponent();
@@ -82,6 +85,26 @@ namespace WinSonic.Pages.Dialog
                 }
             }
             PlaylistList.ItemsSource = ownerPlaylists;
+        }
+
+        private async void NewNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!playlistsQueried)
+            {
+                var rs = await SubsonicApiHelper.GetPlaylists(Songs[0].Server);
+                Playlists.AddRange(rs);
+                playlistsQueried = true;
+            }
+            bool exists = Playlists.Exists(p => string.Equals(p.Name, NewNameTextBox.Text));
+            if (exists && !nameAlreadyExistsShown)
+            {
+                NameExistsInfoBar.IsOpen = true;
+                nameAlreadyExistsShown = true;
+            }
+            else if (!exists && NameExistsInfoBar.IsOpen)
+            {
+                NameExistsInfoBar.IsOpen = false;
+            }
         }
     }
 }
