@@ -87,19 +87,19 @@ namespace WinSonic.Controls
                 foreach (var s in songs)
                 {
                     PlayerPlaylist.Instance.AddSong(s);
-                    // TODO: PlayerPlaylist Queue song index change
                 }
+                PlayerPlaylist.Instance.PlaySong(songs.IndexOf(song));
             }
             else
             {
                 throw new ArgumentException("Unexpected GridTableDoubleClickBehavior value.");
             }
-                flyout.Hide();
+            flyout.Hide();
         }
 
         private static void PlayNext(CommandBarFlyout flyout, Song song)
         {
-            PlayerPlaylist.Instance.AddSong(song, (int)((App)Application.Current).MediaPlaybackList.CurrentItemIndex + 1);
+            PlayerPlaylist.Instance.AddNextSong(song);
             flyout.Hide();
         }
 

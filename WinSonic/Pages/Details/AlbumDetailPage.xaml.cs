@@ -148,7 +148,7 @@ namespace WinSonic.Pages
         {
             for (int i = Songs.Count - 1; i >= 0; i--)
             {
-                PlayerPlaylist.Instance.AddSong(Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+                PlayerPlaylist.Instance.AddNextSong(Songs[i]);
             }
         }
 

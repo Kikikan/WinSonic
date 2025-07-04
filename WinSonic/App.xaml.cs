@@ -35,6 +35,7 @@ namespace WinSonic
             MediaPlaybackList.CurrentItemChanged += MediaPlaybackList_CurrentItemChanged;
             PlayerPlaylist.Instance.SongAdded += Instance_SongAdded;
             PlayerPlaylist.Instance.SongRemoved += Instance_SongRemoved;
+            PlayerPlaylist.Instance.SongIndexChanged += Instance_SongIndexChanged;
             MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
             MediaPlayer.VolumeChanged += MediaPlayer_VolumeChanged;
             MediaPlayer.Volume = RoamingSettings.PlayerSettings.Volume;
@@ -55,7 +56,8 @@ namespace WinSonic
         {
             if (MediaPlaybackList.CurrentItem != null)
             {
-                var song = PlayerPlaylist.Instance.Songs[(int)MediaPlaybackList.CurrentItemIndex];
+                PlayerPlaylist.Instance.SongIndex = (int)MediaPlaybackList.CurrentItemIndex;
+                var song = PlayerPlaylist.Instance.Songs[PlayerPlaylist.Instance.SongIndex];
                 await SubsonicApiHelper.Scrobble(song.Server, song.Id);
             }
         }
@@ -97,6 +99,10 @@ namespace WinSonic
             }
         }
 
+        private void Instance_SongIndexChanged(object? sender, int index)
+        {
+            MediaPlaybackList.MoveTo((uint)index);
+        }
         private static MediaPlaybackItem CreatePlaybackItem(Song song)
         {
             var mediaSource = MediaSource.CreateFromUri(song.StreamUri);
