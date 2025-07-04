@@ -38,7 +38,7 @@ public sealed partial class SongsPage : Page
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
     {
-        return SongCommandBarFlyout.Create(songList, songList[e.Index], GridTable, this);
+        return SongCommandBarFlyout.Create(songList, songList[e.Index], GridTable, this, Model.Settings.BehaviorSettings.GridTableDoubleClickBehavior.LoadCurrent);
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -58,8 +58,7 @@ public sealed partial class SongsPage : Page
 
     private void GridTable_RowDoubleTapped(object sender, Control.RowEvent e)
     {
-        PlayerPlaylist.Instance.ClearSongs();
-        PlayerPlaylist.Instance.AddSong(songList[e.Index]);
+        SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), songList[e.Index], songList, Model.Settings.BehaviorSettings.GridTableDoubleClickBehavior.LoadCurrent);
     }
 
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)

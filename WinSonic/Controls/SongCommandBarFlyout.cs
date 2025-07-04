@@ -4,20 +4,23 @@ using System;
 using System.Collections.Generic;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Model.Settings;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Dialog;
+using WinSonic.Persistence;
 
 namespace WinSonic.Controls
 {
     public class SongCommandBarFlyout
     {
-        public delegate void SongEventHandler(CommandBarFlyout flyout, Song song);
-        public delegate void PageSongEventHandler(CommandBarFlyout flyout, Song song, Page page, GridTable gridTable, List<Song> songs);
+        private readonly RoamingSettings settings = ((App)Application.Current).RoamingSettings;
+
         public static CommandBarFlyout Create(
             List<Song> songs,
             Song song,
             GridTable gridTable,
-            Page page)
+            Page page,
+            BehaviorSettings.GridTableDoubleClickBehavior behavior)
         {
             var flyout = new CommandBarFlyout { AlwaysExpanded = true };
 
@@ -26,7 +29,7 @@ namespace WinSonic.Controls
                 Label = "Play Now",
                 Icon = new FontIcon { Glyph = "\uE768" }
             };
-            playNowButton.Click += (sender, e) => PlayNow(flyout, song);
+            playNowButton.Click += (sender, e) => PlayNow(flyout, song, songs, behavior);
 
             var playNextButton = new AppBarButton
             {
@@ -72,11 +75,26 @@ namespace WinSonic.Controls
             return flyout;
         }
 
-        private static void PlayNow(CommandBarFlyout flyout, Song song)
+        public static void PlayNow(CommandBarFlyout flyout, Song song, List<Song> songs, BehaviorSettings.GridTableDoubleClickBehavior behavior)
         {
             PlayerPlaylist.Instance.ClearSongs();
-            PlayerPlaylist.Instance.AddSong(song);
-            flyout.Hide();
+            if (behavior == BehaviorSettings.GridTableDoubleClickBehavior.LoadCurrent)
+            {
+                PlayerPlaylist.Instance.AddSong(song);
+            }
+            else if (behavior == BehaviorSettings.GridTableDoubleClickBehavior.LoadAll)
+            {
+                foreach (var s in songs)
+                {
+                    PlayerPlaylist.Instance.AddSong(s);
+                    // TODO: PlayerPlaylist Queue song index change
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Unexpected GridTableDoubleClickBehavior value.");
+            }
+                flyout.Hide();
         }
 
         private static void PlayNext(CommandBarFlyout flyout, Song song)

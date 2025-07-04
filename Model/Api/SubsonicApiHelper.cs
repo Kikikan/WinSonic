@@ -36,7 +36,7 @@ namespace WinSonic.Model.Api
             return albums;
         }
 
-        public static async Task<Trio<List<ArtistId3>, List<Album>, List<Song>>> GetStarred(Server server)
+        public static async Task<Tuple<List<ArtistId3>, List<Album>, List<Song>>> GetStarred(Server server)
         {
             var artists = new List<ArtistId3>();
             var albums = new List<Album>();
@@ -48,7 +48,7 @@ namespace WinSonic.Model.Api
                 albums.AddRange([.. response.Starred2.Album.Select(c => new Album(c, server))]);
                 songs.AddRange([.. response.Starred2.Song.Select(c => new Song(c, server))]);
             }
-            return new Trio<List<ArtistId3>, List<Album>, List<Song>>(artists, albums, songs);
+            return Tuple.Create(artists, albums, songs);
         }
 
         public static async Task<ArtistInfo2> GetArtistInfo(Server server, string id)

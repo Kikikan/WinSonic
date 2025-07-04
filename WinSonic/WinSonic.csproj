@@ -28,6 +28,7 @@
     <None Remove="Pages\Player\RelatedPage.xaml" />
     <None Remove="Pages\PlaylistPage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
+    <None Remove="Pages\Settings\BehaviorSettingsPage.xaml" />
     <None Remove="Pages\SongPage.xaml" />
     <None Remove="Pages\SongsPage.xaml" />
     <None Remove="Pages\UnsuccessfulConnectionDialog.xaml" />
@@ -101,6 +102,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Settings\BehaviorSettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\UpdatePlaylistDialog.xaml">

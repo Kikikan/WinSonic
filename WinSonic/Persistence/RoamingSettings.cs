@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Model.Settings;
 
 namespace WinSonic.Persistence
 {
@@ -22,15 +23,19 @@ namespace WinSonic.Persistence
 
         public PlayerSettings PlayerSettings { get; private set; }
 
-        public AlbumSettings AlbumSettings { get; private set; }
+        public AlbumSettings AlbumSettings { get; private set; } 
+
+        public BehaviorSettings BehaviorSettings { get; private set; }
 
         public RoamingSettings()
         {
             PlayerSettings = CreateSettings<PlayerSettings>("player");
             AlbumSettings = CreateSettings<AlbumSettings>("album");
+            BehaviorSettings = CreateSettings<BehaviorSettings>("behavior");
 
             KeyPair.Add(PlayerSettings, "player");
             KeyPair.Add(AlbumSettings, "album");
+            KeyPair.Add(BehaviorSettings, "behavior");
         }
 
         public T CreateSettings<T>(string key) where T : class

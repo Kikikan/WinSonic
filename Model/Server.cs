@@ -21,8 +21,8 @@ namespace WinSonic.Model
             Address = uri;
             Username = username;
             var pass = GetPassword(password);
-            PasswordHash = pass.Left;
-            Salt = pass.Right;
+            PasswordHash = pass.Item1;
+            Salt = pass.Item2;
             InitClient();
         }
 
@@ -67,14 +67,14 @@ namespace WinSonic.Model
             return $"?{string.Join('&', GetParameters().Select(SubsonicApiHelper.GetParameterString))}";
         }
 
-        private Pair<string, string> GetPassword(string password)
+        private Tuple<string, string> GetPassword(string password)
         {
             string salt = GenerateRandomAlphanumericString(32);
             MD5 md5 = MD5.Create();
 
             string hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(password + salt)));
             hash = hash.ToLower().Replace("-", "");
-            return new Pair<string, string>(hash, salt);
+            return Tuple.Create(hash, salt);
         }
 
         static string GenerateRandomAlphanumericString(int length)

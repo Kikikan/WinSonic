@@ -103,13 +103,12 @@ namespace WinSonic.Pages.Details
 
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-            PlayerPlaylist.Instance.ClearSongs();
-            PlayerPlaylist.Instance.AddSong(Playlist.Songs[e.Index]);
+            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Playlist.Songs[e.Index], [..Playlist.Songs], app.RoamingSettings.BehaviorSettings.PlaylistDoubleClickBehavior);
         }
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
         {
-            return SongCommandBarFlyout.Create(Playlist.Playlist.Songs, Playlist.Songs[e.Index], SongGridTable, this);
+            return SongCommandBarFlyout.Create(Playlist.Playlist.Songs, Playlist.Songs[e.Index], SongGridTable, this, app.RoamingSettings.BehaviorSettings.PlaylistDoubleClickBehavior);
         }
 
         private async void EditButton_Click(object sender, RoutedEventArgs e)
