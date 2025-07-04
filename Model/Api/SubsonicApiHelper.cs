@@ -161,7 +161,7 @@ namespace WinSonic.Model.Api
 
         public static async Task UpdatePlaylist(Server server, string playlistId, string? name, string? comment, bool? isPublic, List<string> songIndicesToRemove, List<string> songIdsToAdd)
         {
-            List<(string, string)> parameters = [("playlistId", playlistId)];
+            List<(string, string)> parameters = [];
             if (name != null)
             {
                 parameters.Add(("name", name));
@@ -176,7 +176,7 @@ namespace WinSonic.Model.Api
             }
             parameters.AddRange([..songIndicesToRemove.Select(index => ("songIndexToRemove", index))]);
             parameters.AddRange([..songIdsToAdd.Select(index => ("songIdToAdd", index))]);
-            await ExecuteLongUrl(server, "/rest/updatePlaylist", parameters, ["playlistId"]);
+            await ExecuteLongUrl(server, "/rest/updatePlaylist", [("playlistId", playlistId)], parameters);
         }
 
         public static async Task DeletePlaylist(Server server, string id)
@@ -186,9 +186,7 @@ namespace WinSonic.Model.Api
 
         private static async Task<Response> Execute(Server server, string baseUrl, List<(string, string)> parameters)
         {
-            var clientParams = server.GetParameters();
-            parameters.AddRange(clientParams);
-            var urls = GetUrls(baseUrl, parameters, [.. clientParams.Select(p => p.Item1)]);
+            var urls = GetUrls(baseUrl, server.GetParameters(), parameters);
             if (urls.Count > 1)
             {
                 string urlStrings = string.Join(";", urls);
@@ -200,12 +198,11 @@ namespace WinSonic.Model.Api
             }
         }
 
-        private static async Task<List<Response>> ExecuteLongUrl(Server server, string baseUrl, List<(string, string)> parameters, List<string> requiredParameters)
+        private static async Task<List<Response>> ExecuteLongUrl(Server server, string baseUrl, List<(string, string)> requiredParameters,
+                                                                 List<(string, string)> optionalParameters)
         {
-            var clientParams = server.GetParameters();
-            parameters.AddRange(clientParams);
-            requiredParameters.AddRange([.. clientParams.Select(p => p.Item1)]);
-            var urls = GetUrls(baseUrl, parameters, requiredParameters);
+            requiredParameters.AddRange(server.GetParameters());
+            var urls = GetUrls(baseUrl, requiredParameters, optionalParameters);
             if (urls.Count > 1)
             {
                 var tasks = urls.Select(url => Execute(server.Client, url));
@@ -217,36 +214,28 @@ namespace WinSonic.Model.Api
             }
         }
 
-        private static List<string> GetUrls(string baseUrl, List<(string, string)> parameters, List<string> requiredParameters)
+        private static List<string> GetUrls(string baseUrl, List<(string, string)> requiredParameters, List<(string, string)> optionalParameters)
         {
             string baseUrlWithRequiredParams = $"{baseUrl}?";
-            List<(string, string)> usedParameters = [];
             foreach (var parameter in requiredParameters)
             {
-                var paramTuple = parameters.Where(p => string.Equals(p.Item1, parameter)).First();
-                baseUrlWithRequiredParams += GetParameterString(paramTuple) + "&";
-                usedParameters.Add(paramTuple);
+                baseUrlWithRequiredParams += GetParameterString(parameter) + "&";
             }
             baseUrlWithRequiredParams = baseUrlWithRequiredParams[..baseUrlWithRequiredParams.LastIndexOf('&')];
 
             List<string> urls = [];
             string currentUrl = $"{baseUrlWithRequiredParams}";
-            int i = 0;
-            while (usedParameters.Count < parameters.Count)
+            foreach (var parameter in optionalParameters)
             {
-                var param = parameters[i++];
-                if (!usedParameters.Contains(param))
+                string newUrl = $"{currentUrl}&{GetParameterString(parameter)}";
+                if (newUrl.Length >= URL_LIMIT)
                 {
-                    usedParameters.Add(param);
-                    string newUrl = $"{currentUrl}&{GetParameterString(param)}";
-                    if (newUrl.Length >= URL_LIMIT)
-                    {
-                        urls.Add(currentUrl);
-                        currentUrl = $"{baseUrlWithRequiredParams}&{GetParameterString(param)}";
-                    } else
-                    {
-                        currentUrl = newUrl;
-                    }
+                    urls.Add(currentUrl);
+                    currentUrl = $"{baseUrlWithRequiredParams}&{GetParameterString(parameter)}";
+                }
+                else
+                {
+                    currentUrl = newUrl;
                 }
             }
             urls.Add(currentUrl);
