@@ -15,14 +15,14 @@ namespace WinSonic.Model.Api
 
         public static async Task<List<Album>> GetAlbumList(Server server, AlbumListType type, int size = 10, int offset = 0, int fromYear = -1, int toYear = -1, string genre = "")
         {
-            List<Tuple<string, string>> parameters = [Tuple.Create("type", type.ToString()), Tuple.Create("size", size.ToString()), Tuple.Create("offset", offset.ToString())];
+            List<(string, string)> parameters = [("type", type.ToString()), ("size", size.ToString()), ("offset", offset.ToString())];
             if (type == AlbumListType.byYear)
             {
-                parameters.AddRange([Tuple.Create("fromYear", fromYear.ToString()), Tuple.Create("toYear", toYear.ToString())]);
+                parameters.AddRange([("fromYear", fromYear.ToString()), ("toYear", toYear.ToString())]);
             }
             else if (type == AlbumListType.byGenre)
             {
-                parameters.Add(Tuple.Create("genre", genre));
+                parameters.Add(("genre", genre));
             }
             var response = await Execute(server, "/rest/getAlbumList2", parameters);
             var albums = new List<Album>();
@@ -36,7 +36,7 @@ namespace WinSonic.Model.Api
             return albums;
         }
 
-        public static async Task<Tuple<List<ArtistId3>, List<Album>, List<Song>>> GetStarred(Server server)
+        public static async Task<(List<ArtistId3>, List<Album>, List<Song>)> GetStarred(Server server)
         {
             var artists = new List<ArtistId3>();
             var albums = new List<Album>();
@@ -48,12 +48,12 @@ namespace WinSonic.Model.Api
                 albums.AddRange([.. response.Starred2.Album.Select(c => new Album(c, server))]);
                 songs.AddRange([.. response.Starred2.Song.Select(c => new Song(c, server))]);
             }
-            return Tuple.Create(artists, albums, songs);
+            return (artists, albums, songs);
         }
 
         public static async Task<ArtistInfo2> GetArtistInfo(Server server, string id)
         {
-            var response = await Execute(server, "/rest/getArtistInfo2", [Tuple.Create("id", id)]);
+            var response = await Execute(server, "/rest/getArtistInfo2", [("id", id)]);
             return response.ArtistInfo2;
         }
 
@@ -77,25 +77,25 @@ namespace WinSonic.Model.Api
 
         public static async Task<ArtistWithAlbumsId3> GetArtist(Server server, string id)
         {
-            var rs = await Execute(server, "/rest/getArtist", [Tuple.Create("id", id)]);
+            var rs = await Execute(server, "/rest/getArtist", [("id", id)]);
             return rs.Artist;
         }
 
         public static async Task<AlbumInfo> GetAlbumInfo(Server server, string id)
         {
-            var rs = await Execute(server, "/rest/getAlbumInfo2", [Tuple.Create("id", id)]);
+            var rs = await Execute(server, "/rest/getAlbumInfo2", [("id", id)]);
             return rs.AlbumInfo;
         }
 
         public static async Task<AlbumWithSongsId3> GetAlbum(Server server, string id)
         {
-            var rs = await Execute(server, "/rest/getAlbum", [Tuple.Create("id", id)]);
+            var rs = await Execute(server, "/rest/getAlbum", [("id", id)]);
             return rs.Album;
         }
 
         public static async Task<bool> Scrobble(Server server, string id)
         {
-            var rs = await Execute(server, "/rest/scrobble", [Tuple.Create("id", id), Tuple.Create("submission", "false")]);
+            var rs = await Execute(server, "/rest/scrobble", [("id", id), ("submission", "false")]);
             return rs.Status == ResponseStatus.Ok;
         }
 
@@ -107,13 +107,13 @@ namespace WinSonic.Model.Api
                 StarType.Album => "albumId",
                 _ => "id",
             };
-            var rs = await Execute(server, "/rest/" + (!star ? "un" : "") + "star", [Tuple.Create(paramName, id)]);
+            var rs = await Execute(server, "/rest/" + (!star ? "un" : "") + "star", [(paramName, id)]);
             return rs.Status == ResponseStatus.Ok;
         }
 
         public static async Task<List<Song>> Search(Server server, int songCount = 9999, int songOffset = 0)
         {
-            var rs = await Execute(server, "/rest/search3", [Tuple.Create("query", ""), Tuple.Create("songCount", songCount.ToString()), Tuple.Create("songOffset", songOffset.ToString())]);
+            var rs = await Execute(server, "/rest/search3", [("query", ""), ("songCount", songCount.ToString()), ("songOffset", songOffset.ToString())]);
             return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
         }
 
@@ -125,7 +125,7 @@ namespace WinSonic.Model.Api
 
         public static async Task<DetailedPlaylist> GetPlaylist(Server server, string id)
         {
-            var rs = await Execute(server, "/rest/getPlaylist", [Tuple.Create("id", id)]);
+            var rs = await Execute(server, "/rest/getPlaylist", [("id", id)]);
 
             if (rs.Playlist != null)
             {
@@ -145,7 +145,7 @@ namespace WinSonic.Model.Api
 
         public static async Task<Playlist> CreatePlaylist(Server server, string name, List<string> songIds)
         {
-            return (await Execute(server, "/rest/createPlaylist", [Tuple.Create("name", name), ..songIds.Select(s => Tuple.Create("songId", s))])).Playlist;
+            return (await Execute(server, "/rest/createPlaylist", [("name", name), ..songIds.Select(s => ("songId", s))])).Playlist;
         }
 
         public static async Task UpdatePlaylist(DetailedPlaylist playlist)
@@ -161,30 +161,30 @@ namespace WinSonic.Model.Api
 
         public static async Task UpdatePlaylist(Server server, string playlistId, string? name, string? comment, bool? isPublic, List<string> songIndicesToRemove, List<string> songIdsToAdd)
         {
-            List<Tuple<string, string>> parameters = [Tuple.Create("playlistId", playlistId)];
+            List<(string, string)> parameters = [("playlistId", playlistId)];
             if (name != null)
             {
-                parameters.Add(Tuple.Create("name", name));
+                parameters.Add(("name", name));
             }
             if (comment != null)
             {
-                parameters.Add(Tuple.Create("comment", comment));
+                parameters.Add(("comment", comment));
             }
             if (isPublic != null)
             {
-                parameters.Add(Tuple.Create("public", ((bool)isPublic ? "true" : "false")));
+                parameters.Add(("public", ((bool)isPublic ? "true" : "false")));
             }
-            parameters.AddRange([..songIndicesToRemove.Select(index => Tuple.Create("songIndexToRemove", index))]);
-            parameters.AddRange([..songIdsToAdd.Select(index => Tuple.Create("songIdToAdd", index))]);
+            parameters.AddRange([..songIndicesToRemove.Select(index => ("songIndexToRemove", index))]);
+            parameters.AddRange([..songIdsToAdd.Select(index => ("songIdToAdd", index))]);
             await ExecuteLongUrl(server, "/rest/updatePlaylist", parameters, ["playlistId"]);
         }
 
         public static async Task DeletePlaylist(Server server, string id)
         {
-            await Execute(server, "/rest/deletePlaylist", [Tuple.Create("id", id)]);
+            await Execute(server, "/rest/deletePlaylist", [("id", id)]);
         }
 
-        private static async Task<Response> Execute(Server server, string baseUrl, List<Tuple<string, string>> parameters)
+        private static async Task<Response> Execute(Server server, string baseUrl, List<(string, string)> parameters)
         {
             var clientParams = server.GetParameters();
             parameters.AddRange(clientParams);
@@ -200,7 +200,7 @@ namespace WinSonic.Model.Api
             }
         }
 
-        private static async Task<List<Response>> ExecuteLongUrl(Server server, string baseUrl, List<Tuple<string, string>> parameters, List<string> requiredParameters)
+        private static async Task<List<Response>> ExecuteLongUrl(Server server, string baseUrl, List<(string, string)> parameters, List<string> requiredParameters)
         {
             var clientParams = server.GetParameters();
             parameters.AddRange(clientParams);
@@ -217,10 +217,10 @@ namespace WinSonic.Model.Api
             }
         }
 
-        private static List<string> GetUrls(string baseUrl, List<Tuple<string, string>> parameters, List<string> requiredParameters)
+        private static List<string> GetUrls(string baseUrl, List<(string, string)> parameters, List<string> requiredParameters)
         {
             string baseUrlWithRequiredParams = $"{baseUrl}?";
-            List<Tuple<string, string>> usedParameters = [];
+            List<(string, string)> usedParameters = [];
             foreach (var parameter in requiredParameters)
             {
                 var paramTuple = parameters.Where(p => string.Equals(p.Item1, parameter)).First();
@@ -253,7 +253,7 @@ namespace WinSonic.Model.Api
             return urls;
         }
 
-        internal static string GetParameterString(Tuple<string, string> parameter)
+        internal static string GetParameterString((string, string) parameter)
         {
             return $"{parameter.Item1}={parameter.Item2}";
         }

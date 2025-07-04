@@ -25,22 +25,22 @@ namespace WinSonic.Pages.Dialog
             Songs = songs;
         }
 
-        public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, Song song)
+        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, Song song)
         {
             return CreateDialog("song", page, [song]);
         }
 
-        public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, DetailedArtist artist, List<Song> songs)
+        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, DetailedArtist artist, List<Song> songs)
         {
             return CreateDialog($"{artist.Name}'s currently available songs", page, songs);
         }
 
-        public static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(Page page, Album album, List<Song> songs)
+        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, Album album, List<Song> songs)
         {
             return CreateDialog($"currently available songs of {album.Title}", page, songs);
         }
 
-        private static Tuple<ContentDialog, AddToPlaylistDialog> CreateDialog(string obj, Page page, List<Song> songs)
+        private static (ContentDialog, AddToPlaylistDialog) CreateDialog(string obj, Page page, List<Song> songs)
         {
             var content = new AddToPlaylistDialog(songs);
             ContentDialog dialog = new()

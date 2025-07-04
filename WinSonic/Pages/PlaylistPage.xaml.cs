@@ -31,10 +31,10 @@ namespace WinSonic.Pages
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
             PlaylistGridTable.Columns = [
-                new Tuple<string, GridLength>("Name", new GridLength(4, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Description", new GridLength(3, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Owner", new GridLength(2, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Tracks", new GridLength(80, GridUnitType.Pixel))
+                ("Name", new GridLength(4, GridUnitType.Star)),
+                ("Description", new GridLength(3, GridUnitType.Star)),
+                ("Owner", new GridLength(2, GridUnitType.Star)),
+                ("Tracks", new GridLength(80, GridUnitType.Pixel))
             ];
         }
         protected override async void OnNavigatedTo(NavigationEventArgs e)

@@ -57,9 +57,9 @@ namespace WinSonic.Model
             return d;
         }
 
-        public List<Tuple<string, string>> GetParameters()
+        public List<(string, string)> GetParameters()
         {
-            return [Tuple.Create("c", "winsonic"), Tuple.Create("u", Username), Tuple.Create("t", PasswordHash), Tuple.Create("s", Salt), Tuple.Create("v", "1.16.1")];
+            return [("c", "winsonic"), ("u", Username), ("t", PasswordHash), ("s", Salt), ("v", "1.16.1")];
         }
 
         public string GetStringParameters()
@@ -67,14 +67,14 @@ namespace WinSonic.Model
             return $"?{string.Join('&', GetParameters().Select(SubsonicApiHelper.GetParameterString))}";
         }
 
-        private Tuple<string, string> GetPassword(string password)
+        private (string, string) GetPassword(string password)
         {
             string salt = GenerateRandomAlphanumericString(32);
             MD5 md5 = MD5.Create();
 
             string hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(password + salt)));
             hash = hash.ToLower().Replace("-", "");
-            return Tuple.Create(hash, salt);
+            return (hash, salt);
         }
 
         static string GenerateRandomAlphanumericString(int length)

@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI;
@@ -17,8 +16,8 @@ namespace WinSonic.Pages.Control
 {
     public sealed partial class GridTable : UserControl
     {
-        private List<Tuple<string, GridLength>> _columns = [];
-        public List<Tuple<string, GridLength>> Columns { get => _columns; set => _columns = value; }
+        private List<(string, GridLength)> _columns = [];
+        public List<(string, GridLength)> Columns { get => _columns; set => _columns = value; }
         private int _selectedIndex = -1;
         public int SelectedIndex { get => _selectedIndex; set { ChangeSelection(value, this); } }
 
