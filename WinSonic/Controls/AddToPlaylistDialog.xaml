@@ -14,12 +14,14 @@
         <TextBlock Text="Create new playlist" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 24 0 16"/>
         <TextBox x:Name="NewNameTextBox" PlaceholderText="If you want a new playlist, type its name here." Margin="0 0 0 24"/>
         <TextBlock Text="Add to existing" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 0 0 16"/>
-        <ListView x:Name="PlaylistList" SelectionMode="Multiple" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="api:Playlist">
-                    <TextBlock Text="{x:Bind Name}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <ScrollViewer MaxHeight="300">
+            <ListView x:Name="PlaylistList" SelectionMode="Multiple" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="api:Playlist">
+                        <TextBlock Text="{x:Bind Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
     </StackPanel>
 </UserControl>
