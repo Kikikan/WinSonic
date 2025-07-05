@@ -66,11 +66,6 @@ namespace WinSonic.Pages
             }
         }
 
-        private CommandBarFlyout? PlaylistGridTable_RowRightTapped(object sender, RowEvent e)
-        {
-            return null;
-        }
-
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!initialized)

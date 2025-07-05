@@ -25,7 +25,6 @@
         </CommandBar>
         <control:GridTable x:Name="PlaylistGridTable" Grid.Row="1" Margin="0 0 20 0"
                            RowTapped="PlaylistGridTable_RowTapped"
-                           RowAdded="PlaylistGridTable_RowAdded"
-                           RowRightTapped="PlaylistGridTable_RowRightTapped"/>
+                           RowAdded="PlaylistGridTable_RowAdded"/>
     </Grid>
 </Page>
