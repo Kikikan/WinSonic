@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
 using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Model.Settings;
 
 namespace WinSonic.Persistence
 {
     internal class RoamingSettings
     {
-        public List<Server> Servers { get; } = [];
+        private readonly List<Server> _servers = [];
+        public ImmutableList<Server> ActiveServers { get { return _servers.Where(s => s.Enabled).ToImmutableList(); } }
+        public ImmutableList<Server> Servers { get => _servers.ToImmutableList(); }
 
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
@@ -21,13 +25,17 @@ namespace WinSonic.Persistence
 
         public AlbumSettings AlbumSettings { get; private set; }
 
+        public BehaviorSettings BehaviorSettings { get; private set; }
+
         public RoamingSettings()
         {
             PlayerSettings = CreateSettings<PlayerSettings>("player");
             AlbumSettings = CreateSettings<AlbumSettings>("album");
+            BehaviorSettings = CreateSettings<BehaviorSettings>("behavior");
 
             KeyPair.Add(PlayerSettings, "player");
             KeyPair.Add(AlbumSettings, "album");
+            KeyPair.Add(BehaviorSettings, "behavior");
         }
 
         public T CreateSettings<T>(string key) where T : class
@@ -91,7 +99,7 @@ namespace WinSonic.Persistence
                                 disabledServers.Add(server);
                             }
                         }
-                        Servers.Add(server);
+                        _servers.Add(server);
                     }
                 }
             }
@@ -125,7 +133,7 @@ namespace WinSonic.Persistence
 
         public bool AddServer(Server server)
         {
-            bool found = Servers
+            bool found = _servers
                 .Where(s => s.Address == server.Address)
                 .Where(s => s.Username == server.Username)
                 .Any();
@@ -134,14 +142,14 @@ namespace WinSonic.Persistence
             {
                 return false;
             }
-            Servers.Add(server);
+            _servers.Add(server);
             return true;
         }
 
         public void SaveServers()
         {
             var list = new List<Dictionary<string, string>>();
-            foreach (var server in Servers)
+            foreach (var server in _servers)
             {
                 list.Add(server.ToDictionary());
             }

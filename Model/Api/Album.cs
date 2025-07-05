@@ -12,7 +12,7 @@
             Title = title;
             Artist = artist;
             IsFavourite = isFavourite;
-            CoverImageUrl = new Uri($"{server.Address}/rest/getCoverArt{server.GetParameters()}&id={id}");
+            CoverImageUrl = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={id}");
         }
 
         public Album(AlbumId3 album, Server server) : this(album.Id, album.Name, album.Artist, album.StarredSpecified, server)

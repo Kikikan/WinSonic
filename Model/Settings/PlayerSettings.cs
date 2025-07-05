@@ -1,4 +1,4 @@
-﻿namespace WinSonic.Model
+﻿namespace WinSonic.Model.Settings
 {
     public class PlayerSettings : ISetting
     {

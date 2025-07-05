@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="WinSonic.Pages.Dialog.AddToPlaylistDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages.Dialog"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:api="using:WinSonic.Model.Api"
+    Loaded="UserControl_Loaded">
+
+    <StackPanel Width="300">
+        <InfoBar x:Name="NameExistsInfoBar" IsOpen="False" Severity="Warning" Title="Playlist with a similar name already exists."/>
+        <TextBlock Text="Create new playlist" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 24 0 16"/>
+        <TextBox x:Name="NewNameTextBox" TextChanged="NewNameTextBox_TextChanged" PlaceholderText="If you want a new playlist, type its name here." Margin="0 0 0 24"/>
+        <TextBlock Text="Add to existing" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0 0 0 16"/>
+        <ScrollViewer MaxHeight="300">
+            <ListView x:Name="PlaylistList" SelectionMode="Multiple" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="api:Playlist">
+                        <TextBlock Text="{x:Bind Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+    </StackPanel>
+</UserControl>

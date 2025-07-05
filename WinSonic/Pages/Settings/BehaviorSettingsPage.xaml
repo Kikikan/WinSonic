@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinSonic.Pages.Settings.BehaviorSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Spacing="16">
+                <TextBlock Text="GridTable Settings" Style="{StaticResource TitleTextBlockStyle}"/>
+                <TextBlock Text="Album" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <ComboBox x:Name="AlbumGridTableComboBox" Header="Play Now / Double Click" SelectionChanged="AlbumGridTableComboBox_SelectionChanged" Width="192"/>
+                <TextBlock Text="Playlist" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <ComboBox x:Name="PlaylistGridTableComboBox" Header="Play Now / Double Click" SelectionChanged="PlaylistGridTableComboBox_SelectionChanged" Width="192"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

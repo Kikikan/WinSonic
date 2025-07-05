@@ -6,10 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
+using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,16 +31,15 @@ namespace WinSonic.Pages
         public InfoWithPicture? DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = [];
         private readonly App app = (App)Application.Current;
-        private Song? RightClickedSong;
 
         public AlbumDetailPage()
         {
             InitializeComponent();
             SongGridTable.Columns = [
-                new Tuple<string, GridLength>("Track", new GridLength(80, GridUnitType.Pixel)),
-                new Tuple<string, GridLength>("Title", new GridLength(4, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Artist", new GridLength(3, GridUnitType.Star)),
-                new Tuple<string, GridLength>("Time", new GridLength(80, GridUnitType.Pixel))
+                ("Track", new GridLength(80, GridUnitType.Pixel)),
+                ("Title", new GridLength(4, GridUnitType.Star)),
+                ("Artist", new GridLength(3, GridUnitType.Star)),
+                ("Time", new GridLength(80, GridUnitType.Pixel))
             ];
         }
 
@@ -146,63 +148,36 @@ namespace WinSonic.Pages
         {
             for (int i = Songs.Count - 1; i >= 0; i--)
             {
-                PlayerPlaylist.Instance.AddSong(Songs[i], (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+                PlayerPlaylist.Instance.AddNextSong(Songs[i]);
             }
         }
 
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-            PlayerPlaylist.Instance.ClearSongs();
-            PlayerPlaylist.Instance.AddSong(Songs[e.Index]);
+            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Songs[e.Index], [.. Songs], app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
         }
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
         {
-            RightClickedSong = Songs[e.Index];
-            OnPropertyChanged(nameof(RightClickedSong));
-            return SongFlyout;
+            return SongCommandBarFlyout.Create([.. Songs], Songs[e.Index], SongGridTable, this, app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
         }
 
-        private void SongPlayButton_Click(object sender, RoutedEventArgs e)
+        private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
         {
-            if (RightClickedSong != null)
+            if (DetailedObject?.ApiObject is Album album)
             {
-                PlayerPlaylist.Instance.ClearSongs();
-                PlayerPlaylist.Instance.AddSong(RightClickedSong);
+                var result = AddToPlaylistDialog.CreateDialog(this, album, Songs.ToList());
+                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
             }
-            SongFlyout.Hide();
         }
 
-        private void SongPlayNextButton_Click(object sender, RoutedEventArgs e)
+        private void SongGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)
         {
-            if (RightClickedSong != null)
+            if (Songs[e.Index].IsFavourite)
             {
-                PlayerPlaylist.Instance.AddSong(RightClickedSong, (int)app.MediaPlaybackList.CurrentItemIndex + 1);
+                SongGridTable.RectangleColors[row] = true;
+                SongGridTable.GetRectangle(e.Index).Fill = SongGridTable.Colors[true].Fill;
             }
-            SongFlyout.Hide();
-        }
-
-        private void SongAddToQueueButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (RightClickedSong != null)
-            {
-                PlayerPlaylist.Instance.AddSong(RightClickedSong);
-            }
-            SongFlyout.Hide();
-        }
-
-        private async void SongFavouriteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (RightClickedSong != null)
-            {
-                bool success = await SubsonicApiHelper.Star(RightClickedSong.Server, !RightClickedSong.IsFavourite, SubsonicApiHelper.StarType.Song, RightClickedSong.Id);
-                if (success)
-                {
-                    RightClickedSong.IsFavourite = !RightClickedSong.IsFavourite;
-                    OnPropertyChanged(nameof(RightClickedSong));
-                }
-            }
-            SongFlyout.Hide();
         }
     }
 }

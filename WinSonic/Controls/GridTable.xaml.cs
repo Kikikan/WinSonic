@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI;
@@ -17,8 +16,8 @@ namespace WinSonic.Pages.Control
 {
     public sealed partial class GridTable : UserControl
     {
-        private List<Tuple<string, GridLength>> _columns = [];
-        public List<Tuple<string, GridLength>> Columns { get => _columns; set => _columns = value; }
+        private List<(string, GridLength)> _columns = [];
+        public List<(string, GridLength)> Columns { get => _columns; set => _columns = value; }
         private int _selectedIndex = -1;
         public int SelectedIndex { get => _selectedIndex; set { ChangeSelection(value, this); } }
 
@@ -47,6 +46,7 @@ namespace WinSonic.Pages.Control
         public delegate void RowAddedHandler(Rectangle row, RowEvent e);
 
         public event RowEventHandler? SelectionChanged;
+        public event RowEventHandler? RowTapped;
         public event RowEventHandler? RowDoubleTapped;
         public event RowRightTapEventHandler? RowRightTapped;
         public event RowAddedHandler? RowAdded;
@@ -288,6 +288,7 @@ namespace WinSonic.Pages.Control
             if (sender is Rectangle rect)
             {
                 ChangeSelection(_orderedToRawIndeces[rowIndices[rect]], sender);
+                RowTapped?.Invoke(sender, new(_orderedToRawIndeces[rowIndices[rect]]));
             }
         }
 
@@ -375,8 +376,8 @@ namespace WinSonic.Pages.Control
 
     public sealed class AccentBrush : IGridTableRowBrush
     {
-        public Brush Fill { get; } = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark2"]);
-        public Brush HoverFill { get; } = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark1"]);
-        public Brush Stroke { get; } = (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"];
+        public Brush Fill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark2"]); }
+        public Brush HoverFill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark1"]); }
+        public Brush Stroke { get => (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"]; }
     }
 }
