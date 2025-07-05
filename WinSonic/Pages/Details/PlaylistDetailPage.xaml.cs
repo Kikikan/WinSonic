@@ -3,14 +3,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
-using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -103,7 +100,7 @@ namespace WinSonic.Pages.Details
 
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Playlist.Songs[e.Index], [..Playlist.Songs], app.RoamingSettings.BehaviorSettings.PlaylistDoubleClickBehavior);
+            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Playlist.Songs[e.Index], [.. Playlist.Songs], app.RoamingSettings.BehaviorSettings.PlaylistDoubleClickBehavior);
         }
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)

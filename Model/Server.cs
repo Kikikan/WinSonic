@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using WinSonic.Model.Api;
-using WinSonic.Model.Util;
 
 namespace WinSonic.Model
 {

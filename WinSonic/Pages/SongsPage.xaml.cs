@@ -2,11 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
-using WinSonic.Model.Player;
-using WinSonic.Pages.Dialog;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,

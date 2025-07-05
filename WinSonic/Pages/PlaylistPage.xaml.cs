@@ -29,7 +29,7 @@ namespace WinSonic.Pages
         public PlaylistPage()
         {
             InitializeComponent();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             PlaylistGridTable.Columns = [
                 ("Name", new GridLength(4, GridUnitType.Star)),
                 ("Description", new GridLength(3, GridUnitType.Star)),
@@ -47,7 +47,7 @@ namespace WinSonic.Pages
             }
         }
 
-        private void PlaylistGridTable_RowDoubleTapped(object sender, RowEvent e)
+        private void PlaylistGridTable_RowTapped(object sender, RowEvent e)
         {
             if (Application.Current is App app)
             {

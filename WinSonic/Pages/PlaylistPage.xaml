@@ -24,7 +24,7 @@
             </AppBarButton>
         </CommandBar>
         <control:GridTable x:Name="PlaylistGridTable" Grid.Row="1" Margin="0 0 20 0"
-                           RowDoubleTapped="PlaylistGridTable_RowDoubleTapped"
+                           RowTapped="PlaylistGridTable_RowTapped"
                            RowAdded="PlaylistGridTable_RowAdded"
                            RowRightTapped="PlaylistGridTable_RowRightTapped"/>
     </Grid>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Media.Playlists;
+﻿using System.Collections.ObjectModel;
 using WinSonic.Model.Api;
 
 namespace WinSonic.ViewModel

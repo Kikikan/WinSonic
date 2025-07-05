@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using WinSonic.Model.Util;
 
 namespace WinSonic.Model.Api
 {
@@ -145,7 +144,7 @@ namespace WinSonic.Model.Api
 
         public static async Task<Playlist> CreatePlaylist(Server server, string name, List<string> songIds)
         {
-            return (await Execute(server, "/rest/createPlaylist", [("name", name), ..songIds.Select(s => ("songId", s))])).Playlist;
+            return (await Execute(server, "/rest/createPlaylist", [("name", name), .. songIds.Select(s => ("songId", s))])).Playlist;
         }
 
         public static async Task UpdatePlaylist(DetailedPlaylist playlist)
@@ -174,8 +173,8 @@ namespace WinSonic.Model.Api
             {
                 parameters.Add(("public", ((bool)isPublic ? "true" : "false")));
             }
-            parameters.AddRange([..songIndicesToRemove.Select(index => ("songIndexToRemove", index))]);
-            parameters.AddRange([..songIdsToAdd.Select(index => ("songIdToAdd", index))]);
+            parameters.AddRange([.. songIndicesToRemove.Select(index => ("songIndexToRemove", index))]);
+            parameters.AddRange([.. songIdsToAdd.Select(index => ("songIdToAdd", index))]);
             await ExecuteLongUrl(server, "/rest/updatePlaylist", [("playlistId", playlistId)], parameters);
         }
 

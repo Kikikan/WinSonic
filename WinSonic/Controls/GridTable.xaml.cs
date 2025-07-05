@@ -46,6 +46,7 @@ namespace WinSonic.Pages.Control
         public delegate void RowAddedHandler(Rectangle row, RowEvent e);
 
         public event RowEventHandler? SelectionChanged;
+        public event RowEventHandler? RowTapped;
         public event RowEventHandler? RowDoubleTapped;
         public event RowRightTapEventHandler? RowRightTapped;
         public event RowAddedHandler? RowAdded;
@@ -287,6 +288,7 @@ namespace WinSonic.Pages.Control
             if (sender is Rectangle rect)
             {
                 ChangeSelection(_orderedToRawIndeces[rowIndices[rect]], sender);
+                RowTapped?.Invoke(sender, new(_orderedToRawIndeces[rowIndices[rect]]));
             }
         }
 

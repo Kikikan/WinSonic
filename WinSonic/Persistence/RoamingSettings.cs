@@ -23,7 +23,7 @@ namespace WinSonic.Persistence
 
         public PlayerSettings PlayerSettings { get; private set; }
 
-        public AlbumSettings AlbumSettings { get; private set; } 
+        public AlbumSettings AlbumSettings { get; private set; }
 
         public BehaviorSettings BehaviorSettings { get; private set; }
 

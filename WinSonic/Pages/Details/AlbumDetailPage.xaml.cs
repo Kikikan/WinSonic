@@ -154,7 +154,7 @@ namespace WinSonic.Pages
 
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
-            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Songs[e.Index], [..Songs], app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
+            SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Songs[e.Index], [.. Songs], app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
         }
 
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
