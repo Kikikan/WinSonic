@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using WinSonic.Model.Util;
+using WinSonic.Model.Api;
 
 namespace WinSonic.Model
 {
@@ -20,8 +20,8 @@ namespace WinSonic.Model
             Address = uri;
             Username = username;
             var pass = GetPassword(password);
-            PasswordHash = pass.Left;
-            Salt = pass.Right;
+            PasswordHash = pass.Item1;
+            Salt = pass.Item2;
             InitClient();
         }
 
@@ -56,19 +56,24 @@ namespace WinSonic.Model
             return d;
         }
 
-        public string GetParameters()
+        public List<(string, string)> GetParameters()
         {
-            return $"?c=winsonic&u={Username}&t={PasswordHash}&s={Salt}&v=1.16.1";
+            return [("c", "winsonic"), ("u", Username), ("t", PasswordHash), ("s", Salt), ("v", "1.16.1")];
         }
 
-        private Pair<string, string> GetPassword(string password)
+        public string GetStringParameters()
+        {
+            return $"?{string.Join('&', GetParameters().Select(SubsonicApiHelper.GetParameterString))}";
+        }
+
+        private (string, string) GetPassword(string password)
         {
             string salt = GenerateRandomAlphanumericString(32);
             MD5 md5 = MD5.Create();
 
             string hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(password + salt)));
             hash = hash.ToLower().Replace("-", "");
-            return new Pair<string, string>(hash, salt);
+            return (hash, salt);
         }
 
         static string GenerateRandomAlphanumericString(int length)

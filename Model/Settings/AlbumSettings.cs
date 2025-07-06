@@ -1,6 +1,6 @@
 ﻿using WinSonic.Model.Api;
 
-namespace WinSonic.Model
+namespace WinSonic.Model.Settings
 {
     public class AlbumSettings : ISetting
     {

@@ -34,7 +34,7 @@ namespace WinSonic.Pages
         {
             bool added = false;
             bool result = false;
-            foreach (var server in serverFile.Servers.Where(s => s.Enabled).ToList())
+            foreach (var server in serverFile.ActiveServers.ToList())
             {
                 List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
                 this.albums.AddRange(albums);

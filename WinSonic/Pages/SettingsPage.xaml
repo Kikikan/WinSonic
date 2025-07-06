@@ -6,42 +6,28 @@
     xmlns:local="using:WinSonic.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" x:DataType="local:SettingsPage">
+    mc:Ignorable="d">
 
-    <Grid Margin="10">
-        <SplitView x:Name="SplitView" PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-           IsPaneOpen="True" OpenPaneLength="256" CompactPaneLength="48" DisplayMode="Inline">
-            <SplitView.Pane>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="Categories" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <ListView x:Name="NavLinksList"
-                              Margin="0,12,0,0"
-                              SelectionMode="Single"
-                              Grid.Row="1"
-                              VerticalAlignment="Stretch"
-                              ItemClick="NavLinksList_ItemClick"
-                              IsItemClickEnabled="True">
-                        <ListViewItem>
-                            <TextBlock Text="Setting 1"/>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <TextBlock Text="Setting 2"/>
-                        </ListViewItem>
-                        <ListViewItem>
-                            <TextBlock Text="Setting 3"/>
-                        </ListViewItem>
-                    </ListView>
-                </Grid>
-            </SplitView.Pane>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <StackPanel Margin="10">
-                <TextBlock Text="Settings" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
-            </StackPanel>
-        </SplitView>
+        <!-- Left Navigation -->
+        <NavigationView PaneDisplayMode="Left" IsBackButtonVisible="Collapsed"
+                        SelectionChanged="NavView_SelectionChanged" IsBackEnabled="False"
+                        IsSettingsVisible="False" IsPaneToggleButtonVisible="False" Margin="4">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Behavior" Tag="behavior">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE76E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+        </NavigationView>
+
+        <!-- Right Detail Content -->
+        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="4"/>
     </Grid>
 </Page>
