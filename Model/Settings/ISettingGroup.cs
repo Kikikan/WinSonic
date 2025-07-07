@@ -1,9 +1,9 @@
 ﻿namespace WinSonic.Model.Settings
 {
-    public interface ISettingGroup
+    public interface ISettingGroup<T> where T : class
     {
         string Key { get; }
-        void Load(Dictionary<string, string> settings);
-        Dictionary<string, string> ToDictionary();
+        void Load(T settings);
+        T ToDictionary();
     }
 }

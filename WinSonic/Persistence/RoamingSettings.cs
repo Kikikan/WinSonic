@@ -29,13 +29,15 @@ namespace WinSonic.Persistence
 
         public RoamingSettings()
         {
-            PlayerSettings = CreateSettings<PlayerSettingGroup>();
-            AlbumSettings = CreateSettings<AlbumSettingGroup>();
-            BehaviorSettings = CreateSettings<BehaviorSettingGroup>();
-            //ServerSettings = CreateSettings<ServerSettingGroup>();
+            PlayerSettings = CreateSettings<PlayerSettingGroup, Dictionary<string, string>>();
+            AlbumSettings = CreateSettings<AlbumSettingGroup, Dictionary<string, string>>();
+            BehaviorSettings = CreateSettings<BehaviorSettingGroup, Dictionary<string, string>>();
+            ServerSettings = CreateSettings<ServerSettingGroup, List<Dictionary<string, string>>>();
         }
 
-        public T CreateSettings<T>() where T : ISettingGroup
+        public T CreateSettings<T, U>()
+            where U : class
+            where T : ISettingGroup<U>
         {
             if (Activator.CreateInstance(typeof(T)) is not T setting)
             {
@@ -43,7 +45,7 @@ namespace WinSonic.Persistence
             }
             if (roaming.Values[setting.Key] is string json)
             {
-                Dictionary<string, string>? config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                U? config = JsonSerializer.Deserialize<U>(json);
                 if (config != null)
                 {
                     setting.Load(config);
@@ -139,7 +141,7 @@ namespace WinSonic.Persistence
             roaming.Values["servers"] = json;
         }
 
-        public void SaveSetting(ISettingGroup setting)
+        public void SaveSetting<T>(ISettingGroup<T> setting) where T : class
         {
             string json = JsonSerializer.Serialize(setting.ToDictionary());
             roaming.Values[setting.Key] = json;

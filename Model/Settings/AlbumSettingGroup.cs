@@ -2,7 +2,7 @@
 
 namespace WinSonic.Model.Settings
 {
-    public class AlbumSettingGroup : ISettingGroup
+    public class AlbumSettingGroup : ISettingGroup<Dictionary<string, string>>
     {
         public SubsonicApiHelper.AlbumListType OrderBy { get; set; } = SubsonicApiHelper.AlbumListType.newest;
 

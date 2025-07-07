@@ -1,6 +1,6 @@
 ﻿namespace WinSonic.Model.Settings
 {
-    public class PlayerSettingGroup : ISettingGroup
+    public class PlayerSettingGroup : ISettingGroup<Dictionary<string, string>>
     {
         public double Volume { get; set; } = 1;
 

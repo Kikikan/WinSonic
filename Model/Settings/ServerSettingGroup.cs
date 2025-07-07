@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinSonic.Model.Settings
+﻿namespace WinSonic.Model.Settings
 {
-    public class ServerSettingGroup : ISettingGroup
+    public class ServerSettingGroup : ISettingGroup<List<Dictionary<string, string>>>
     {
         public string Key => "servers";
 
-        public void Load(Dictionary<string, string> settings)
+        public void Load(List<Dictionary<string, string>> settings)
         {
             throw new NotImplementedException();
         }
 
-        public Dictionary<string, string> ToDictionary()
+        List<Dictionary<string, string>> ISettingGroup<List<Dictionary<string, string>>>.ToDictionary()
         {
             throw new NotImplementedException();
         }
