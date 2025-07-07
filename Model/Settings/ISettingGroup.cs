@@ -2,7 +2,8 @@
 {
     public interface ISettingGroup
     {
-        Dictionary<string, string> ToDictionary();
         string Key { get; }
+        void Load(Dictionary<string, string> settings);
+        Dictionary<string, string> ToDictionary();
     }
 }

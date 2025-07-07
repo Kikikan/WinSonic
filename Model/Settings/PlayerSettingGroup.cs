@@ -7,9 +7,10 @@
         public string Key => "player";
 
         public PlayerSettingGroup() { }
-        public PlayerSettingGroup(Dictionary<string, string> data)
+
+        public void Load(Dictionary<string, string> settings)
         {
-            Volume = double.Parse(data["volume"]);
+            Volume = double.Parse(settings["volume"]);
         }
 
         public Dictionary<string, string> ToDictionary()

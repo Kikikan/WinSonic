@@ -9,12 +9,10 @@ namespace WinSonic.Model.Settings
 
         public string Key => "behavior";
 
-        public BehaviorSettingGroup() { }
-
-        public BehaviorSettingGroup(Dictionary<string, string> data)
+        public void Load(Dictionary<string, string> settings)
         {
-            AlbumDoubleClickBehavior = (GridTableDoubleClickBehavior)int.Parse(data["gridTable.album.doubleClick"]);
-            PlaylistDoubleClickBehavior = (GridTableDoubleClickBehavior)int.Parse(data["gridTable.playlist.doubleClick"]);
+            AlbumDoubleClickBehavior = (GridTableDoubleClickBehavior)int.Parse(settings["gridTable.album.doubleClick"]);
+            PlaylistDoubleClickBehavior = (GridTableDoubleClickBehavior)int.Parse(settings["gridTable.playlist.doubleClick"]);
         }
 
         public Dictionary<string, string> ToDictionary()

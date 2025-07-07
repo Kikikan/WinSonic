@@ -25,48 +25,31 @@ namespace WinSonic.Persistence
 
         public BehaviorSettingGroup BehaviorSettings { get; private set; }
 
+        public ServerSettingGroup ServerSettings { get; private set; }
+
         public RoamingSettings()
         {
             PlayerSettings = CreateSettings<PlayerSettingGroup>();
             AlbumSettings = CreateSettings<AlbumSettingGroup>();
             BehaviorSettings = CreateSettings<BehaviorSettingGroup>();
+            //ServerSettings = CreateSettings<ServerSettingGroup>();
         }
 
         public T CreateSettings<T>() where T : ISettingGroup
         {
-            ISettingGroup? setting = Activator.CreateInstance(typeof(T)) as ISettingGroup;
-            if (setting == null)
-            {
-                throw new Exception("Setting could not have been created.");
-            }
-            var json = roaming.Values[setting.Key] as string;
-            Dictionary<string, string>? config = null;
-            if (json is not null)
-            {
-                config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            }
-
-            object? obj;
-            if (config != null)
-            {
-                obj = Activator.CreateInstance(typeof(T), [config]);
-            }
-            else
-            {
-                obj = Activator.CreateInstance(typeof(T));
-            }
-            if (obj == null)
+            if (Activator.CreateInstance(typeof(T)) is not T setting)
             {
                 throw new NullReferenceException($"Could not create type: {typeof(T)}");
             }
-            if (obj is T t)
+            if (roaming.Values[setting.Key] is string json)
             {
-                return t;
+                Dictionary<string, string>? config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (config != null)
+                {
+                    setting.Load(config);
+                }
             }
-            else
-            {
-                throw new InvalidCastException($"Obj '{obj}' is not of type '{typeof(T)}'");
-            }
+            return setting;
         }
 
         internal async Task<List<Server>> InitializeServers()

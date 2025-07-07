@@ -8,10 +8,9 @@ namespace WinSonic.Model.Settings
 
         public string Key => "album";
 
-        public AlbumSettingGroup() { }
-        public AlbumSettingGroup(Dictionary<string, string> data)
+        public void Load(Dictionary<string, string> settings)
         {
-            OrderBy = (SubsonicApiHelper.AlbumListType)int.Parse(data["orderBy"]);
+            OrderBy = (SubsonicApiHelper.AlbumListType)int.Parse(settings["orderBy"]);
         }
 
         public Dictionary<string, string> ToDictionary()
