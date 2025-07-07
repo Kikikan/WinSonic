@@ -18,7 +18,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumsPage : Page
     {
-        private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+        private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -27,14 +27,14 @@ namespace WinSonic.Pages
         {
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-            OrderBy = serverFile.AlbumSettings.OrderBy;
+            OrderBy = roamingSettings.AlbumSettings.OrderBy;
         }
 
         private async Task<bool> Update()
         {
             bool added = false;
             bool result = false;
-            foreach (var server in serverFile.ActiveServers.ToList())
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
                 List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
                 this.albums.AddRange(albums);
@@ -76,7 +76,7 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                switch (serverFile.AlbumSettings.OrderBy)
+                switch (roamingSettings.AlbumSettings.OrderBy)
                 {
                     case SubsonicApiHelper.AlbumListType.newest:
                         NewestRadioItem.IsChecked = true;
@@ -113,8 +113,8 @@ namespace WinSonic.Pages
             {
                 OrderBy = SubsonicApiHelper.AlbumListType.alphabeticalByArtist;
             }
-            serverFile.AlbumSettings.OrderBy = OrderBy;
-            serverFile.SaveSetting(serverFile.AlbumSettings);
+            roamingSettings.AlbumSettings.OrderBy = OrderBy;
+            roamingSettings.SaveSetting(roamingSettings.AlbumSettings);
             Refresh();
         }
     }

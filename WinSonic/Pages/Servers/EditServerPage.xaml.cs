@@ -22,13 +22,13 @@ namespace WinSonic.Pages
 
         internal bool IsEditing { get; set; } = false;
         internal Server? SelectedServer { get; set; }
-        private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+        private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         internal readonly List<Server> servers = [];
         private bool initialized = false;
         public EditServerPage()
         {
             InitializeComponent();
-            servers.AddRange(serverFile.Servers);
+            servers.AddRange(roamingSettings.ServerSettings.Servers);
             OnPropertyChanged(nameof(servers));
         }
 
@@ -40,7 +40,7 @@ namespace WinSonic.Pages
                 {
                     server.Enabled = ServerListView.SelectedItems.Contains(server);
                 }
-                serverFile.SaveServers();
+                roamingSettings.SaveSetting(roamingSettings.ServerSettings);
             }
         }
 
@@ -58,7 +58,8 @@ namespace WinSonic.Pages
                 if (item is Server server)
                 {
                     servers.Remove(server);
-                    serverFile.SaveServers();
+                    roamingSettings.ServerSettings.RemoveServer(server);
+                    roamingSettings.SaveSetting(roamingSettings.ServerSettings);
                     OnPropertyChanged(nameof(servers));
                 }
             }

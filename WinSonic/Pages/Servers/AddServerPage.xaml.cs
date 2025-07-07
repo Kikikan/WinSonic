@@ -113,12 +113,12 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
     {
         if (server is not null)
         {
-            var serverFile = ((App)Application.Current).RoamingSettings;
-            bool added = serverFile.AddServer(server);
+            var roamingSettings = ((App)Application.Current).RoamingSettings;
+            bool added = roamingSettings.ServerSettings.AddServer(server);
             string message;
             if (added)
             {
-                serverFile.SaveServers();
+                roamingSettings.SaveSetting(roamingSettings.ServerSettings);
                 message = "Server was successfully saved.";
             }
             else

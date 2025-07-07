@@ -89,7 +89,7 @@ namespace WinSonic.Pages
         {
             playlistServerMap.Clear();
             playlists.Clear();
-            foreach (var server in roamingSettings.ActiveServers)
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers)
             {
                 foreach (var playlist in await SubsonicApiHelper.GetPlaylists(server))
                 {

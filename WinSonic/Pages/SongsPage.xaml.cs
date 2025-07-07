@@ -16,7 +16,7 @@ namespace WinSonic.Pages;
 /// </summary>
 public sealed partial class SongsPage : Page
 {
-    private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+    private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
@@ -43,7 +43,7 @@ public sealed partial class SongsPage : Page
         if (!initialized)
         {
             songList.Clear();
-            foreach (var server in serverFile.ActiveServers)
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers)
             {
                 songList.AddRange(await SubsonicApiHelper.Search(server));
             }
@@ -62,7 +62,7 @@ public sealed partial class SongsPage : Page
     {
         RefreshButton.IsEnabled = false;
         songList.Clear();
-        foreach (var server in serverFile.ActiveServers)
+        foreach (var server in roamingSettings.ServerSettings.ActiveServers)
         {
             songList.AddRange(await SubsonicApiHelper.Search(server));
         }

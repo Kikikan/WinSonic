@@ -13,9 +13,9 @@ using WinRT.Interop;
 using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Model.Settings;
 using WinSonic.Pages;
 using WinSonic.Pages.Details;
-using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -89,7 +89,7 @@ namespace WinSonic
 
         private async void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            ShowUnsuccessfulServers(await ((App)Application.Current).RoamingSettings.InitializeServers());
+            ShowUnsuccessfulServers(await ((App)Application.Current).RoamingSettings.ServerSettings.InitializeServers());
         }
 
         private async void ShowUnsuccessfulServers(List<Server> servers)
@@ -124,7 +124,7 @@ namespace WinSonic
                             attemptList.Add(server);
                         }
                     }
-                    List<Server> attemptResult = await RoamingSettings.TryPing(attemptList);
+                    List<Server> attemptResult = await ServerSettingGroup.TryPing(attemptList);
                     ShowUnsuccessfulServers(attemptResult);
                 }
                 else
