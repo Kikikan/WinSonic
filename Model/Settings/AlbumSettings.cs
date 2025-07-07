@@ -6,6 +6,8 @@ namespace WinSonic.Model.Settings
     {
         public SubsonicApiHelper.AlbumListType OrderBy { get; set; } = SubsonicApiHelper.AlbumListType.newest;
 
+        public string Key => "album";
+
         public AlbumSettings() { }
         public AlbumSettings(Dictionary<string, string> data)
         {

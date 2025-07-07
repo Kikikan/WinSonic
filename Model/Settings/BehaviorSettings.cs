@@ -7,6 +7,8 @@ namespace WinSonic.Model.Settings
         public GridTableDoubleClickBehavior AlbumDoubleClickBehavior { get; set; } = GridTableDoubleClickBehavior.LoadCurrent;
         public GridTableDoubleClickBehavior PlaylistDoubleClickBehavior { get; set; } = GridTableDoubleClickBehavior.LoadCurrent;
 
+        public string Key => "behavior";
+
         public BehaviorSettings() { }
 
         public BehaviorSettings(Dictionary<string, string> data)

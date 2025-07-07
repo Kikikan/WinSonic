@@ -19,8 +19,6 @@ namespace WinSonic.Persistence
 
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
-        private readonly Dictionary<ISetting, string> KeyPair = [];
-
         public PlayerSettings PlayerSettings { get; private set; }
 
         public AlbumSettings AlbumSettings { get; private set; }
@@ -29,18 +27,19 @@ namespace WinSonic.Persistence
 
         public RoamingSettings()
         {
-            PlayerSettings = CreateSettings<PlayerSettings>("player");
-            AlbumSettings = CreateSettings<AlbumSettings>("album");
-            BehaviorSettings = CreateSettings<BehaviorSettings>("behavior");
-
-            KeyPair.Add(PlayerSettings, "player");
-            KeyPair.Add(AlbumSettings, "album");
-            KeyPair.Add(BehaviorSettings, "behavior");
+            PlayerSettings = CreateSettings<PlayerSettings>();
+            AlbumSettings = CreateSettings<AlbumSettings>();
+            BehaviorSettings = CreateSettings<BehaviorSettings>();
         }
 
-        public T CreateSettings<T>(string key) where T : class
+        public T CreateSettings<T>() where T : ISetting
         {
-            var json = roaming.Values[key] as string;
+            ISetting? setting = Activator.CreateInstance(typeof(T)) as ISetting;
+            if (setting == null)
+            {
+                throw new Exception("Setting could not have been created.");
+            }
+            var json = roaming.Values[setting.Key] as string;
             Dictionary<string, string>? config = null;
             if (json is not null)
             {
@@ -160,7 +159,7 @@ namespace WinSonic.Persistence
         public void SaveSetting(ISetting setting)
         {
             string json = JsonSerializer.Serialize(setting.ToDictionary());
-            roaming.Values[KeyPair[setting]] = json;
+            roaming.Values[setting.Key] = json;
         }
     }
 }

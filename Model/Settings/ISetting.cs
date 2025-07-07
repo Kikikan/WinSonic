@@ -3,5 +3,6 @@
     public interface ISetting
     {
         Dictionary<string, string> ToDictionary();
+        string Key { get; }
     }
 }

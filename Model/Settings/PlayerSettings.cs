@@ -4,6 +4,8 @@
     {
         public double Volume { get; set; } = 1;
 
+        public string Key => "player";
+
         public PlayerSettings() { }
         public PlayerSettings(Dictionary<string, string> data)
         {
