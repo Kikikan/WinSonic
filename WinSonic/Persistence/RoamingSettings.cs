@@ -19,22 +19,22 @@ namespace WinSonic.Persistence
 
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
-        public PlayerSettings PlayerSettings { get; private set; }
+        public PlayerSettingGroup PlayerSettings { get; private set; }
 
-        public AlbumSettings AlbumSettings { get; private set; }
+        public AlbumSettingGroup AlbumSettings { get; private set; }
 
-        public BehaviorSettings BehaviorSettings { get; private set; }
+        public BehaviorSettingGroup BehaviorSettings { get; private set; }
 
         public RoamingSettings()
         {
-            PlayerSettings = CreateSettings<PlayerSettings>();
-            AlbumSettings = CreateSettings<AlbumSettings>();
-            BehaviorSettings = CreateSettings<BehaviorSettings>();
+            PlayerSettings = CreateSettings<PlayerSettingGroup>();
+            AlbumSettings = CreateSettings<AlbumSettingGroup>();
+            BehaviorSettings = CreateSettings<BehaviorSettingGroup>();
         }
 
-        public T CreateSettings<T>() where T : ISetting
+        public T CreateSettings<T>() where T : ISettingGroup
         {
-            ISetting? setting = Activator.CreateInstance(typeof(T)) as ISetting;
+            ISettingGroup? setting = Activator.CreateInstance(typeof(T)) as ISettingGroup;
             if (setting == null)
             {
                 throw new Exception("Setting could not have been created.");
@@ -156,7 +156,7 @@ namespace WinSonic.Persistence
             roaming.Values["servers"] = json;
         }
 
-        public void SaveSetting(ISetting setting)
+        public void SaveSetting(ISettingGroup setting)
         {
             string json = JsonSerializer.Serialize(setting.ToDictionary());
             roaming.Values[setting.Key] = json;

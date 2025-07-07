@@ -22,12 +22,12 @@ namespace WinSonic.Pages.Settings
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            AlbumGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettings.GridTableDoubleClickBehavior>();
+            AlbumGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettingGroup.GridTableDoubleClickBehavior>();
             AlbumGridTableComboBox.DisplayMemberPath = "DisplayName";
             AlbumGridTableComboBox.SelectedValuePath = "Value";
             AlbumGridTableComboBox.SelectedIndex = (int)settings.BehaviorSettings.AlbumDoubleClickBehavior;
 
-            PlaylistGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettings.GridTableDoubleClickBehavior>();
+            PlaylistGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettingGroup.GridTableDoubleClickBehavior>();
             PlaylistGridTableComboBox.DisplayMemberPath = "DisplayName";
             PlaylistGridTableComboBox.SelectedValuePath = "Value";
             PlaylistGridTableComboBox.SelectedIndex = (int)settings.BehaviorSettings.PlaylistDoubleClickBehavior;
@@ -35,13 +35,13 @@ namespace WinSonic.Pages.Settings
 
         private void AlbumGridTableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            settings.BehaviorSettings.AlbumDoubleClickBehavior = (BehaviorSettings.GridTableDoubleClickBehavior)AlbumGridTableComboBox.SelectedIndex;
+            settings.BehaviorSettings.AlbumDoubleClickBehavior = (BehaviorSettingGroup.GridTableDoubleClickBehavior)AlbumGridTableComboBox.SelectedIndex;
             settings.SaveSetting(settings.BehaviorSettings);
         }
 
         private void PlaylistGridTableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            settings.BehaviorSettings.PlaylistDoubleClickBehavior = (BehaviorSettings.GridTableDoubleClickBehavior)PlaylistGridTableComboBox.SelectedIndex;
+            settings.BehaviorSettings.PlaylistDoubleClickBehavior = (BehaviorSettingGroup.GridTableDoubleClickBehavior)PlaylistGridTableComboBox.SelectedIndex;
             settings.SaveSetting(settings.BehaviorSettings);
         }
     }
