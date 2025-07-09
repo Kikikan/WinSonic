@@ -7,15 +7,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    xmlns:control="using:WinSonic.Controls">
 
     <Grid>
         <ScrollViewer>
-            <StackPanel Spacing="16" Margin="16 16 16 0">
-                <TextBlock Text="Album" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                <ComboBox x:Name="AlbumGridTableComboBox" Header="Play Now / Double Click" SelectionChanged="AlbumGridTableComboBox_SelectionChanged" Width="192"/>
-                <TextBlock Text="Playlist" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                <ComboBox x:Name="PlaylistGridTableComboBox" Header="Play Now / Double Click" SelectionChanged="PlaylistGridTableComboBox_SelectionChanged" Width="192"/>
+            <StackPanel Spacing="8" Margin="16 16 16 0">
+                <TextBlock Text="Double click / Play now" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold"/>
+                <control:SettingBar IconGlyph="&#xE93C;" Title="Album" Description="Only the clicked song or the whole album is added to the queue">
+                    <ComboBox x:Name="AlbumGridTableComboBox" SelectionChanged="AlbumGridTableComboBox_SelectionChanged" Width="192"/>
+                </control:SettingBar>
+
+                <control:SettingBar IconGlyph="&#xEA37;" Title="Playlist" Description="Only the clicked song or the whole playlist is added to the queue">
+                    <ComboBox x:Name="PlaylistGridTableComboBox" SelectionChanged="PlaylistGridTableComboBox_SelectionChanged" Width="192"/>
+                </control:SettingBar>
             </StackPanel>
         </ScrollViewer>
     </Grid>
