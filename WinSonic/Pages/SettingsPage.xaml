@@ -9,25 +9,26 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <!-- Left Navigation -->
-        <NavigationView PaneDisplayMode="Left" IsBackButtonVisible="Collapsed"
-                        SelectionChanged="NavView_SelectionChanged" IsBackEnabled="False"
+        <NavigationView x:Name="SettingsNavigationView"
+                        PaneDisplayMode="Top"
+                        ItemInvoked="NavigationView_ItemInvoked"
+                        IsBackEnabled="False" IsBackButtonVisible="Visible"
+                        BackRequested="NavigationView_BackRequested"
                         IsSettingsVisible="False" IsPaneToggleButtonVisible="False" Margin="4">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Behavior" Tag="behavior">
+                <NavigationViewItem Content="Behavior" Tag="WinSonic.Pages.Settings.BehaviorSettingsPage">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE76E;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Servers" Tag="WinSonic.Pages.Settings.ServerSettingsPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE977;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
-        </NavigationView>
 
-        <!-- Right Detail Content -->
-        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="4"/>
+            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated"/>
+        </NavigationView>
     </Grid>
 </Page>

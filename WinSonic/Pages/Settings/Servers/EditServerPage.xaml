@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="WinSonic.Pages.EditServerPage"
+    x:Class="WinSonic.Pages.Settings.Servers.EditServerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:WinSonic.Pages"
+    xmlns:local="using:WinSonic.Pages.Settings.Servers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" xmlns:models="using:WinSonic.Model">
@@ -45,8 +45,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <StackPanel Margin="36 40 36 0">
-        <TextBlock Text="Servers" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 0 0 36"/>
+    <StackPanel Margin="18 18 18 0">
         <ListView x:Name="ServerListView" SelectionMode="Multiple" ItemsSource="{x:Bind servers}" ItemTemplate="{StaticResource ServerTemplate}" SelectionChanged="ServerListView_SelectionChanged" Loaded="ServerListView_Loaded" Margin="0 0 0 50"/>
         <TextBox x:Name="NameTextBox" Header="Server Name" IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Name, Mode=OneWay}" Margin="0 0 0 16"/>
         <TextBox x:Name="URL" Header="Enter the URL of the server." IsEnabled="{x:Bind IsEditing, Mode=OneWay}" Text="{x:Bind SelectedServer.Address, Mode=OneWay}" Margin="0 0 0 16"/>
