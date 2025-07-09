@@ -121,7 +121,6 @@
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
-                <NavigationViewItemSeparator/>
                 <NavigationViewItem Tag="WinSonic.Pages.AlbumsPage" Content="Albums">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe93c;" />

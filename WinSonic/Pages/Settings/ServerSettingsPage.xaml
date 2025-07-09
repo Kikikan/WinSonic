@@ -18,7 +18,7 @@
                                                 Description="Name, URL, username, password"
                                                 Click="AddButton_Click"/>
 
-                    <control:SettingGroupButton IconGlyph="&#xE710;"
+                    <control:SettingGroupButton IconGlyph="&#xE70F;"
                                                 Title="Edit"
                                                 Description="Connect, disconnect, modify, delete"
                                                 Click="EditButton_Click"/>
