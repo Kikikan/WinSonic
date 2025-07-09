@@ -280,6 +280,7 @@ namespace WinSonic
                     }
                 });
             }
+            MainNav.IsBackEnabled = BackAllowedPages.Contains(e.SourcePageType);
         }
 
         private void SongInfoButton_Click(object sender, RoutedEventArgs e)

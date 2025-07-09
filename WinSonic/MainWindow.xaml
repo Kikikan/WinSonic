@@ -117,7 +117,7 @@
                         Grid.Row="1"
                         PaneDisplayMode="Top"
                         ItemInvoked="NavView_ItemInvoked"
-                        IsBackEnabled="True"
+                        IsBackEnabled="False"
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
