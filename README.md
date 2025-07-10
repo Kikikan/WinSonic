@@ -18,7 +18,7 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 ## 🎨 Screenshots
 
 ### Add new server connection
-![image](https://github.com/user-attachments/assets/8a81a0ab-79c6-4b47-b982-b108f61db683)
+![image](https://github.com/user-attachments/assets/d9f52357-8f03-427a-9ea7-0a059150081e)
 
 ### Albums view
 ![image](https://github.com/user-attachments/assets/03f9d11b-c2a5-4fb6-92b3-83becdd380a3)
