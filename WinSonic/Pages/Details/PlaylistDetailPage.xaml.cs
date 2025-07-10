@@ -139,16 +139,7 @@ namespace WinSonic.Pages.Details
         {
             if (DetailedObject != null)
             {
-                ContentDialog dialog = new()
-                {
-                    Title = "Are you sure?",
-                    Content = "This action cannot be undone.",
-                    PrimaryButtonText = "Delete",
-                    CloseButtonText = "Cancel",
-                    XamlRoot = XamlRoot,
-                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                    DefaultButton = ContentDialogButton.Close
-                };
+                ContentDialog dialog = ConfirmationContentDialog.CreateDialog(XamlRoot);
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {

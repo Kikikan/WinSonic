@@ -10,10 +10,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Windows.Media.Playback;
 using WinRT.Interop;
-using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
-using WinSonic.Model.Settings;
 using WinSonic.Pages;
 using WinSonic.Pages.Details;
 
@@ -32,7 +30,7 @@ namespace WinSonic
         private static readonly List<Type> BackAllowedPages = [typeof(AlbumDetailPage), typeof(ArtistDetailPage), typeof(PlaylistDetailPage), typeof(PlayerPage)];
         public Frame NavFrame { get { return ContentFrame; } }
         private bool _isLoading = true;
-        private bool IsLoading { get => _isLoading; set { _isLoading = value; LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
+        public bool IsLoading { get => _isLoading; set { _isLoading = value; LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed; } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName) =>
@@ -89,53 +87,8 @@ namespace WinSonic
 
         private async void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            ShowUnsuccessfulServers(await ((App)Application.Current).RoamingSettings.ServerSettings.InitializeServers());
-        }
-
-        private async void ShowUnsuccessfulServers(List<Server> servers)
-        {
-            if (servers != null && servers.Count > 0)
-            {
-                ContentDialog dialog = new()
-                {
-                    XamlRoot = MainGrid.XamlRoot,
-                    Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                    Title = "Unsuccessful Connection",
-                    PrimaryButtonText = "Retry for selected",
-                    CloseButtonText = "Close",
-                    IsSecondaryButtonEnabled = false,
-                    DefaultButton = ContentDialogButton.Primary
-                };
-                var content = new UnsuccessfulConnectionDialog();
-                foreach (var server in servers)
-                {
-                    content.Servers.Add(server);
-                }
-                dialog.Content = content;
-
-                var result = await dialog.ShowAsync();
-                if (result == ContentDialogResult.Primary && content.ServerListView != null)
-                {
-                    List<Server> attemptList = [];
-                    foreach (var obj in content.ServerListView.SelectedItems)
-                    {
-                        if (obj is Server server)
-                        {
-                            attemptList.Add(server);
-                        }
-                    }
-                    List<Server> attemptResult = await ServerSettingGroup.TryPing(attemptList);
-                    ShowUnsuccessfulServers(attemptResult);
-                }
-                else
-                {
-                    IsLoading = false;
-                }
-            }
-            else
-            {
-                IsLoading = false;
-            }
+            await UnsuccessfulConnectionDialog.ShowDialog(MainGrid.XamlRoot, await ((App)Application.Current).RoamingSettings.ServerSettings.InitializeServers());
+            IsLoading = false;
         }
 
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)

@@ -14,7 +14,14 @@
         <DataTemplate x:Key="ServerTemplate" x:DataType="models:Server">
             <control:SettingGroupButton IconGlyph="&#xE977;" Title="{x:Bind Name}" Description="{x:Bind Description}" Click="SettingGroupButton_Click" Tag="{x:Bind}">
                 <control:SettingGroupButton.Content>
-                    <ToggleSwitch OffContent="Disconnected" OnContent="Connected" IsOn="{x:Bind Enabled, Mode=TwoWay}" Toggled="ToggleSwitch_Toggled" />
+                    <StackPanel Orientation="Horizontal">
+                        <ToggleSwitch OffContent="Disconnected" OnContent="Connected" IsOn="{x:Bind Enabled, Mode=TwoWay}" Toggled="ToggleSwitch_Toggled" Tag="{x:Bind}" />
+                        <Button x:Name="DeleteButton" Click="DeleteButton_Click" Tag="{x:Bind}" Background="Transparent" BorderBrush="Transparent">
+                            <Button.Content>
+                                <FontIcon Glyph="&#xE74D;" />
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
                 </control:SettingGroupButton.Content>
             </control:SettingGroupButton>
         </DataTemplate>

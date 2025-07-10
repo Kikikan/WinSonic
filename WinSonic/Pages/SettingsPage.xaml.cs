@@ -2,7 +2,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
-using WinSonic.Pages.Settings;
 using WinSonic.Pages.Settings.Behavior;
 using WinSonic.Pages.Settings.Servers;
 
