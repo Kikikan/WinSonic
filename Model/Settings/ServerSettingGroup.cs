@@ -9,6 +9,7 @@ namespace WinSonic.Model.Settings
         public string Key => "servers";
         public ImmutableList<Server> ActiveServers { get { return _servers.Where(s => s.Enabled).ToImmutableList(); } }
         public ImmutableList<Server> Servers { get => _servers.ToImmutableList(); }
+        public uint Version { get; private set; } = 0;
 
         public void Load(List<Dictionary<string, string>> settings)
         {
@@ -64,6 +65,7 @@ namespace WinSonic.Model.Settings
                 return false;
             }
             _servers.Add(server);
+            Version++;
             return true;
         }
 
@@ -76,12 +78,14 @@ namespace WinSonic.Model.Settings
             }
             _servers.RemoveAt(index);
             _servers.Insert(index, newServer);
+            Version++;
             return true;
         }
 
         public void RemoveServer(Server server)
         {
             _servers.Remove(server);
+            Version++;
         }
 
         public static async Task<List<Server>> TryPing(List<Server> servers)
@@ -107,6 +111,11 @@ namespace WinSonic.Model.Settings
                 }
             }
             return unsuccessfulServers;
+        }
+
+        public void OnSave()
+        {
+            Version++;
         }
     }
 }

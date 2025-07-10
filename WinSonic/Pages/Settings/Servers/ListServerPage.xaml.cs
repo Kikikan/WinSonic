@@ -21,6 +21,7 @@ namespace WinSonic.Pages.Settings.Servers
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private readonly ObservableCollection<Server> servers = [];
+        private bool initialized = false;
         public ListServerPage()
         {
             InitializeComponent();
@@ -29,7 +30,10 @@ namespace WinSonic.Pages.Settings.Servers
 
         private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            DispatcherQueue.TryEnqueue(() => roamingSettings.SaveSetting(roamingSettings.ServerSettings));
+            if (initialized)
+            {
+                DispatcherQueue.TryEnqueue(() => roamingSettings.SaveSetting(roamingSettings.ServerSettings));
+            }
         }
 
         private void SettingGroupButton_Click(object sender, RoutedEventArgs e)
@@ -38,6 +42,11 @@ namespace WinSonic.Pages.Settings.Servers
             {
                 Frame.Navigate(typeof(ServerFormPage), server, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
             }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            initialized = true;
         }
     }
 }

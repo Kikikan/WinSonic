@@ -23,6 +23,7 @@ namespace WinSonic.Pages
     public sealed partial class PlaylistPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+        private uint currentVersion;
         private bool initialized = false;
         private readonly List<Playlist> playlists = [];
         private readonly Dictionary<Playlist, Server> playlistServerMap = [];
@@ -36,6 +37,7 @@ namespace WinSonic.Pages
                 ("Owner", new GridLength(2, GridUnitType.Star)),
                 ("Tracks", new GridLength(80, GridUnitType.Pixel))
             ];
+            currentVersion = roamingSettings.ServerSettings.Version;
         }
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -68,13 +70,15 @@ namespace WinSonic.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!initialized)
+            RefreshButton.IsEnabled = false;
+            if (!initialized || currentVersion != roamingSettings.ServerSettings.Version)
             {
                 await InitializeCollections();
                 Refresh();
                 initialized = true;
-                RefreshButton.IsEnabled = true;
+                currentVersion = roamingSettings.ServerSettings.Version;
             }
+            RefreshButton.IsEnabled = true;
         }
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)

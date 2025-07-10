@@ -20,6 +20,7 @@ namespace WinSonic.Pages
     public sealed partial class ArtistsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+        private uint currentVersion;
         private bool initialized = false;
         private readonly List<DetailedArtist> artists = [];
 
@@ -27,6 +28,7 @@ namespace WinSonic.Pages
         {
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            currentVersion = roamingSettings.ServerSettings.Version;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -36,6 +38,13 @@ namespace WinSonic.Pages
                 await Refresh();
                 initialized = true;
                 RefreshButton.IsEnabled = true;
+            }
+            else if (currentVersion != roamingSettings.ServerSettings.Version)
+            {
+                RefreshButton.IsEnabled = false;
+                await Refresh();
+                RefreshButton.IsEnabled = true;
+                currentVersion = roamingSettings.ServerSettings.Version;
             }
         }
 

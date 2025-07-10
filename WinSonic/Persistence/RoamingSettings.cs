@@ -49,6 +49,7 @@ namespace WinSonic.Persistence
         {
             string json = JsonSerializer.Serialize(setting.ToDictionary());
             roaming.Values[setting.Key] = json;
+            setting.OnSave();
         }
     }
 }

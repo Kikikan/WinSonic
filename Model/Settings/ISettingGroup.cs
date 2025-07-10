@@ -5,5 +5,10 @@
         string Key { get; }
         void Load(T settings);
         T ToDictionary();
+
+        void OnSave()
+        {
+
+        }
     }
 }

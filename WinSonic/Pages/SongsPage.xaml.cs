@@ -17,6 +17,7 @@ namespace WinSonic.Pages;
 public sealed partial class SongsPage : Page
 {
     private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+    private uint currentVersion;
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
@@ -31,6 +32,7 @@ public sealed partial class SongsPage : Page
             ("Album", new GridLength(3, GridUnitType.Star)),
             ("Time", new GridLength(80, GridUnitType.Pixel))
             ];
+        currentVersion = roamingSettings.ServerSettings.Version;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -40,7 +42,8 @@ public sealed partial class SongsPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        if (!initialized)
+        RefreshButton.IsEnabled = false;
+        if (!initialized || currentVersion != roamingSettings.ServerSettings.Version)
         {
             songList.Clear();
             foreach (var server in roamingSettings.ServerSettings.ActiveServers)
@@ -49,8 +52,9 @@ public sealed partial class SongsPage : Page
             }
             Refresh();
             initialized = true;
-            RefreshButton.IsEnabled = true;
+            currentVersion = roamingSettings.ServerSettings.Version;
         }
+        RefreshButton.IsEnabled = true;
     }
 
     private void GridTable_RowDoubleTapped(object sender, Control.RowEvent e)

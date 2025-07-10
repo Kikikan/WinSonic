@@ -19,6 +19,7 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+        private uint currentVersion;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -28,6 +29,7 @@ namespace WinSonic.Pages
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
             OrderBy = roamingSettings.AlbumSettings.OrderBy;
+            currentVersion = roamingSettings.ServerSettings.Version;
         }
 
         private async Task<bool> Update()
@@ -58,12 +60,12 @@ namespace WinSonic.Pages
             return result;
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            await Refresh();
         }
 
-        private async void Refresh()
+        private async Task Refresh()
         {
             albums.Clear();
             AlbumControl.Items.Clear();
@@ -72,7 +74,7 @@ namespace WinSonic.Pages
             AlbumControl.UpdateAction = Update;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!initialized)
             {
@@ -93,13 +95,18 @@ namespace WinSonic.Pages
                 AlbumControl.UpdateAction = Update;
                 initialized = true;
             }
+            else if (roamingSettings.ServerSettings.Version != currentVersion)
+            {
+                await Refresh();
+                currentVersion = roamingSettings.ServerSettings.Version;
+            }
         }
-        private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
+        private async void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            await Refresh();
         }
 
-        private void RadioItem_Click(object sender, RoutedEventArgs e)
+        private async void RadioItem_Click(object sender, RoutedEventArgs e)
         {
             if (NewestRadioItem.IsChecked)
             {
@@ -115,7 +122,7 @@ namespace WinSonic.Pages
             }
             roamingSettings.AlbumSettings.OrderBy = OrderBy;
             roamingSettings.SaveSetting(roamingSettings.AlbumSettings);
-            Refresh();
+            await Refresh();
         }
     }
 }

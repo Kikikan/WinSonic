@@ -7,7 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" xmlns:models="using:WinSonic.Model"
-    xmlns:control="using:WinSonic.Controls" xmlns:sys="using:System">
+    xmlns:control="using:WinSonic.Controls" xmlns:sys="using:System"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <DataTemplate x:Key="ServerTemplate" x:DataType="models:Server">
