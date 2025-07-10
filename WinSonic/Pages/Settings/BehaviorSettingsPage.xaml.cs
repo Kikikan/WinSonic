@@ -26,20 +26,9 @@ namespace WinSonic.Pages.Settings
     /// </summary>
     public sealed partial class BehaviorSettingsPage : Page
     {
-        private Frame? ContentFrame;
-
         public BehaviorSettingsPage()
         {
             InitializeComponent();
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            if (e.Parameter is Frame frame)
-            {
-                ContentFrame = frame;
-            }
         }
 
         private void GridTableButton_Click(object sender, RoutedEventArgs e)

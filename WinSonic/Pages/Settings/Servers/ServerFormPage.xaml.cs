@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace WinSonic.Pages.Settings.Servers;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class AddServerPage : Page, INotifyPropertyChanged
+public sealed partial class ServerFormPage : Page, INotifyPropertyChanged
 {
     private bool _isServerEditable = true;
 
@@ -46,9 +47,10 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         }
     }
 
+    private Server? oldServer;
     private Server? server;
 
-    public AddServerPage()
+    public ServerFormPage()
     {
         InitializeComponent();
     }
@@ -57,6 +59,19 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
 
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is Server server)
+        {
+            oldServer = server;
+            this.server = server;
+            NameTextBox.Text = server.Name;
+            URLTextBox.Text = server.Address;
+            UsernameTextBox.Text = server.Username;
+        }
+    }
 
     private async void Connect_Click(object sender, RoutedEventArgs e)
     {
@@ -68,7 +83,14 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         string messageText;
         try
         {
-            server = new Server(NameTextBox.Text, URL.Text, Username.Text, Password.Password);
+            if (oldServer == null || !string.IsNullOrEmpty(PasswordTextBox.Password))
+            {
+                server = new Server(NameTextBox.Text, URLTextBox.Text, UsernameTextBox.Text, PasswordTextBox.Password);
+            }
+            else
+            {
+                server = new Server(NameTextBox.Text, URLTextBox.Text, UsernameTextBox.Text, oldServer.PasswordHash, oldServer.Salt);
+            }
             var rs = await SubsonicApiHelper.Ping(server);
 
             messageText = rs.Status == ResponseStatus.Ok
@@ -114,21 +136,38 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         if (server is not null)
         {
             var roamingSettings = ((App)Application.Current).RoamingSettings;
-            bool added = roamingSettings.ServerSettings.AddServer(server);
+            bool success;
+
+            if (oldServer == null)
+            {
+                success = roamingSettings.ServerSettings.AddServer(server);
+            }
+            else
+            {
+                success = roamingSettings.ServerSettings.ReplaceServer(oldServer, server);
+            }
             string message;
-            if (added)
+            if (success)
             {
                 roamingSettings.SaveSetting(roamingSettings.ServerSettings);
-                message = "Server was successfully saved.";
+                if (oldServer == null)
+                {
+                    message = "Server was successfully saved.";
+                }
+                else
+                {
+                    message = "Server was successfully edited.";
+                    DispatcherQueue.TryEnqueue(() => Frame.GoBack());
+                }
             }
             else
             {
                 message = "Server is already saved.";
             }
             NameTextBox.Text = "";
-            URL.Text = "";
-            Username.Text = "";
-            Password.Password = "";
+            URLTextBox.Text = "";
+            UsernameTextBox.Text = "";
+            PasswordTextBox.Password = "";
             IsServerEditable = true;
             IsConnectionSuccessful = false;
 
@@ -152,5 +191,9 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
     {
         IsServerEditable = true;
         IsConnectionSuccessful = false;
+        if (oldServer != null)
+        {
+            Frame.GoBack();
+        }
     }
 }

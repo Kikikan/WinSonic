@@ -102,7 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\Servers\" />
-    <Folder Include="Pages\Settings\Servers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />

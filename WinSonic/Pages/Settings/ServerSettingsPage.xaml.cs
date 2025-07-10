@@ -25,28 +25,18 @@ namespace WinSonic.Pages.Settings;
 /// </summary>
 public sealed partial class ServerSettingsPage : Page
 {
-    private Frame? ContentFrame;
     public ServerSettingsPage()
     {
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
-        if (e.Parameter is Frame frame)
-        {
-            ContentFrame = frame;
-        }
-    }
-
     private void EditButton_Click(object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(EditServerPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+        Frame.Navigate(typeof(ListServerPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
     }
 
     private void AddButton_Click(object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(AddServerPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+        Frame.Navigate(typeof(ServerFormPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
     }
 }

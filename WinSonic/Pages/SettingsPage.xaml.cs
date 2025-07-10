@@ -16,7 +16,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
-        private static readonly HashSet<Type> BACK_ALLOWED_PAGES = [typeof(AddServerPage), typeof(EditServerPage), typeof(GridTableSettingsPage)];
+        private static readonly HashSet<Type> BACK_ALLOWED_PAGES = [typeof(ServerFormPage), typeof(ListServerPage), typeof(GridTableSettingsPage)];
         public SettingsPage()
         {
             InitializeComponent();

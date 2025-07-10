@@ -67,6 +67,18 @@ namespace WinSonic.Model.Settings
             return true;
         }
 
+        public bool ReplaceServer(Server oldServer, Server newServer)
+        {
+            int index = _servers.IndexOf(oldServer);
+            if (index == -1)
+            {
+                return false;
+            }
+            _servers.RemoveAt(index);
+            _servers.Insert(index, newServer);
+            return true;
+        }
+
         public void RemoveServer(Server server)
         {
             _servers.Remove(server);

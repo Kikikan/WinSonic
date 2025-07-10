@@ -49,6 +49,15 @@ namespace WinSonic.Controls
         public static readonly DependencyProperty ButtonDescriptionProperty =
             DependencyProperty.Register("ButtonDescription", typeof(string), typeof(SettingGroupButton), new PropertyMetadata(""));
 
+        public static readonly new DependencyProperty ContentProperty =
+        DependencyProperty.Register(nameof(Content), typeof(object), typeof(SettingBar), new PropertyMetadata(null));
+
+        public new object Content
+        {
+            get => GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
+        }
+
         public SettingGroupButton()
         {
             InitializeComponent();
@@ -56,7 +65,7 @@ namespace WinSonic.Controls
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Click?.Invoke(sender, e);
+            Click?.Invoke(this, e);
         }
     }
 }
