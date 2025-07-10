@@ -156,8 +156,8 @@ public sealed partial class ServerFormPage : Page, INotifyPropertyChanged
                 }
                 else
                 {
-                    message = "Server was successfully edited.";
-                    DispatcherQueue.TryEnqueue(() => Frame.GoBack());
+                    Frame.GoBack();
+                    return;
                 }
             }
             else
