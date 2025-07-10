@@ -1,13 +1,16 @@
 ﻿namespace WinSonic.Model.Settings
 {
-    public class PlayerSettings : ISetting
+    public class PlayerSettingGroup : ISettingGroup<Dictionary<string, string>>
     {
         public double Volume { get; set; } = 1;
 
-        public PlayerSettings() { }
-        public PlayerSettings(Dictionary<string, string> data)
+        public string Key => "player";
+
+        public PlayerSettingGroup() { }
+
+        public void Load(Dictionary<string, string> settings)
         {
-            Volume = double.Parse(data["volume"]);
+            Volume = double.Parse(settings["volume"]);
         }
 
         public Dictionary<string, string> ToDictionary()

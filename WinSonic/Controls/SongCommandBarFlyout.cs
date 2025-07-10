@@ -20,7 +20,7 @@ namespace WinSonic.Controls
             Song song,
             GridTable gridTable,
             Page page,
-            BehaviorSettings.GridTableDoubleClickBehavior behavior)
+            BehaviorSettingGroup.GridTableDoubleClickBehavior behavior)
         {
             var flyout = new CommandBarFlyout { AlwaysExpanded = true };
 
@@ -75,14 +75,14 @@ namespace WinSonic.Controls
             return flyout;
         }
 
-        public static void PlayNow(CommandBarFlyout flyout, Song song, List<Song> songs, BehaviorSettings.GridTableDoubleClickBehavior behavior)
+        public static void PlayNow(CommandBarFlyout flyout, Song song, List<Song> songs, BehaviorSettingGroup.GridTableDoubleClickBehavior behavior)
         {
             PlayerPlaylist.Instance.ClearSongs();
-            if (behavior == BehaviorSettings.GridTableDoubleClickBehavior.LoadCurrent)
+            if (behavior == BehaviorSettingGroup.GridTableDoubleClickBehavior.LoadCurrent)
             {
                 PlayerPlaylist.Instance.AddSong(song);
             }
-            else if (behavior == BehaviorSettings.GridTableDoubleClickBehavior.LoadAll)
+            else if (behavior == BehaviorSettingGroup.GridTableDoubleClickBehavior.LoadAll)
             {
                 foreach (var s in songs)
                 {

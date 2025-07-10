@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinSonic.Pages.Settings.Behavior.GridTableSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Pages.Settings.Behavior"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded"
+    xmlns:control="using:WinSonic.Controls">
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Spacing="8" Margin="16 16 16 0">
+                <TextBlock Text="Double click / Play now" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold"/>
+                <control:SettingBar IconGlyph="&#xE93C;" Title="Album" Description="Only the clicked song or the whole album is added to the queue">
+                    <ComboBox x:Name="AlbumGridTableComboBox" SelectionChanged="AlbumGridTableComboBox_SelectionChanged" Width="192"/>
+                </control:SettingBar>
+
+                <control:SettingBar IconGlyph="&#xEA37;" Title="Playlist" Description="Only the clicked song or the whole playlist is added to the queue">
+                    <ComboBox x:Name="PlaylistGridTableComboBox" SelectionChanged="PlaylistGridTableComboBox_SelectionChanged" Width="192"/>
+                </control:SettingBar>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

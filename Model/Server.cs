@@ -13,6 +13,7 @@ namespace WinSonic.Model
         public string PasswordHash { get; private set; }
         public string Salt { get; private set; }
         public bool Enabled { get; set; } = true;
+        public string Description => $"{Address} ({Username})";
 
         public Server(string name, string uri, string username, string password)
         {
@@ -22,6 +23,16 @@ namespace WinSonic.Model
             var pass = GetPassword(password);
             PasswordHash = pass.Item1;
             Salt = pass.Item2;
+            InitClient();
+        }
+
+        public Server(string name, string uri, string username, string passwordHash, string salt)
+        {
+            Name = name;
+            Address = uri;
+            Username = username;
+            PasswordHash = passwordHash;
+            Salt = salt;
             InitClient();
         }
 
@@ -66,7 +77,7 @@ namespace WinSonic.Model
             return $"?{string.Join('&', GetParameters().Select(SubsonicApiHelper.GetParameterString))}";
         }
 
-        private (string, string) GetPassword(string password)
+        private static (string, string) GetPassword(string password)
         {
             string salt = GenerateRandomAlphanumericString(32);
             MD5 md5 = MD5.Create();
