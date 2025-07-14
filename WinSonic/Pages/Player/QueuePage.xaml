@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:api="using:WinSonic.Model.Api"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    xmlns:control="using:WinSonic.Pages.Control">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,34 +29,7 @@
                 </Button.Content>
             </Button>
         </StackPanel>
-        
-        <ListView Grid.Row="1" x:Name="PlaylistView" HorizontalAlignment="Left" ItemsSource="{x:Bind Songs}" CanDragItems="True" CanReorderItems="True" AllowDrop="True" SelectionMode="Single" IsSwipeEnabled="True" ContainerContentChanging="PlaylistView_ContainerContentChanging">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="api:Song">
-                    <ItemContainer x:Name="SongContainer" DoubleTapped="SongContainer_DoubleTapped" RightTapped="SongContainer_RightTapped">
-                        <ItemContainer.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem x:Name="SongPlayItem" Text="Play" Click="SongPlayItem_Click">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xe768;" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem x:Name="SongRemoveItem" Text="Remove" Click="SongRemoveItem_Click">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xe738;" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                            </MenuFlyout>
-                        </ItemContainer.ContextFlyout>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind DiskNumber}"/>
-                            <TextBlock Text="."/>
-                            <TextBlock Text="{x:Bind Track}"/>
-                            <TextBlock Text="{x:Bind Title}" Margin="5 0 0 0"/>
-                        </StackPanel>
-                    </ItemContainer>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+
+        <control:GridTable x:Name="QueueGridTable" Grid.Row="1" CanReorder="false"  RowRightTapped="QueueGridTable_RowRightTapped" RowTapped="QueueGridTable_RowTapped"/>
     </Grid>
 </Page>
