@@ -18,7 +18,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <CommandBar Grid.Row="0" HorizontalAlignment="Left" OverflowButtonVisibility="Collapsed">
+        <CommandBar Grid.Row="0" OverflowButtonVisibility="Collapsed">
             <AppBarButton x:Name="ClearButton" Click="ClearButton_Click" ToolTipService.ToolTip="Clear">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE894;" />
