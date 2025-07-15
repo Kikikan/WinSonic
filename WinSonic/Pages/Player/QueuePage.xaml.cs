@@ -38,7 +38,7 @@ namespace WinSonic.Pages.Player
                 throw new Exception("Application is not App.");
             }
             QueueGridTable.Columns = [
-                ("#", new GridLength(40, GridUnitType.Pixel)),
+                ("#", new GridLength(60, GridUnitType.Pixel)),
                 ("Title", new GridLength(1, GridUnitType.Star)),
                 ("Artist", new GridLength(1, GridUnitType.Star)),
                 ("Album", new GridLength(1, GridUnitType.Star))

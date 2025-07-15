@@ -24,11 +24,11 @@
                     <FontIcon Glyph="&#xE894;" />
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle" IsEnabled="False">
+            <!--<AppBarButton x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle" IsEnabled="False">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE8B1;" />
                 </AppBarButton.Icon>
-            </AppBarButton>
+            </AppBarButton>-->
         </CommandBar>
 
         <control:GridTable x:Name="QueueGridTable" Grid.Row="1" CanReorder="false"  RowRightTapped="QueueGridTable_RowRightTapped" RowTapped="QueueGridTable_RowTapped"/>
