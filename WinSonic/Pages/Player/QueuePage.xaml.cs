@@ -124,5 +124,10 @@ namespace WinSonic.Pages.Player
         {
             Queue.MoveTo((uint)e.Index);
         }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Queue.CurrentItemChanged -= Queue_CurrentItemChanged;
+        }
     }
 }

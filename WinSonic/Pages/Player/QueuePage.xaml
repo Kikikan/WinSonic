@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     xmlns:api="using:WinSonic.Model.Api"
     Loaded="Page_Loaded"
-    xmlns:control="using:WinSonic.Pages.Control">
+    xmlns:control="using:WinSonic.Pages.Control"
+    Unloaded="Page_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -17,18 +18,18 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5 10 0 10">
-            <Button x:Name="ClearButton" Click="ClearButton_Click" ToolTipService.ToolTip="Clear Queue">
-                <Button.Content>
+        <CommandBar Grid.Row="0" HorizontalAlignment="Left" OverflowButtonVisibility="Collapsed">
+            <AppBarButton x:Name="ClearButton" Click="ClearButton_Click" ToolTipService.ToolTip="Clear">
+                <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE894;" />
-                </Button.Content>
-            </Button>
-            <Button x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle Queue" Margin="5 0 0 0" IsEnabled="False">
-                <Button.Content>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="ShuffleButton" Click="ShuffleButton_Click" ToolTipService.ToolTip="Shuffle" IsEnabled="False">
+                <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE8B1;" />
-                </Button.Content>
-            </Button>
-        </StackPanel>
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
 
         <control:GridTable x:Name="QueueGridTable" Grid.Row="1" CanReorder="false"  RowRightTapped="QueueGridTable_RowRightTapped" RowTapped="QueueGridTable_RowTapped"/>
     </Grid>
