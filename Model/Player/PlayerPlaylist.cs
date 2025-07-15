@@ -6,7 +6,7 @@ namespace WinSonic.Model.Player
     {
         public List<Song> Songs { get; set; } = [];
 
-        public int SongIndex { get; set; }
+        public int SongIndex { get; set; } = -1;
 
         private PlayerPlaylist() { }
 
@@ -45,7 +45,10 @@ namespace WinSonic.Model.Player
             {
                 Songs.RemoveAt(index);
                 SongRemoved?.Invoke(this, index);
-                // TODO: changing songIndex if index <= songIndex
+                if (SongIndex == index)
+                {
+                    SongIndex--;
+                }
                 return true;
             }
             return false;
@@ -57,6 +60,7 @@ namespace WinSonic.Model.Player
             {
                 RemoveSong(i);
             }
+            SongIndex = -1;
         }
 
         public void PlaySong(int index)

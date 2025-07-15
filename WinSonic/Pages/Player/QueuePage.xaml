@@ -19,6 +19,11 @@
         </Grid.RowDefinitions>
 
         <CommandBar Grid.Row="0" OverflowButtonVisibility="Collapsed">
+            <AppBarToggleButton x:Name="RepeatButton" Click="RepeatButton_Click" ToolTipService.ToolTip="Repeat" IsChecked="{x:Bind RepeatChecked, Mode=OneWay}">
+                <AppBarToggleButton.Icon>
+                    <FontIcon Glyph="{x:Bind RepeatGlyph, Mode=OneWay}" />
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
             <AppBarButton x:Name="ClearButton" Click="ClearButton_Click" ToolTipService.ToolTip="Clear">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE894;" />

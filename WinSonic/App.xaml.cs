@@ -22,6 +22,19 @@ namespace WinSonic
         public MainWindow? Window { get; private set; }
         public MediaPlayer MediaPlayer { get; private set; } = new();
         public MediaPlaybackList MediaPlaybackList { get; private set; } = new();
+        private uint repeatIndex = 0;
+        public bool ForcefulSongChange { get; set; } = false;
+
+        private RepeatMode _repeatMode;
+        public RepeatMode RepeatMode
+        {
+            get => _repeatMode;
+            set
+            {
+                _repeatMode = value;
+                MediaPlaybackList.AutoRepeatEnabled = _repeatMode == RepeatMode.ALL;
+            }
+        }
 
         private bool autoPlayNext = false;
 
@@ -56,9 +69,18 @@ namespace WinSonic
         {
             if (MediaPlaybackList.CurrentItem != null)
             {
-                PlayerPlaylist.Instance.SongIndex = (int)MediaPlaybackList.CurrentItemIndex;
-                var song = PlayerPlaylist.Instance.Songs[PlayerPlaylist.Instance.SongIndex];
-                await SubsonicApiHelper.Scrobble(song.Server, song.Id);
+                if (RepeatMode != RepeatMode.ONE || ForcefulSongChange || MediaPlaybackList.CurrentItemIndex == repeatIndex)
+                {
+                    ForcefulSongChange = false;
+                    repeatIndex = MediaPlaybackList.CurrentItemIndex;
+                    PlayerPlaylist.Instance.SongIndex = (int)MediaPlaybackList.CurrentItemIndex;
+                    var song = PlayerPlaylist.Instance.Songs[PlayerPlaylist.Instance.SongIndex];
+                    await SubsonicApiHelper.Scrobble(song.Server, song.Id);
+                }
+                else
+                {
+                    MediaPlaybackList.MoveTo(repeatIndex);
+                }
             }
         }
 
@@ -143,5 +165,12 @@ namespace WinSonic
             smtc.IsPreviousEnabled = true;
             MediaPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
         }
+    }
+
+    public enum RepeatMode
+    {
+        OFF,
+        ALL,
+        ONE
     }
 }

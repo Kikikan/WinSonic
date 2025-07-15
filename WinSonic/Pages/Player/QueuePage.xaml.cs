@@ -22,14 +22,18 @@ namespace WinSonic.Pages.Player
     public sealed partial class QueuePage : Page
     {
         public ObservableCollection<Song> Songs { get; set; } = [];
+        private readonly App app;
         private readonly MediaPlaybackList Queue;
         private Rectangle? PreviousSongRectangle;
+        private string RepeatGlyph { get { return GetRepeatGlyph(); } }
+        private bool? RepeatChecked { get { return GetRepeatChecked(); } }
 
         public QueuePage()
         {
             InitializeComponent();
             if (Application.Current is App app)
             {
+                this.app = app;
                 Queue = app.MediaPlaybackList;
                 Queue.CurrentItemChanged += Queue_CurrentItemChanged;
             }
@@ -115,19 +119,58 @@ namespace WinSonic.Pages.Player
             throw new NotImplementedException(); // TODO
         }
 
-        private CommandBarFlyout QueueGridTable_RowRightTapped(object sender, Control.RowEvent e)
+        private CommandBarFlyout QueueGridTable_RowRightTapped(object sender, RowEvent e)
         {
             return QueueSongCommandBarFlyout.Create(QueueGridTable, (uint)e.Index, Queue);
         }
 
-        private void QueueGridTable_RowTapped(object sender, Control.RowEvent e)
+        private void QueueGridTable_RowTapped(object sender, RowEvent e)
         {
+            app.ForcefulSongChange = true;
             Queue.MoveTo((uint)e.Index);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             Queue.CurrentItemChanged -= Queue_CurrentItemChanged;
+        }
+
+        private void RepeatButton_Click(object sender, RoutedEventArgs e)
+        {
+            switch (app.RepeatMode)
+            {
+                case RepeatMode.OFF:
+                    app.RepeatMode = RepeatMode.ALL;
+                    break;
+                case RepeatMode.ALL:
+                    app.RepeatMode = RepeatMode.ONE;
+                    break;
+                case RepeatMode.ONE:
+                    app.RepeatMode = RepeatMode.OFF;
+                    break;
+            }
+            RepeatButton.IsChecked = GetRepeatChecked();
+            ((FontIcon)RepeatButton.Icon).Glyph = GetRepeatGlyph();
+        }
+
+        private string GetRepeatGlyph()
+        {
+            return app.RepeatMode switch
+            {
+                RepeatMode.ALL => "\uE8EE",
+                RepeatMode.ONE => "\uE8ED",
+                _ => "\uF5E7",
+            };
+        }
+
+        private bool GetRepeatChecked()
+        {
+            return app.RepeatMode switch
+            {
+                RepeatMode.ALL => true,
+                RepeatMode.ONE => true,
+                _ => false,
+            };
         }
     }
 }
