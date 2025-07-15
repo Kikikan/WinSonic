@@ -36,7 +36,6 @@ A modern music streaming client for Windows, compatible with the Subsonic API an
 * **Windows 10 or 11**
 * **.NET 8 Desktop Runtime**
 * **Access to a Subsonic-compatible server**
-* [Segoe Fluent Icons](https://learn.microsoft.com/en-us/windows/apps/design/downloads/#fonts) for Windows 10
 
 ---
 
