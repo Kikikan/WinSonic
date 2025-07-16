@@ -8,35 +8,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:control="using:WinSonic.Pages.Control"
-    xmlns:api="using:WinSonic.Model.Api">
+    xmlns:api="using:WinSonic.Model.Api"
+    Loaded="CurrentlyPlayingPage_Loaded">
 
-    <Grid Margin="25 0 0 0">
+    <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Now Playing" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 25 0 25"/>
-        <Grid Grid.Row="1" Margin="0 25 0 20">
+        <TextBlock Grid.Row="0" Text="Now Playing" Style="{StaticResource HeaderTextBlockStyle}" Margin="0 40 0 36"/>
+        <Grid Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Image Grid.Row="0" x:Name="Image" Stretch="Uniform" HorizontalAlignment="Center">
+            <StackPanel x:Name="CurrentSongPanel" Grid.Column="0" Margin="0 0 36 0">
+                <Image x:Name="Image" Stretch="Uniform" HorizontalAlignment="Center">
                     <Image.Source>
                         <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
                     </Image.Source>
                 </Image>
-                <StackPanel Grid.Row="1">
+                <StackPanel Grid.Row="1" VerticalAlignment="Top">
                     <TextBlock Text="{x:Bind Song.Title, Mode=OneWay}" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind Song.Artist, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
                     <TextBlock Text="{x:Bind Song.Album, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
                 </StackPanel>
-            </Grid>
+            </StackPanel>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>

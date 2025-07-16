@@ -78,14 +78,6 @@ namespace WinSonic.Pages
 
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            // Wait for the UI to load before trying to animate
-            this.Loaded += CurrentlyPlayingPage_Loaded;
-        }
-
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
@@ -93,7 +85,7 @@ namespace WinSonic.Pages
             if (e.NavigationMode == NavigationMode.Back)
             {
                 var animationService = ConnectedAnimationService.GetForCurrentView();
-                animationService.PrepareToAnimate("coverImageBackAnimation", Image);
+                animationService.PrepareToAnimate("coverImageBackAnimation", CurrentSongPanel);
             }
         }
 
@@ -104,8 +96,13 @@ namespace WinSonic.Pages
             if (animation != null)
             {
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
-                animation.TryStart(Image);
+                animation.TryStart(CurrentSongPanel);
             }
+        }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Image.MaxWidth = e.NewSize.Height - 100;
         }
     }
 }
