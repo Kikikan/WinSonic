@@ -17,7 +17,6 @@ namespace WinSonic.Pages;
 public sealed partial class SongsPage : Page
 {
     private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
-    private uint currentVersion;
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
@@ -32,7 +31,20 @@ public sealed partial class SongsPage : Page
             ("Album", new GridLength(3, GridUnitType.Star)),
             ("Time", new GridLength(80, GridUnitType.Pixel))
             ];
-        currentVersion = roamingSettings.ServerSettings.Version;
+        roamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
+    }
+
+    private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
+    {
+        RefreshButton.IsEnabled = false;
+        songList.Clear();
+        foreach (var s in roamingSettings.ServerSettings.ActiveServers)
+        {
+            songList.AddRange(await SubsonicApiHelper.Search(s));
+        }
+        Refresh();
+        initialized = true;
+        RefreshButton.IsEnabled = true;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -43,7 +55,7 @@ public sealed partial class SongsPage : Page
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
         RefreshButton.IsEnabled = false;
-        if (!initialized || currentVersion != roamingSettings.ServerSettings.Version)
+        if (!initialized)
         {
             songList.Clear();
             foreach (var server in roamingSettings.ServerSettings.ActiveServers)
@@ -52,7 +64,6 @@ public sealed partial class SongsPage : Page
             }
             Refresh();
             initialized = true;
-            currentVersion = roamingSettings.ServerSettings.Version;
         }
         RefreshButton.IsEnabled = true;
     }

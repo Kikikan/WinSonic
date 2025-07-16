@@ -33,24 +33,40 @@ namespace WinSonic.Pages.Settings.Servers
         {
             if (initialized)
             {
-                if (sender is ToggleSwitch toggle && toggle.Tag is Server server && toggle.IsOn)
+                if (sender is ToggleSwitch toggle && toggle.Tag is Server server)
                 {
-                    _ = Task.Delay(500).ContinueWith(t => SetIsLoading(true));
-                    toggle.IsEnabled = false;
-                    pinging = true;
-                    var successful = (await ServerSettingGroup.TryPing([server])).Count == 0;
-                    if (!successful)
+                    if (toggle.IsOn)
                     {
-                        toggle.IsOn = false;
-                        await UnsuccessfulConnectionDialog.ShowDialog(toggle.XamlRoot, [server]);
-                        toggle.IsOn = server.Enabled;
+                        _ = Task.Delay(500).ContinueWith(t => SetIsLoading(true));
+                        toggle.IsEnabled = false;
+                        pinging = true;
+                        var successful = (await ServerSettingGroup.TryPing([server])).Count == 0;
+                        if (!successful)
+                        {
+                            toggle.IsOn = false;
+                            await UnsuccessfulConnectionDialog.ShowDialog(toggle.XamlRoot, [server]);
+                            toggle.IsOn = server.Enabled;
+                        }
+                        pinging = false;
+                        toggle.IsEnabled = true;
+                        SetIsLoading(false);
+                        if (server.Enabled)
+                        {
+                            DispatcherQueue.TryEnqueue(() => ToggleServer(server));
+                        }
                     }
-                    pinging = false;
-                    toggle.IsEnabled = true;
-                    SetIsLoading(false);
+                    else
+                    {
+                        DispatcherQueue.TryEnqueue(() => ToggleServer(server));
+                    }
                 }
-                DispatcherQueue.TryEnqueue(() => roamingSettings.SaveSetting(roamingSettings.ServerSettings));
             }
+        }
+
+        private void ToggleServer(Server server)
+        {
+            roamingSettings.ServerSettings.ToggledServer(server, server.Enabled);
+            roamingSettings.SaveSetting(roamingSettings.ServerSettings);
         }
 
         private void SetIsLoading(bool value)

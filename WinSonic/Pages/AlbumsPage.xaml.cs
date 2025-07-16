@@ -19,7 +19,6 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
-        private uint currentVersion;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -29,7 +28,10 @@ namespace WinSonic.Pages
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
             OrderBy = roamingSettings.AlbumSettings.OrderBy;
-            currentVersion = roamingSettings.ServerSettings.Version;
+            if (Application.Current is App app)
+            {
+                app.RoamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
+            }
         }
 
         private async Task<bool> Update()
@@ -65,6 +67,11 @@ namespace WinSonic.Pages
             await Refresh();
         }
 
+        private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
+        {
+            await Refresh();
+        }
+
         private async Task Refresh()
         {
             albums.Clear();
@@ -74,7 +81,7 @@ namespace WinSonic.Pages
             AlbumControl.UpdateAction = Update;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!initialized)
             {
@@ -94,11 +101,6 @@ namespace WinSonic.Pages
                 }
                 AlbumControl.UpdateAction = Update;
                 initialized = true;
-            }
-            else if (roamingSettings.ServerSettings.Version != currentVersion)
-            {
-                await Refresh();
-                currentVersion = roamingSettings.ServerSettings.Version;
             }
         }
         private async void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
