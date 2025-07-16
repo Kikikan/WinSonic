@@ -13,7 +13,7 @@ namespace WinSonic.Model.Settings
             OrderBy = (SubsonicApiHelper.AlbumListType)int.Parse(settings["orderBy"]);
         }
 
-        public Dictionary<string, string> ToDictionary()
+        public Dictionary<string, string> ToData()
         {
             var d = new Dictionary<string, string>
             {

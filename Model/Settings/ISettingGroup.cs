@@ -4,7 +4,7 @@
     {
         string Key { get; }
         void Load(T settings);
-        T ToDictionary();
+        T ToData();
 
         void OnSave()
         {

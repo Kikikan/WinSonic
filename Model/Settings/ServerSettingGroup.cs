@@ -19,7 +19,7 @@ namespace WinSonic.Model.Settings
             }
         }
 
-        List<Dictionary<string, string>> ISettingGroup<List<Dictionary<string, string>>>.ToDictionary()
+        List<Dictionary<string, string>> ISettingGroup<List<Dictionary<string, string>>>.ToData()
         {
             return [.. _servers.Select(a => a.ToDictionary())];
         }

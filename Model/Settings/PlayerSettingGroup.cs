@@ -13,7 +13,7 @@
             Volume = double.Parse(settings["volume"]);
         }
 
-        public Dictionary<string, string> ToDictionary()
+        public Dictionary<string, string> ToData()
         {
             var d = new Dictionary<string, string>
             {

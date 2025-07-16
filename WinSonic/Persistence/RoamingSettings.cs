@@ -47,7 +47,7 @@ namespace WinSonic.Persistence
 
         public void SaveSetting<T>(ISettingGroup<T> setting) where T : class
         {
-            string json = JsonSerializer.Serialize(setting.ToDictionary());
+            string json = JsonSerializer.Serialize(setting.ToData());
             roaming.Values[setting.Key] = json;
             setting.OnSave();
         }

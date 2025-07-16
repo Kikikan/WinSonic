@@ -15,7 +15,7 @@ namespace WinSonic.Model.Settings
             PlaylistDoubleClickBehavior = (GridTableDoubleClickBehavior)int.Parse(settings["gridTable.playlist.doubleClick"]);
         }
 
-        public Dictionary<string, string> ToDictionary()
+        public Dictionary<string, string> ToData()
         {
             var d = new Dictionary<string, string>
             {
