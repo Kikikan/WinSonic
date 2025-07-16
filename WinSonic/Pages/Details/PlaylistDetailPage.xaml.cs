@@ -139,7 +139,7 @@ namespace WinSonic.Pages.Details
         {
             if (DetailedObject != null)
             {
-                ContentDialog dialog = ConfirmationContentDialog.CreateDialog(XamlRoot);
+                ContentDialog dialog = DeleteConfirmationContentDialog.CreateDialog(XamlRoot);
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {

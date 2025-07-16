@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace WinSonic.Controls
 {
-    public class ConfirmationContentDialog
+    public class DeleteConfirmationContentDialog
     {
         public static ContentDialog CreateDialog(XamlRoot xamlRoot)
         {

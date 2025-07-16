@@ -78,7 +78,7 @@ namespace WinSonic.Pages.Settings.Servers
         {
             if (sender is FrameworkElement element && element.Tag is Server server)
             {
-                ContentDialog dialog = ConfirmationContentDialog.CreateDialog(XamlRoot);
+                ContentDialog dialog = DeleteConfirmationContentDialog.CreateDialog(XamlRoot);
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
