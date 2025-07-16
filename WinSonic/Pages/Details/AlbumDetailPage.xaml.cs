@@ -118,8 +118,26 @@ namespace WinSonic.Pages
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayerPlaylist.Instance.ClearSongs();
-            AddToQueueButton_Click(sender, e);
+            if (DetailedObject?.ApiObject is Album album)
+            {
+                AlbumCommandBarFlyout.PlayNow(album, null);
+            }
+        }
+
+        private void PlayNextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject?.ApiObject is Album album)
+            {
+                AlbumCommandBarFlyout.PlayNext(album, null);
+            }
+        }
+
+        private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DetailedObject?.ApiObject is Album album)
+            {
+                AlbumCommandBarFlyout.AddToQueue(album, null);
+            }
         }
 
         private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
@@ -133,22 +151,6 @@ namespace WinSonic.Pages
                     album.IsFavourite = !album.IsFavourite;
                     OnPropertyChanged(nameof(DetailedObject));
                 }
-            }
-        }
-
-        private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var song in Songs)
-            {
-                PlayerPlaylist.Instance.AddSong(song);
-            }
-        }
-
-        private void PlayNextButton_Click(object sender, RoutedEventArgs e)
-        {
-            for (int i = Songs.Count - 1; i >= 0; i--)
-            {
-                PlayerPlaylist.Instance.AddNextSong(Songs[i]);
             }
         }
 
@@ -166,8 +168,7 @@ namespace WinSonic.Pages
         {
             if (DetailedObject?.ApiObject is Album album)
             {
-                var result = AddToPlaylistDialog.CreateDialog(this, album, Songs.ToList());
-                AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
+                await AlbumCommandBarFlyout.AddToPlaylist(album, this, null);
             }
         }
 

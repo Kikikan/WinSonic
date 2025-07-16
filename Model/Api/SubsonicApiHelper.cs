@@ -92,6 +92,17 @@ namespace WinSonic.Model.Api
             return rs.Album;
         }
 
+        public static async Task<AlbumWithSongsId3> GetAlbum(Album album)
+        {
+            var rs = await Execute(album.Server, "/rest/getAlbum", [("id", album.Id)]);
+            return rs.Album;
+        }
+
+        public static async Task<List<Song>> GetSongs(Album album)
+        {
+            return (await GetAlbum(album)).Song.Select(c => new Song(c, album.Server)).ToList();
+        }
+
         public static async Task<bool> Scrobble(Server server, string id)
         {
             var rs = await Execute(server, "/rest/scrobble", [("id", id), ("submission", "false")]);
