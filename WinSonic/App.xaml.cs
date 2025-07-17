@@ -32,7 +32,7 @@ namespace WinSonic
             set
             {
                 _repeatMode = value;
-                MediaPlaybackList.AutoRepeatEnabled = _repeatMode == RepeatMode.ALL;
+                MediaPlaybackList.AutoRepeatEnabled = _repeatMode != RepeatMode.OFF;
             }
         }
 
