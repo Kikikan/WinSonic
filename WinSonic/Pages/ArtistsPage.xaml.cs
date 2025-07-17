@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
@@ -91,6 +92,11 @@ namespace WinSonic.Pages
                 }
                 ArtistControl.IsGrouped = true;
             }
+        }
+
+        private CommandBarFlyout ArtistControl_RightTappedPicture(int index, InfoWithPicture picture)
+        {
+            return ArtistCommandBarFlyout.Create(artists[index], this, picture);
         }
     }
 }

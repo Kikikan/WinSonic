@@ -105,10 +105,10 @@ namespace WinSonic.Controls
 
         public static async Task AddToPlaylist(Album album, Page page, CommandBarFlyout? flyout)
         {
+            flyout?.Hide();
             var songs = await SubsonicApiHelper.GetSongs(album);
             var result = AddToPlaylistDialog.CreateDialog(page, album, songs);
             AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
-            flyout?.Hide();
         }
     }
 }
