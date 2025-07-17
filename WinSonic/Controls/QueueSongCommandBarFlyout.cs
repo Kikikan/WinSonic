@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,10 @@ namespace WinSonic.Controls
 
         private static void Play(MediaPlaybackList playlist, uint index, CommandBarFlyout flyout)
         {
+            if (Application.Current is App app)
+            {
+                app.ForcefulSongChange = true;
+            }
             playlist.MoveTo(index);
             flyout.Hide();
         }
