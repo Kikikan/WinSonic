@@ -24,6 +24,10 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+    public delegate CommandBarFlyout? RightTappedPictureHandler(int index, InfoWithPicture picture);
+    public event RightTappedPictureHandler? RightTappedPicture;
+
+
     private bool canBeUpdated = true;
     private bool isLoading = false;
     private InfoWithPicture? _storedObject;
@@ -174,6 +178,15 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
         if (UpdateAction != null)
         {
             CheckAndLoadMoreIfNeeded();
+        }
+    }
+
+    private void ControlGrid_RightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+    {
+        if (sender is Grid grid && grid.DataContext is InfoWithPicture infoWithPicture)
+        {
+            var commandBarFlyout = RightTappedPicture?.Invoke(Items.IndexOf(infoWithPicture), infoWithPicture);
+            commandBarFlyout?.ShowAt(grid);
         }
     }
 }

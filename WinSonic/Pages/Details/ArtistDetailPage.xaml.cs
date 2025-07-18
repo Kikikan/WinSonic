@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Dialog;
@@ -99,13 +100,11 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         }
     }
 
-    private async void PlayButton_Click(object sender, RoutedEventArgs e)
+    private void PlayButton_Click(object sender, RoutedEventArgs e)
     {
-        PlayerPlaylist.Instance.ClearSongs();
-        var songs = await GetSongs();
-        foreach (var song in songs)
+        if (DetailedObject?.ApiObject is DetailedArtist artist)
         {
-            PlayerPlaylist.Instance.AddSong(song);
+            ArtistCommandBarFlyout.PlayNow(artist, null);
         }
     }
 
@@ -152,8 +151,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
     {
         if (DetailedObject?.ApiObject is DetailedArtist artist)
         {
-            var result = AddToPlaylistDialog.CreateDialog(this, artist, await GetSongs());
-            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
+            await ArtistCommandBarFlyout.AddToPlaylist(artist, this, null);
         }
     }
 }
