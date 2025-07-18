@@ -391,8 +391,17 @@ namespace WinSonic.Pages.Control
 
     public sealed class AccentBrush : IGridTableRowBrush
     {
-        public Brush Fill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark2"]); }
-        public Brush HoverFill { get => new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColorDark1"]); }
+        public Brush Fill { get => new SolidColorBrush((Color)(GetAppTheme() == ElementTheme.Dark ? Application.Current.Resources["SystemAccentColorDark2"] : Application.Current.Resources["SystemAccentColorLight1"])); }
+        public Brush HoverFill { get => new SolidColorBrush((Color)(GetAppTheme() == ElementTheme.Dark ? Application.Current.Resources["SystemAccentColorDark1"] : Application.Current.Resources["SystemAccentColorLight2"])); }
         public Brush Stroke { get => (Brush)Application.Current.Resources["FocusStrokeColorOuterBrush"]; }
+
+        private ElementTheme GetAppTheme()
+        {
+            if (Application.Current is App app && app.Window?.Content is FrameworkElement rootElement)
+            {
+                return rootElement.ActualTheme;
+            }
+            return ElementTheme.Default;
+        }
     }
 }
