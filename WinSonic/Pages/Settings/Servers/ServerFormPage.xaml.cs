@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -9,12 +10,12 @@ using WinSonic.Model.Api;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace WinSonic.Pages;
+namespace WinSonic.Pages.Settings.Servers;
 
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class AddServerPage : Page, INotifyPropertyChanged
+public sealed partial class ServerFormPage : Page, INotifyPropertyChanged
 {
     private bool _isServerEditable = true;
 
@@ -46,9 +47,10 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         }
     }
 
+    private Server? oldServer;
     private Server? server;
 
-    public AddServerPage()
+    public ServerFormPage()
     {
         InitializeComponent();
     }
@@ -57,6 +59,19 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
 
     private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is Server server)
+        {
+            oldServer = server;
+            this.server = server;
+            NameTextBox.Text = server.Name;
+            URLTextBox.Text = server.Address;
+            UsernameTextBox.Text = server.Username;
+        }
+    }
 
     private async void Connect_Click(object sender, RoutedEventArgs e)
     {
@@ -68,7 +83,14 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
         string messageText;
         try
         {
-            server = new Server(NameTextBox.Text, URL.Text, Username.Text, Password.Password);
+            if (oldServer == null || !string.IsNullOrEmpty(PasswordTextBox.Password))
+            {
+                server = new Server(NameTextBox.Text, URLTextBox.Text, UsernameTextBox.Text, PasswordTextBox.Password);
+            }
+            else
+            {
+                server = new Server(NameTextBox.Text, URLTextBox.Text, UsernameTextBox.Text, oldServer.PasswordHash, oldServer.Salt);
+            }
             var rs = await SubsonicApiHelper.Ping(server);
 
             messageText = rs.Status == ResponseStatus.Ok
@@ -113,22 +135,39 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
     {
         if (server is not null)
         {
-            var serverFile = ((App)Application.Current).RoamingSettings;
-            bool added = serverFile.AddServer(server);
-            string message;
-            if (added)
+            var roamingSettings = ((App)Application.Current).RoamingSettings;
+            bool success;
+
+            if (oldServer == null)
             {
-                serverFile.SaveServers();
-                message = "Server was successfully saved.";
+                success = roamingSettings.ServerSettings.AddServer(server);
+            }
+            else
+            {
+                success = roamingSettings.ServerSettings.ReplaceServer(oldServer, server);
+            }
+            string message;
+            if (success)
+            {
+                roamingSettings.SaveSetting(roamingSettings.ServerSettings);
+                if (oldServer == null)
+                {
+                    message = "Server was successfully saved.";
+                }
+                else
+                {
+                    Frame.GoBack();
+                    return;
+                }
             }
             else
             {
                 message = "Server is already saved.";
             }
             NameTextBox.Text = "";
-            URL.Text = "";
-            Username.Text = "";
-            Password.Password = "";
+            URLTextBox.Text = "";
+            UsernameTextBox.Text = "";
+            PasswordTextBox.Password = "";
             IsServerEditable = true;
             IsConnectionSuccessful = false;
 
@@ -152,5 +191,9 @@ public sealed partial class AddServerPage : Page, INotifyPropertyChanged
     {
         IsServerEditable = true;
         IsConnectionSuccessful = false;
+        if (oldServer != null)
+        {
+            Frame.GoBack();
+        }
     }
 }

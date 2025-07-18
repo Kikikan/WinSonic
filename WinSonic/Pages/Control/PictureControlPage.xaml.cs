@@ -30,7 +30,7 @@ public partial class PictureControlPage : Page, INotifyPropertyChanged
     public ObservableCollection<InfoWithPicture> Items { get; } = [];
 
     private Func<Task<bool>>? _updateAction;
-    public Func<Task<bool>>? UpdateAction { get => _updateAction; set { _updateAction = value; CheckAndLoadMoreIfNeeded(); } }
+    public Func<Task<bool>>? UpdateAction { get => _updateAction; set { _updateAction = value; canBeUpdated = true; CheckAndLoadMoreIfNeeded(); } }
     private bool _isGrouped = false;
     public bool IsGrouped
     {

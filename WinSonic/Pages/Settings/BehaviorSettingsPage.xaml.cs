@@ -1,8 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinSonic.Model.Settings;
-using WinSonic.Model.Util;
-using WinSonic.Persistence;
+using Microsoft.UI.Xaml.Media.Animation;
+using WinSonic.Pages.Settings.Behavior;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,35 +13,14 @@ namespace WinSonic.Pages.Settings
     /// </summary>
     public sealed partial class BehaviorSettingsPage : Page
     {
-        private readonly RoamingSettings settings = ((App)Application.Current).RoamingSettings;
         public BehaviorSettingsPage()
         {
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void GridTableButton_Click(object sender, RoutedEventArgs e)
         {
-            AlbumGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettings.GridTableDoubleClickBehavior>();
-            AlbumGridTableComboBox.DisplayMemberPath = "DisplayName";
-            AlbumGridTableComboBox.SelectedValuePath = "Value";
-            AlbumGridTableComboBox.SelectedIndex = (int)settings.BehaviorSettings.AlbumDoubleClickBehavior;
-
-            PlaylistGridTableComboBox.ItemsSource = EnumExtensions.GetDisplayItems<BehaviorSettings.GridTableDoubleClickBehavior>();
-            PlaylistGridTableComboBox.DisplayMemberPath = "DisplayName";
-            PlaylistGridTableComboBox.SelectedValuePath = "Value";
-            PlaylistGridTableComboBox.SelectedIndex = (int)settings.BehaviorSettings.PlaylistDoubleClickBehavior;
-        }
-
-        private void AlbumGridTableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            settings.BehaviorSettings.AlbumDoubleClickBehavior = (BehaviorSettings.GridTableDoubleClickBehavior)AlbumGridTableComboBox.SelectedIndex;
-            settings.SaveSetting(settings.BehaviorSettings);
-        }
-
-        private void PlaylistGridTableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            settings.BehaviorSettings.PlaylistDoubleClickBehavior = (BehaviorSettings.GridTableDoubleClickBehavior)PlaylistGridTableComboBox.SelectedIndex;
-            settings.SaveSetting(settings.BehaviorSettings);
+            Frame.Navigate(typeof(GridTableSettingsPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
     }
 }
