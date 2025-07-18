@@ -31,34 +31,31 @@ namespace WinSonic.Pages.Settings.Servers
 
         private async void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (initialized)
+            if (initialized && sender is ToggleSwitch toggle && toggle.Tag is Server server)
             {
-                if (sender is ToggleSwitch toggle && toggle.Tag is Server server)
+                if (toggle.IsOn)
                 {
-                    if (toggle.IsOn)
+                    _ = Task.Delay(500).ContinueWith(t => SetIsLoading(true));
+                    toggle.IsEnabled = false;
+                    pinging = true;
+                    var successful = (await ServerSettingGroup.TryPing([server])).Count == 0;
+                    if (!successful)
                     {
-                        _ = Task.Delay(500).ContinueWith(t => SetIsLoading(true));
-                        toggle.IsEnabled = false;
-                        pinging = true;
-                        var successful = (await ServerSettingGroup.TryPing([server])).Count == 0;
-                        if (!successful)
-                        {
-                            toggle.IsOn = false;
-                            await UnsuccessfulConnectionDialog.ShowDialog(toggle.XamlRoot, [server]);
-                            toggle.IsOn = server.Enabled;
-                        }
-                        pinging = false;
-                        toggle.IsEnabled = true;
-                        SetIsLoading(false);
-                        if (server.Enabled)
-                        {
-                            DispatcherQueue.TryEnqueue(() => ToggleServer(server));
-                        }
+                        toggle.IsOn = false;
+                        await UnsuccessfulConnectionDialog.ShowDialog(toggle.XamlRoot, [server]);
+                        toggle.IsOn = server.Enabled;
                     }
-                    else
+                    pinging = false;
+                    toggle.IsEnabled = true;
+                    SetIsLoading(false);
+                    if (server.Enabled)
                     {
                         DispatcherQueue.TryEnqueue(() => ToggleServer(server));
                     }
+                }
+                else
+                {
+                    DispatcherQueue.TryEnqueue(() => ToggleServer(server));
                 }
             }
         }
