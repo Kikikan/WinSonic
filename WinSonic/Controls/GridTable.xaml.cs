@@ -51,6 +51,8 @@ namespace WinSonic.Pages.Control
         public event RowRightTapEventHandler? RowRightTapped;
         public event RowAddedHandler? RowAdded;
 
+        public bool CanReorder { get; set; } = true;
+
         public GridTable()
         {
             InitializeComponent();
@@ -64,6 +66,16 @@ namespace WinSonic.Pages.Control
         public void AddRow(Dictionary<string, string?> content)
         {
             _content.Add(content);
+        }
+
+        public void RemoveRow(int index)
+        {
+            _content.RemoveAt(index);
+            _orderedContent.RemoveAt(index);
+            if (_selectedIndex == index)
+            {
+                _selectedIndex = -1;
+            }
         }
 
         public void Clear()
@@ -212,16 +224,19 @@ namespace WinSonic.Pages.Control
 
         private void CreateOrderIcon(StackPanel header)
         {
-            FontIcon icon = new()
+            if (CanReorder)
             {
-                Glyph = ascending ? "\uE70D" : "\uE70E"
-            };
-            header.Children.Add(icon);
+                FontIcon icon = new()
+                {
+                    Glyph = ascending ? "\uE70D" : "\uE70E"
+                };
+                header.Children.Add(icon);
+            }
         }
 
         private void OnHeaderHover(object sender, RoutedEventArgs e)
         {
-            if (sender is StackPanel header && orderByColumn != headerIndices[header])
+            if (sender is StackPanel header && orderByColumn != headerIndices[header] && CanReorder)
             {
                 FontIcon icon = new()
                 {
@@ -242,7 +257,7 @@ namespace WinSonic.Pages.Control
 
         private void OnHeaderTap(object sender, RoutedEventArgs e)
         {
-            if (sender is StackPanel header)
+            if (sender is StackPanel header && CanReorder)
             {
                 headers[orderByColumn].Children.RemoveAt(1);
                 if (orderByColumn != headerIndices[header])

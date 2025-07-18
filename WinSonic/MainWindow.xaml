@@ -123,27 +123,27 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Tag="WinSonic.Pages.AlbumsPage" Content="Albums">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe93c;" />
+                        <FontIcon Glyph="&#xe93c;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Tag="WinSonic.Pages.ArtistsPage" Content="Artists">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe716;" />
+                        <FontIcon Glyph="&#xe716;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Tag="WinSonic.Pages.GenrePage" Content="Genres">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe899;" />
+                        <FontIcon Glyph="&#xe899;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Tag="WinSonic.Pages.PlaylistPage" Content="Playlists">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xea37;" />
+                        <FontIcon Glyph="&#xea37;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Tag="WinSonic.Pages.SongsPage" Content="Songs">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xec4f;" />
+                        <FontIcon Glyph="&#xec4f;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

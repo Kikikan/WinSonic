@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using WinSonic.Model.Api;
@@ -7,14 +6,11 @@ using WinSonic.Model.Player;
 using WinSonic.Model.Settings;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Dialog;
-using WinSonic.Persistence;
 
 namespace WinSonic.Controls
 {
     public class SongCommandBarFlyout
     {
-        private readonly RoamingSettings settings = ((App)Application.Current).RoamingSettings;
-
         public static CommandBarFlyout Create(
             List<Song> songs,
             Song song,
