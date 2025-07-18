@@ -27,8 +27,8 @@ namespace WinSonic.Persistence
         }
 
         public T CreateSettings<T, U>()
-            where U : class
-            where T : ISettingGroup<U>
+            where U : class, new()
+            where T : ISettingGroup<U>, new()
         {
             if (Activator.CreateInstance(typeof(T)) is not T setting)
             {
@@ -45,7 +45,7 @@ namespace WinSonic.Persistence
             return setting;
         }
 
-        public void SaveSetting<T>(ISettingGroup<T> setting) where T : class
+        public void SaveSetting<T>(ISettingGroup<T> setting) where T : class, new()
         {
             string json = JsonSerializer.Serialize(setting.ToData());
             roaming.Values[setting.Key] = json;
