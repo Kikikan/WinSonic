@@ -36,14 +36,21 @@ namespace WinSonic.Pages
                 ("Owner", new GridLength(2, GridUnitType.Star)),
                 ("Tracks", new GridLength(80, GridUnitType.Pixel))
             ];
+            roamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
         }
+
+        private async void ServerSettings_ServerChanged(Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
+        {
+            await Refresh();
+        }
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.Back)
             {
                 await InitializeCollections();
-                Refresh();
+                RefreshGridTable();
             }
         }
 
@@ -68,20 +75,26 @@ namespace WinSonic.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            RefreshButton.IsEnabled = false;
             if (!initialized)
             {
                 await InitializeCollections();
-                Refresh();
+                RefreshGridTable();
                 initialized = true;
-                RefreshButton.IsEnabled = true;
             }
+            RefreshButton.IsEnabled = true;
         }
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
+            await Refresh();
+        }
+        
+        private async Task Refresh()
+        {
             RefreshButton.IsEnabled = false;
             await InitializeCollections();
-            Refresh();
+            RefreshGridTable();
             RefreshButton.IsEnabled = true;
         }
 
@@ -89,7 +102,7 @@ namespace WinSonic.Pages
         {
             playlistServerMap.Clear();
             playlists.Clear();
-            foreach (var server in roamingSettings.ActiveServers)
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers)
             {
                 foreach (var playlist in await SubsonicApiHelper.GetPlaylists(server))
                 {
@@ -99,7 +112,7 @@ namespace WinSonic.Pages
             }
         }
 
-        private void Refresh()
+        private void RefreshGridTable()
         {
             PlaylistGridTable.Clear();
             foreach (var playlist in playlists)

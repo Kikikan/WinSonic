@@ -117,7 +117,7 @@
                         Grid.Row="1"
                         PaneDisplayMode="Top"
                         ItemInvoked="NavView_ItemInvoked"
-                        IsBackEnabled="True"
+                        IsBackEnabled="False"
                         IsBackButtonVisible="Visible"
                         BackRequested="MainNav_BackRequested">
             <NavigationView.MenuItems>
@@ -145,24 +145,6 @@
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xec4f;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItemSeparator/>
-                <NavigationViewItem Content="Servers">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xe977;" />
-                    </NavigationViewItem.Icon>
-                    <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Add" ToolTipService.ToolTip="Add a new Subsonic server" Tag="WinSonic.Pages.AddServerPage">
-                            <NavigationViewItem.Icon>
-                                <FontIcon Glyph="&#xe710;" />
-                            </NavigationViewItem.Icon>
-                        </NavigationViewItem>
-                        <NavigationViewItem Content="Edit" ToolTipService.ToolTip="Edit already added Subsonic servers" Tag="WinSonic.Pages.EditServerPage">
-                            <NavigationViewItem.Icon>
-                                <FontIcon Glyph="&#xe70f;" />
-                            </NavigationViewItem.Icon>
-                        </NavigationViewItem>
-                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 

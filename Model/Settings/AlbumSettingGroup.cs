@@ -2,17 +2,18 @@
 
 namespace WinSonic.Model.Settings
 {
-    public class AlbumSettings : ISetting
+    public class AlbumSettingGroup : ISettingGroup<Dictionary<string, string>>
     {
         public SubsonicApiHelper.AlbumListType OrderBy { get; set; } = SubsonicApiHelper.AlbumListType.newest;
 
-        public AlbumSettings() { }
-        public AlbumSettings(Dictionary<string, string> data)
+        public string Key => "album";
+
+        public void Load(Dictionary<string, string> settings)
         {
-            OrderBy = (SubsonicApiHelper.AlbumListType)int.Parse(data["orderBy"]);
+            OrderBy = (SubsonicApiHelper.AlbumListType)int.Parse(settings["orderBy"]);
         }
 
-        public Dictionary<string, string> ToDictionary()
+        public Dictionary<string, string> ToData()
         {
             var d = new Dictionary<string, string>
             {

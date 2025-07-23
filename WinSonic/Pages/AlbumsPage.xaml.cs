@@ -19,7 +19,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class AlbumsPage : Page
     {
-        private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+        private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -28,14 +28,18 @@ namespace WinSonic.Pages
         {
             InitializeComponent();
             NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
-            OrderBy = serverFile.AlbumSettings.OrderBy;
+            OrderBy = roamingSettings.AlbumSettings.OrderBy;
+            if (Application.Current is App app)
+            {
+                app.RoamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
+            }
         }
 
         private async Task<bool> Update()
         {
             bool added = false;
             bool result = false;
-            foreach (var server in serverFile.ActiveServers.ToList())
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
                 List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
                 this.albums.AddRange(albums);
@@ -59,12 +63,17 @@ namespace WinSonic.Pages
             return result;
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            await Refresh();
         }
 
-        private async void Refresh()
+        private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
+        {
+            await Refresh();
+        }
+
+        private async Task Refresh()
         {
             albums.Clear();
             AlbumControl.Items.Clear();
@@ -77,7 +86,7 @@ namespace WinSonic.Pages
         {
             if (!initialized)
             {
-                switch (serverFile.AlbumSettings.OrderBy)
+                switch (roamingSettings.AlbumSettings.OrderBy)
                 {
                     case SubsonicApiHelper.AlbumListType.newest:
                         NewestRadioItem.IsChecked = true;
@@ -95,12 +104,12 @@ namespace WinSonic.Pages
                 initialized = true;
             }
         }
-        private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
+        private async void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            await Refresh();
         }
 
-        private void RadioItem_Click(object sender, RoutedEventArgs e)
+        private async void RadioItem_Click(object sender, RoutedEventArgs e)
         {
             if (NewestRadioItem.IsChecked)
             {
@@ -114,9 +123,9 @@ namespace WinSonic.Pages
             {
                 OrderBy = SubsonicApiHelper.AlbumListType.alphabeticalByArtist;
             }
-            serverFile.AlbumSettings.OrderBy = OrderBy;
-            serverFile.SaveSetting(serverFile.AlbumSettings);
-            Refresh();
+            roamingSettings.AlbumSettings.OrderBy = OrderBy;
+            roamingSettings.SaveSetting(roamingSettings.AlbumSettings);
+            await Refresh();
         }
 
         private async Task<CommandBarFlyout> AlbumControl_RightTappedPicture(int index, InfoWithPicture picture)

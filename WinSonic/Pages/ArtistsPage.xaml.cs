@@ -21,7 +21,7 @@ namespace WinSonic.Pages
     /// </summary>
     public sealed partial class ArtistsPage : Page
     {
-        private readonly RoamingSettings serverFile = ((App)Application.Current).RoamingSettings;
+        private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private bool initialized = false;
         private readonly List<DetailedArtist> artists = [];
 
@@ -29,6 +29,17 @@ namespace WinSonic.Pages
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
+            if (Application.Current is App app)
+            {
+                app.RoamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
+            }
+        }
+
+        private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
+        {
+            RefreshButton.IsEnabled = false;
+            await Refresh();
+            RefreshButton.IsEnabled = true;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -53,7 +64,7 @@ namespace WinSonic.Pages
             artists.Clear();
             ArtistControl.Items.Clear();
             List<InfoWithPicture> list = [];
-            foreach (var server in serverFile.ActiveServers.ToList())
+            foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
                 var artists = await SubsonicApiHelper.GetArtists(server);
                 foreach (var artist in artists)

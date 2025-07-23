@@ -1,166 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Windows.Storage;
-using WinSonic.Model;
-using WinSonic.Model.Api;
 using WinSonic.Model.Settings;
 
 namespace WinSonic.Persistence
 {
     internal class RoamingSettings
     {
-        private readonly List<Server> _servers = [];
-        public ImmutableList<Server> ActiveServers { get { return _servers.Where(s => s.Enabled).ToImmutableList(); } }
-        public ImmutableList<Server> Servers { get => _servers.ToImmutableList(); }
-
         private readonly ApplicationDataContainer roaming = ApplicationData.Current.RoamingSettings;
 
-        private readonly Dictionary<ISetting, string> KeyPair = [];
+        public PlayerSettingGroup PlayerSettings { get; private set; }
 
-        public PlayerSettings PlayerSettings { get; private set; }
+        public AlbumSettingGroup AlbumSettings { get; private set; }
 
-        public AlbumSettings AlbumSettings { get; private set; }
+        public BehaviorSettingGroup BehaviorSettings { get; private set; }
 
-        public BehaviorSettings BehaviorSettings { get; private set; }
+        public ServerSettingGroup ServerSettings { get; private set; }
 
         public RoamingSettings()
         {
-            PlayerSettings = CreateSettings<PlayerSettings>("player");
-            AlbumSettings = CreateSettings<AlbumSettings>("album");
-            BehaviorSettings = CreateSettings<BehaviorSettings>("behavior");
-
-            KeyPair.Add(PlayerSettings, "player");
-            KeyPair.Add(AlbumSettings, "album");
-            KeyPair.Add(BehaviorSettings, "behavior");
+            PlayerSettings = CreateSettings<PlayerSettingGroup, Dictionary<string, string>>();
+            AlbumSettings = CreateSettings<AlbumSettingGroup, Dictionary<string, string>>();
+            BehaviorSettings = CreateSettings<BehaviorSettingGroup, Dictionary<string, string>>();
+            ServerSettings = CreateSettings<ServerSettingGroup, List<Dictionary<string, string>>>();
         }
 
-        public T CreateSettings<T>(string key) where T : class
+        public T CreateSettings<T, U>()
+            where U : class, new()
+            where T : ISettingGroup<U>, new()
         {
-            var json = roaming.Values[key] as string;
-            Dictionary<string, string>? config = null;
-            if (json is not null)
-            {
-                config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            }
-
-            object? obj;
-            if (config != null)
-            {
-                obj = Activator.CreateInstance(typeof(T), [config]);
-            }
-            else
-            {
-                obj = Activator.CreateInstance(typeof(T));
-            }
-            if (obj == null)
+            if (Activator.CreateInstance(typeof(T)) is not T setting)
             {
                 throw new NullReferenceException($"Could not create type: {typeof(T)}");
             }
-            if (obj is T t)
+            if (roaming.Values[setting.Key] is string json)
             {
-                return t;
-            }
-            else
-            {
-                throw new InvalidCastException($"Obj '{obj}' is not of type '{typeof(T)}'");
-            }
-        }
-
-        internal async Task<List<Server>> InitializeServers()
-        {
-            List<Server> disabledServers = [];
-            var json = roaming.Values["servers"] as string;
-            if (json is not null)
-            {
-                var serverConfigs = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(json);
-                if (serverConfigs != null && serverConfigs.Count > 0)
+                U? config = JsonSerializer.Deserialize<U>(json);
+                if (config != null)
                 {
-                    foreach (var config in serverConfigs)
-                    {
-                        Server server = new(config);
-                        if (server.Enabled)
-                        {
-                            try
-                            {
-                                var rs = await SubsonicApiHelper.Ping(server);
-                                if (rs.Status != ResponseStatus.Ok)
-                                {
-                                    server.Enabled = false;
-                                    disabledServers.Add(server);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                server.Enabled = false;
-                                disabledServers.Add(server);
-                            }
-                        }
-                        _servers.Add(server);
-                    }
+                    setting.Load(config);
                 }
             }
-            return disabledServers;
+            return setting;
         }
 
-        internal static async Task<List<Server>> TryPing(List<Server> servers)
+        public void SaveSetting<T>(ISettingGroup<T> setting) where T : class, new()
         {
-            List<Server> unsuccessfulServers = [];
-            foreach (var server in servers)
-            {
-                try
-                {
-                    var rs = await SubsonicApiHelper.Ping(server);
-                    if (rs.Status == ResponseStatus.Ok)
-                    {
-                        server.Enabled = true;
-                    }
-                    else
-                    {
-                        unsuccessfulServers.Add(server);
-                    }
-                }
-                catch (Exception)
-                {
-                    unsuccessfulServers.Add(server);
-                }
-            }
-            return unsuccessfulServers;
-        }
-
-        public bool AddServer(Server server)
-        {
-            bool found = _servers
-                .Where(s => s.Address == server.Address)
-                .Where(s => s.Username == server.Username)
-                .Any();
-
-            if (found)
-            {
-                return false;
-            }
-            _servers.Add(server);
-            return true;
-        }
-
-        public void SaveServers()
-        {
-            var list = new List<Dictionary<string, string>>();
-            foreach (var server in _servers)
-            {
-                list.Add(server.ToDictionary());
-            }
-            string json = JsonSerializer.Serialize(list);
-            roaming.Values["servers"] = json;
-        }
-
-        public void SaveSetting(ISetting setting)
-        {
-            string json = JsonSerializer.Serialize(setting.ToDictionary());
-            roaming.Values[KeyPair[setting]] = json;
+            string json = JsonSerializer.Serialize(setting.ToData());
+            roaming.Values[setting.Key] = json;
+            setting.OnSave();
         }
     }
 }
