@@ -66,11 +66,11 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.SourcePageType != typeof(AlbumDetailPage))
+        if (e.SourcePageType != typeof(AlbumDetailPage) && e.SourcePageType != typeof(PlayerPage))
         {
             NavigationCacheMode = NavigationCacheMode.Disabled;
         }
-        else
+        else if (e.SourcePageType == typeof(AlbumDetailPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
         }
