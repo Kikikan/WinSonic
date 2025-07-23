@@ -6,13 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
-using WinSonic.Model.Player;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
-using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
