@@ -104,6 +104,11 @@
     <ProjectReference Include="..\Model\WinSonic.Model.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controls\SongCollectionCommandBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Pages\Settings\BehaviorSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

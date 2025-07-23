@@ -51,6 +51,13 @@ namespace WinSonic.Pages
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
+                CommandBar.ShownObj = DetailedObject;
+                if (DetailedObject?.ApiObject is Album album)
+                {
+                    CommandBar.ApiObj = DetailedObject.ApiObject;
+                    CommandBar.FavObj = album;
+                    CommandBar.IsFavourite = album.IsFavourite;
+                }
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 if (imageAnimation != null)
@@ -97,7 +104,9 @@ namespace WinSonic.Pages
                 {
                     foreach (var song in album.Song)
                     {
-                        Songs.Add(new Song(song, DetailedObject.ApiObject.Server));
+                        var s = new Song(song, DetailedObject.ApiObject.Server);
+                        Songs.Add(s);
+                        CommandBar.Songs.Add(s);
                     }
                 }
                 foreach (var song in Songs)
@@ -116,44 +125,6 @@ namespace WinSonic.Pages
             }
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject?.ApiObject is Album album)
-            {
-                AlbumCommandBarFlyout.PlayNow(album, null);
-            }
-        }
-
-        private void PlayNextButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject?.ApiObject is Album album)
-            {
-                AlbumCommandBarFlyout.PlayNext(album, null);
-            }
-        }
-
-        private void AddToQueueButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject?.ApiObject is Album album)
-            {
-                AlbumCommandBarFlyout.AddToQueue(album, null);
-            }
-        }
-
-        private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject != null && DetailedObject.ApiObject is Album album)
-            {
-                bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
-                if (success)
-                {
-                    DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
-                    album.IsFavourite = !album.IsFavourite;
-                    OnPropertyChanged(nameof(DetailedObject));
-                }
-            }
-        }
-
         private void SongGridTable_RowDoubleTapped(object sender, RowEvent e)
         {
             SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), Songs[e.Index], [.. Songs], app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
@@ -162,14 +133,6 @@ namespace WinSonic.Pages
         private CommandBarFlyout SongGridTable_RowRightTapped(object sender, RowEvent e)
         {
             return SongCommandBarFlyout.Create([.. Songs], Songs[e.Index], SongGridTable, this, app.RoamingSettings.BehaviorSettings.AlbumDoubleClickBehavior);
-        }
-
-        private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (DetailedObject?.ApiObject is Album album)
-            {
-                await AlbumCommandBarFlyout.AddToPlaylist(album, this, null);
-            }
         }
 
         private void SongGridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, RowEvent e)

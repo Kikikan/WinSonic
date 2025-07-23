@@ -48,6 +48,13 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
+                CommandBar.ShownObj = DetailedObject;
+                if (DetailedObject?.ApiObject is DetailedArtist artist)
+                {
+                    CommandBar.ApiObj = DetailedObject.ApiObject;
+                    CommandBar.FavObj = artist;
+                    CommandBar.IsFavourite = artist.IsFavourite;
+                }
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
@@ -100,12 +107,9 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         }
     }
 
-    private void PlayButton_Click(object sender, RoutedEventArgs e)
+    private async Task<List<Song>> EmptySongs()
     {
-        if (DetailedObject?.ApiObject is DetailedArtist artist)
-        {
-            ArtistCommandBarFlyout.PlayNow(artist, null);
-        }
+        return await GetSongs();
     }
 
     private async Task<List<Song>> GetSongs()
@@ -131,27 +135,5 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             }
         }
         return list;
-    }
-
-    private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (DetailedObject?.ApiObject is DetailedArtist artist)
-        {
-            bool success = await SubsonicApiHelper.Star(artist.Server, !artist.IsFavourite, SubsonicApiHelper.StarType.Artist, artist.Id);
-            if (success)
-            {
-                DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
-                artist.IsFavourite = !artist.IsFavourite;
-                OnPropertyChanged(nameof(DetailedObject));
-            }
-        }
-    }
-
-    private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (DetailedObject?.ApiObject is DetailedArtist artist)
-        {
-            await ArtistCommandBarFlyout.AddToPlaylist(artist, this, null);
-        }
     }
 }

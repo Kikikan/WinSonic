@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="WinSonic.Controls.SongCollectionCommandBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinSonic.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:converters="using:WinSonic.Pages.Converter">
+
+    <UserControl.Resources>
+        <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
+        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
+    </UserControl.Resources>
+
+    <CommandBar HorizontalAlignment="Left" Background="Transparent" OverflowButtonVisibility="Collapsed" DefaultLabelPosition="Bottom">
+        <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
+            <AppBarButton.Icon>
+                <FontIcon Glyph="&#xE768;" />
+            </AppBarButton.Icon>
+        </AppBarButton>
+        <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" ToolTipService.ToolTip="Play Next">
+            <AppBarButton.Icon>
+                <FontIcon Glyph="&#xE893;" />
+            </AppBarButton.Icon>
+        </AppBarButton>
+        <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" ToolTipService.ToolTip="Add to Queue">
+            <AppBarButton.Icon>
+                <FontIcon Glyph="&#xE710;" />
+            </AppBarButton.Icon>
+        </AppBarButton>
+        <AppBarSeparator />
+        <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind IsFavourite}">
+            <AppBarToggleButton.Icon>
+                <FontIcon x:Name="FavIcon" Glyph="{x:Bind IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
+            </AppBarToggleButton.Icon>
+        </AppBarToggleButton>
+        <AppBarButton x:Name="AddToPlaylistButton" Click="AddToPlaylistButton_Click" ToolTipService.ToolTip="Add to Playlist">
+            <AppBarButton.Icon>
+                <FontIcon Glyph="&#xEA37;" />
+            </AppBarButton.Icon>
+        </AppBarButton>
+    </CommandBar>
+</UserControl>

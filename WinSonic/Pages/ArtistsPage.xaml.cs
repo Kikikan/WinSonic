@@ -94,9 +94,10 @@ namespace WinSonic.Pages
             }
         }
 
-        private CommandBarFlyout ArtistControl_RightTappedPicture(int index, InfoWithPicture picture)
+        private async Task<CommandBarFlyout> ArtistControl_RightTappedPicture(int index, InfoWithPicture picture)
         {
-            return ArtistCommandBarFlyout.Create(artists[index], this, picture);
+
+            return SongCollectionCommandBarFlyout.Create(artists[index], artists[index], await SubsonicApiHelper.GetSongs(artists[index]) ,this, picture);
         }
     }
 }

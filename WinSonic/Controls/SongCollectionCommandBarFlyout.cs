@@ -1,7 +1,10 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using WinSonic.Model;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages.Dialog;
@@ -9,9 +12,9 @@ using WinSonic.ViewModel;
 
 namespace WinSonic.Controls
 {
-    public class AlbumCommandBarFlyout
+    public class SongCollectionCommandBarFlyout
     {
-        public static CommandBarFlyout Create(Album album, Page page, InfoWithPicture picture)
+        public static CommandBarFlyout Create(IFavourite obj, ApiObject apiObj, List<Song> songs, Page page, InfoWithPicture picture)
         {
             var flyout = new CommandBarFlyout { AlwaysExpanded = true };
 
@@ -20,41 +23,41 @@ namespace WinSonic.Controls
                 Label = "Play Now",
                 Icon = new FontIcon { Glyph = "\uE768" }
             };
-            playNowButton.Click += (sender, e) => PlayNow(album, flyout);
+            playNowButton.Click += (sender, e) => PlayNow(songs, flyout);
 
             var playNextButton = new AppBarButton
             {
                 Label = "Play Next",
                 Icon = new FontIcon { Glyph = "\uE893" }
             };
-            playNextButton.Click += (sender, e) => PlayNext(album, flyout);
+            playNextButton.Click += (sender, e) => PlayNext(songs, flyout);
 
             var addToQueueButton = new AppBarButton
             {
                 Label = "Add to Queue",
                 Icon = new FontIcon { Glyph = "\uE710" }
             };
-            addToQueueButton.Click += (sender, e) => AddToQueue(album, flyout);
+            addToQueueButton.Click += (sender, e) => AddToQueue(songs, flyout);
 
             var separator = new AppBarSeparator();
 
             var favouriteToggleButton = new AppBarToggleButton
             {
-                Label = album.IsFavourite ? "Unfavourite" : "Favourite",
-                IsChecked = album.IsFavourite,
+                Label = obj.IsFavourite ? "Unfavourite" : "Favourite",
+                IsChecked = obj.IsFavourite,
                 Icon = new FontIcon
                 {
-                    Glyph = album.IsFavourite ? "\uEA92" : "\uEB51"
+                    Glyph = obj.IsFavourite ? "\uEA92" : "\uEB51"
                 }
             };
-            favouriteToggleButton.Click += (sender, e) => Favourite(album, picture, flyout);
+            favouriteToggleButton.Click += (sender, e) => Favourite(obj, apiObj, picture, flyout);
 
             var addToPlaylistButton = new AppBarButton
             {
                 Label = "Add to Playlist",
                 Icon = new FontIcon { Glyph = "\uEA37" }
             };
-            addToPlaylistButton.Click += async (sender, e) => await AddToPlaylist(album, page, flyout);
+            addToPlaylistButton.Click += async (sender, e) => await AddToPlaylist(songs, page, flyout);
 
             flyout.PrimaryCommands.Add(playNowButton);
             flyout.PrimaryCommands.Add(playNextButton);
@@ -66,15 +69,14 @@ namespace WinSonic.Controls
             return flyout;
         }
 
-        public static void PlayNow(Album album, CommandBarFlyout? flyout)
+        public static void PlayNow(List<Song> songs, CommandBarFlyout? flyout)
         {
             PlayerPlaylist.Instance.ClearSongs();
-            AddToQueue(album, flyout);
+            AddToQueue(songs, flyout);
         }
 
-        public static async void PlayNext(Album album, CommandBarFlyout? flyout)
+        public static void PlayNext(List<Song> songs, CommandBarFlyout? flyout)
         {
-            var songs = await SubsonicApiHelper.GetSongs(album);
             for (int i = songs.Count - 1; i >= 0; i--)
             {
                 PlayerPlaylist.Instance.AddNextSong(songs[i]);
@@ -82,9 +84,8 @@ namespace WinSonic.Controls
             flyout?.Hide();
         }
 
-        public static async void AddToQueue(Album album, CommandBarFlyout? flyout)
+        public static void AddToQueue(List<Song> songs, CommandBarFlyout? flyout)
         {
-            var songs = await SubsonicApiHelper.GetSongs(album);
             foreach (var song in songs)
             {
                 PlayerPlaylist.Instance.AddSong(song);
@@ -92,22 +93,21 @@ namespace WinSonic.Controls
             flyout?.Hide();
         }
 
-        private static async void Favourite(Album album, InfoWithPicture picture, CommandBarFlyout? flyout)
+        private static async void Favourite(IFavourite obj, ApiObject apiObj, InfoWithPicture picture, CommandBarFlyout? flyout)
         {
-            bool success = await SubsonicApiHelper.Star(album.Server, !album.IsFavourite, SubsonicApiHelper.StarType.Album, album.Id);
+            bool success = await SubsonicApiHelper.Star(apiObj.Server, !obj.IsFavourite, obj.Type, apiObj.Id);
             if (success)
             {
-                album.IsFavourite = !album.IsFavourite;
+                obj.IsFavourite = !obj.IsFavourite;
                 picture.IsFavourite = !picture.IsFavourite;
             }
             flyout?.Hide();
         }
 
-        public static async Task AddToPlaylist(Album album, Page page, CommandBarFlyout? flyout)
+        public static async Task AddToPlaylist(List<Song> songs, Page page, CommandBarFlyout? flyout)
         {
             flyout?.Hide();
-            var songs = await SubsonicApiHelper.GetSongs(album);
-            var result = AddToPlaylistDialog.CreateDialog(page, album, songs);
+            var result = AddToPlaylistDialog.CreateDialog(page, songs);
             AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
         }
     }

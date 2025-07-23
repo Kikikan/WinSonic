@@ -9,12 +9,8 @@
     xmlns:control="using:WinSonic.Pages.Control"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    xmlns:converters="using:WinSonic.Pages.Converter">
-
-    <Page.Resources>
-        <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
-        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
-    </Page.Resources>
+    xmlns:converters="using:WinSonic.Pages.Converter"
+    xmlns:controls="using:WinSonic.Controls">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -49,24 +45,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" OverflowButtonVisibility="Collapsed" DefaultLabelPosition="Bottom">
-                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE768;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator />
-                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
-                <AppBarButton x:Name="AddToPlaylistButton" Click="AddToPlaylistButton_Click" ToolTipService.ToolTip="Add to Playlist">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xEA37;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-            </CommandBar>
+            <controls:SongCollectionCommandBar x:Name="CommandBar" Grid.Row="0" EmptySongs="EmptySongs"/>
             <control:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
         </Grid>
     </Grid>

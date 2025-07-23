@@ -119,10 +119,10 @@ namespace WinSonic.Pages
             Refresh();
         }
 
-        private CommandBarFlyout AlbumControl_RightTappedPicture(int index, InfoWithPicture picture)
+        private async Task<CommandBarFlyout> AlbumControl_RightTappedPicture(int index, InfoWithPicture picture)
         {
             var album = albums[index];
-            return AlbumCommandBarFlyout.Create(album, this, picture);
+            return SongCollectionCommandBarFlyout.Create(album, album, await SubsonicApiHelper.GetSongs(album), this, picture);
         }
     }
 }

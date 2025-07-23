@@ -1,6 +1,6 @@
 ﻿namespace WinSonic.Model.Api
 {
-    public class Song : ApiObject
+    public class Song : ApiObject, IFavourite
     {
         public string Title { get; private set; }
         public string Album { get; private set; }
@@ -11,6 +11,7 @@
         public int Track { get; private set; }
         public bool IsFavourite { get; set; }
         public int Duration { get; private set; }
+        public SubsonicApiHelper.StarType Type => SubsonicApiHelper.StarType.Song;
 
         public Song(Child child, Server server) : base(child.Id, server)
         {

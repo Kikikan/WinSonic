@@ -103,6 +103,34 @@ namespace WinSonic.Model.Api
             return (await GetAlbum(album)).Song.Select(c => new Song(c, album.Server)).ToList();
         }
 
+        public static async Task<List<Song>> GetSongs(DetailedArtist artist)
+        {
+            List<Album> albums = [];
+            var artistInfo = await GetArtist(artist.Server, artist.Id);
+            foreach (var album in artistInfo.Album)
+            {
+                Album albumObj = new(album, artist.Server);
+                albums.Add(albumObj);
+            }
+            var list = new List<Song>();
+
+            foreach (var album in albums)
+            {
+                if (album != null)
+                {
+                    var rs = await GetAlbum(album.Server, album.Id);
+                    if (rs != null)
+                    {
+                        foreach (var child in rs.Song)
+                        {
+                            list.Add(new Song(child, album.Server));
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
         public static async Task<bool> Scrobble(Server server, string id)
         {
             var rs = await Execute(server, "/rest/scrobble", [("id", id), ("submission", "false")]);
