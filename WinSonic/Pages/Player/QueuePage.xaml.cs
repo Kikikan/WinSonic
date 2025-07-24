@@ -8,6 +8,7 @@ using Windows.Media.Playback;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Model.Player;
+using WinSonic.Pages.Control;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
