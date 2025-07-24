@@ -193,7 +193,7 @@ namespace WinSonic.Model.Api
             }
             else
             {
-                return await Execute(server.Client, urls[0]);
+                return await Execute(server, urls[0]);
             }
         }
 
@@ -204,12 +204,12 @@ namespace WinSonic.Model.Api
             var urls = GetUrls(baseUrl, requiredParameters, optionalParameters);
             if (urls.Count > 1)
             {
-                var tasks = urls.Select(url => Execute(server.Client, url));
+                var tasks = urls.Select(url => Execute(server, url));
                 return [.. await Task.WhenAll(tasks)];
             }
             else
             {
-                return [await Execute(server.Client, urls[0])];
+                return [await Execute(server, urls[0])];
             }
         }
 
@@ -246,12 +246,27 @@ namespace WinSonic.Model.Api
             return $"{parameter.Item1}={parameter.Item2}";
         }
 
-        private static async Task<Response> Execute(HttpClient client, string url)
+        private static async Task<Response> Execute(Server server, string url)
         {
-            using HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string rs = await response.Content.ReadAsStringAsync();
-            return DeserializeXml(rs);
+            try
+            {
+                using HttpResponseMessage response = await server.Client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string rs = await response.Content.ReadAsStringAsync();
+                return DeserializeXml(rs);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApiException("Network error while fetching data.", ex, server);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new ApiException("Request timed out.", ex, server);
+            }
+            catch (Exception ex)
+            {
+                throw new ApiException("Unexpected error occurred.", ex, server);
+            }
         }
 
         private static Response DeserializeXml(string xml)

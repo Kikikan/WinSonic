@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
+using WinSonic.Pages.Base;
 using WinSonic.Persistence;
 using WinSonic.ViewModel;
 
@@ -16,7 +17,7 @@ namespace WinSonic.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AlbumsPage : Page
+    public sealed partial class AlbumsPage : ApiPage
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private SubsonicApiHelper.AlbumListType OrderBy;
@@ -40,7 +41,8 @@ namespace WinSonic.Pages
             bool result = false;
             foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
+                List<Album>? albums = await TryApiCall(() => SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count));
+
                 this.albums.AddRange(albums);
                 if (albums != null && albums.Count > 0)
                 {
