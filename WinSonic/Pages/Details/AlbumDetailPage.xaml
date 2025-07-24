@@ -9,13 +9,8 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     xmlns:api="using:WinSonic.Model.Api"
-    xmlns:converters="using:WinSonic.Pages.Converter"
-    xmlns:controls="using:WinSonic.Pages.Control">
-
-    <Page.Resources>
-        <converters:BooleanToFavIconConverter x:Key="BoolToFavIcon"/>
-        <converters:BooleanToFavLabelConverter x:Key="BoolToFavLabel"/>
-    </Page.Resources>
+    xmlns:control="using:WinSonic.Pages.Control"
+    xmlns:controls="using:WinSonic.Controls">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -53,35 +48,8 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <CommandBar Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" OverflowButtonVisibility="Collapsed" DefaultLabelPosition="Bottom">
-                <AppBarButton x:Name="PlayButton" Click="PlayButton_Click" ToolTipService.ToolTip="Play Now">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE768;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton x:Name="PlayNextButton" Click="PlayNextButton_Click" ToolTipService.ToolTip="Play Next">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE893;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton x:Name="AddToQueueButton" Click="AddToQueueButton_Click" ToolTipService.ToolTip="Add to Queue">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE710;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarSeparator />
-                <AppBarToggleButton x:Name="FavouriteButton" Click="FavouriteButton_Click" ToolTipService.ToolTip="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavLabel}}" IsChecked="{x:Bind DetailedObject.IsFavourite}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon x:Name="FavIcon" Glyph="{x:Bind DetailedObject.IsFavourite, Mode=OneWay, Converter={StaticResource BoolToFavIcon}}" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
-                <AppBarButton x:Name="AddToPlaylistButton" Click="AddToPlaylistButton_Click" ToolTipService.ToolTip="Add to Playlist">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xEA37;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-            </CommandBar>
-            <controls:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0"
+            <controls:SongCollectionCommandBar x:Name="CommandBar" Grid.Row="0"/>
+            <control:GridTable x:Name="SongGridTable" Grid.Row="1" Margin="0 10 0 0"
                                 RowDoubleTapped="SongGridTable_RowDoubleTapped"
                                 RowRightTapped="SongGridTable_RowRightTapped"
                                 RowAdded="SongGridTable_RowAdded"/>

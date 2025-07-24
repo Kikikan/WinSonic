@@ -47,6 +47,6 @@
                 </AppBarButton.Icon>
             </AppBarButton>
         </CommandBar>
-        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1"/>
+        <controls:PictureControlPage x:Name="AlbumControl" Grid.Row="1" RightTappedPicture="AlbumControl_RightTappedPicture"/>
     </Grid>
 </Page>

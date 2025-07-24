@@ -1,6 +1,6 @@
 ﻿namespace WinSonic.Model.Api
 {
-    public class DetailedArtist : ApiObject
+    public class DetailedArtist : ApiObject, IFavourite
     {
         public string Key { get; private set; }
         public string Name { get; private set; }
@@ -9,6 +9,8 @@
         public Uri? SmallImageUri { get; private set; }
         public Uri? MediumImageUri { get; private set; }
         public Uri? LargeImageUri { get; private set; }
+
+        public SubsonicApiHelper.StarType Type => SubsonicApiHelper.StarType.Artist;
 
         public DetailedArtist(Server server, string key, string id, string name, string biography, bool isFavourite, string smallImageUri, string mediumImageUri, string largeImageUri) : base(id, server)
         {

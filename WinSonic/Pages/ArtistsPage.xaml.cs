@@ -1,9 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
@@ -26,7 +28,7 @@ namespace WinSonic.Pages
         public ArtistsPage()
         {
             InitializeComponent();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             if (Application.Current is App app)
             {
                 app.RoamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
@@ -102,6 +104,12 @@ namespace WinSonic.Pages
                 }
                 ArtistControl.IsGrouped = true;
             }
+        }
+
+        private async Task<CommandBarFlyout> ArtistControl_RightTappedPicture(int index, InfoWithPicture picture)
+        {
+
+            return SongCollectionCommandBarFlyout.Create(artists[index], artists[index], await SubsonicApiHelper.GetSongs(artists[index]), this, picture);
         }
     }
 }

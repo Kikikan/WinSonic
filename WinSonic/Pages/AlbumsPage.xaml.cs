@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Persistence;
 using WinSonic.ViewModel;
@@ -125,6 +126,12 @@ namespace WinSonic.Pages
             roamingSettings.AlbumSettings.OrderBy = OrderBy;
             roamingSettings.SaveSetting(roamingSettings.AlbumSettings);
             await Refresh();
+        }
+
+        private async Task<CommandBarFlyout> AlbumControl_RightTappedPicture(int index, InfoWithPicture picture)
+        {
+            var album = albums[index];
+            return SongCollectionCommandBarFlyout.Create(album, album, await SubsonicApiHelper.GetSongs(album), this, picture);
         }
     }
 }
