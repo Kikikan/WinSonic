@@ -2,8 +2,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
+using WinSonic.Pages.Base;
 using WinSonic.Persistence;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,7 +16,7 @@ namespace WinSonic.Pages;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class SongsPage : Page
+public sealed partial class SongsPage : ApiPage
 {
     private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
     private readonly List<Song> songList = [];
@@ -36,15 +38,8 @@ public sealed partial class SongsPage : Page
 
     private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
     {
-        RefreshButton.IsEnabled = false;
-        songList.Clear();
-        foreach (var s in roamingSettings.ServerSettings.ActiveServers)
-        {
-            songList.AddRange(await SubsonicApiHelper.Search(s));
-        }
-        Refresh();
+        await InitializeContent();
         initialized = true;
-        RefreshButton.IsEnabled = true;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -54,18 +49,10 @@ public sealed partial class SongsPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        RefreshButton.IsEnabled = false;
         if (!initialized)
         {
-            songList.Clear();
-            foreach (var server in roamingSettings.ServerSettings.ActiveServers)
-            {
-                songList.AddRange(await SubsonicApiHelper.Search(server));
-            }
-            Refresh();
-            initialized = true;
+            await InitializeContent();
         }
-        RefreshButton.IsEnabled = true;
     }
 
     private void GridTable_RowDoubleTapped(object sender, Control.RowEvent e)
@@ -75,17 +62,26 @@ public sealed partial class SongsPage : Page
 
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
+        await InitializeContent();
+    }
+
+    private async Task InitializeContent()
+    {
         RefreshButton.IsEnabled = false;
         songList.Clear();
         foreach (var server in roamingSettings.ServerSettings.ActiveServers)
         {
-            songList.AddRange(await SubsonicApiHelper.Search(server));
+            var rs = await TryApiCall(() => SubsonicApiHelper.Search(server));
+            if (rs != null)
+            {
+                songList.AddRange(rs);
+            }
         }
-        Refresh();
+        ShowContent();
         RefreshButton.IsEnabled = true;
     }
 
-    private void Refresh()
+    private void ShowContent()
     {
         shownSongs.Clear();
         GridTable.Clear();
@@ -110,7 +106,7 @@ public sealed partial class SongsPage : Page
 
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
     {
-        Refresh();
+        ShowContent();
     }
 
     private void GridTable_RowAdded(Microsoft.UI.Xaml.Shapes.Rectangle row, Control.RowEvent e)

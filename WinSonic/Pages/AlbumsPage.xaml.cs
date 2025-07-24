@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace WinSonic.Pages
         public AlbumsPage()
         {
             InitializeComponent();
-            NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             OrderBy = roamingSettings.AlbumSettings.OrderBy;
             if (Application.Current is App app)
             {
@@ -42,10 +43,9 @@ namespace WinSonic.Pages
             foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
                 List<Album>? albums = await TryApiCall(() => SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count));
-
-                this.albums.AddRange(albums);
                 if (albums != null && albums.Count > 0)
                 {
+                    this.albums.AddRange(albums);
                     foreach (var album in albums)
                     {
                         if (!FavouritesFilterCheckBox.IsChecked || album.IsFavourite)
@@ -56,6 +56,7 @@ namespace WinSonic.Pages
                     }
                     result = true;
                 }
+                
             }
             if (result && !added)
             {

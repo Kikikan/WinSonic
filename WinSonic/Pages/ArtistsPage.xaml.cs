@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
+using WinSonic.Pages.Base;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
 using WinSonic.ViewModel;
@@ -17,7 +18,7 @@ namespace WinSonic.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ArtistsPage : Page
+    public sealed partial class ArtistsPage : ApiPage
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private bool initialized = false;
@@ -64,11 +65,14 @@ namespace WinSonic.Pages
             List<InfoWithPicture> list = [];
             foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
             {
-                var artists = await SubsonicApiHelper.GetArtists(server);
-                foreach (var artist in artists)
+                var artists = await TryApiCall(() => SubsonicApiHelper.GetArtists(server));
+                if (artists != null)
                 {
-                    this.artists.Add(artist);
-                    ArtistControl.Items.Add(ToInfoWithPicture(artist));
+                    foreach (var artist in artists)
+                    {
+                        this.artists.Add(artist);
+                        ArtistControl.Items.Add(ToInfoWithPicture(artist));
+                    }
                 }
             }
             ArtistControl.IsGrouped = true;

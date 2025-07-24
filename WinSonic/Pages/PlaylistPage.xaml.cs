@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinSonic.Model;
 using WinSonic.Model.Api;
+using WinSonic.Pages.Base;
 using WinSonic.Pages.Control;
 using WinSonic.Pages.Details;
 using WinSonic.Persistence;
@@ -20,7 +21,7 @@ namespace WinSonic.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PlaylistPage : Page
+    public sealed partial class PlaylistPage : ApiPage
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
         private bool initialized = false;
@@ -104,11 +105,16 @@ namespace WinSonic.Pages
             playlists.Clear();
             foreach (var server in roamingSettings.ServerSettings.ActiveServers)
             {
-                foreach (var playlist in await SubsonicApiHelper.GetPlaylists(server))
+                var playlists = await TryApiCall(() => SubsonicApiHelper.GetPlaylists(server));
+                if (playlists != null)
                 {
-                    playlists.Add(playlist);
-                    playlistServerMap.Add(playlist, server);
+                    foreach (var playlist in playlists)
+                    {
+                        playlists.Add(playlist);
+                        playlistServerMap.Add(playlist, server);
+                    }
                 }
+                
             }
         }
 

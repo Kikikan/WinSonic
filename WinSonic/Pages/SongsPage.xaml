@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Page
+<base:ApiPage
     x:Class="WinSonic.Pages.SongsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     xmlns:control="using:WinSonic.Pages.Control"
     Loaded="Page_Loaded"
-    xmlns:converters="using:WinSonic.Pages.Converter">
+    xmlns:converters="using:WinSonic.Pages.Converter"
+    xmlns:base="using:WinSonic.Pages.Base">
     
     <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
@@ -40,4 +41,4 @@
                            RowAdded="GridTable_RowAdded"
                            RowRightTapped="GridTable_RowRightTapped"/>
     </Grid>
-</Page>
+</base:ApiPage>
