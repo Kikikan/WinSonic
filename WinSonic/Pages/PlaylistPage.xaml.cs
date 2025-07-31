@@ -110,7 +110,7 @@ namespace WinSonic.Pages
                 {
                     foreach (var playlist in playlists)
                     {
-                        playlists.Add(playlist);
+                        this.playlists.Add(playlist);
                         playlistServerMap.Add(playlist, server);
                     }
                 }
