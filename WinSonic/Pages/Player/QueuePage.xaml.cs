@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using Windows.Media.Playback;
 using WinSonic.Controls;
 using WinSonic.Model.Api;

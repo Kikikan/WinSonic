@@ -28,14 +28,9 @@ namespace WinSonic.Pages.Dialog
             return CreateDialog("song", page, [song]);
         }
 
-        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, DetailedArtist artist, List<Song> songs)
+        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, List<Song> songs)
         {
-            return CreateDialog($"{artist.Name}'s currently available songs", page, songs);
-        }
-
-        public static (ContentDialog, AddToPlaylistDialog) CreateDialog(Page page, Album album, List<Song> songs)
-        {
-            return CreateDialog($"currently available songs of {album.Title}", page, songs);
+            return CreateDialog($"songs", page, songs);
         }
 
         private static (ContentDialog, AddToPlaylistDialog) CreateDialog(string obj, Page page, List<Song> songs)

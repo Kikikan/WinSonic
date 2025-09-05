@@ -15,7 +15,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <CollectionViewSource x:Name="ItemsCVS"/>
         <DataTemplate x:Key="InfoWithPictureTemplate" x:DataType="model:InfoWithPicture">
-            <Grid x:Name="ControlGrid" Margin="8">
+            <Grid x:Name="ControlGrid" Margin="8" RightTapped="ControlGrid_RightTapped">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>

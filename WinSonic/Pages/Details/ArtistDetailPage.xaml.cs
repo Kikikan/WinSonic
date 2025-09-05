@@ -2,14 +2,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using WinSonic.Model.Api;
-using WinSonic.Model.Player;
-using WinSonic.Pages.Dialog;
 using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -47,6 +44,13 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
+                CommandBar.ShownObj = DetailedObject;
+                if (DetailedObject?.ApiObject is DetailedArtist artist)
+                {
+                    CommandBar.ApiObj = DetailedObject.ApiObject;
+                    CommandBar.FavObj = artist;
+                    CommandBar.IsFavourite = artist.IsFavourite;
+                }
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
@@ -58,11 +62,11 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        if (e.SourcePageType != typeof(AlbumDetailPage))
+        if (e.SourcePageType != typeof(AlbumDetailPage) && e.SourcePageType != typeof(PlayerPage))
         {
             NavigationCacheMode = NavigationCacheMode.Disabled;
         }
-        else
+        else if (e.SourcePageType == typeof(AlbumDetailPage))
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
         }
@@ -99,14 +103,9 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         }
     }
 
-    private async void PlayButton_Click(object sender, RoutedEventArgs e)
+    private async Task<List<Song>> EmptySongs()
     {
-        PlayerPlaylist.Instance.ClearSongs();
-        var songs = await GetSongs();
-        foreach (var song in songs)
-        {
-            PlayerPlaylist.Instance.AddSong(song);
-        }
+        return await GetSongs();
     }
 
     private async Task<List<Song>> GetSongs()
@@ -132,28 +131,5 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             }
         }
         return list;
-    }
-
-    private async void FavouriteButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (DetailedObject?.ApiObject is DetailedArtist artist)
-        {
-            bool success = await SubsonicApiHelper.Star(artist.Server, !artist.IsFavourite, SubsonicApiHelper.StarType.Artist, artist.Id);
-            if (success)
-            {
-                DetailedObject.IsFavourite = !DetailedObject.IsFavourite;
-                artist.IsFavourite = !artist.IsFavourite;
-                OnPropertyChanged(nameof(DetailedObject));
-            }
-        }
-    }
-
-    private async void AddToPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (DetailedObject?.ApiObject is DetailedArtist artist)
-        {
-            var result = AddToPlaylistDialog.CreateDialog(this, artist, await GetSongs());
-            AddToPlaylistDialog.ProcessDialog(await result.Item1.ShowAsync(), result.Item2);
-        }
     }
 }
