@@ -24,6 +24,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     public InfoWithPicture? DetailedObject { get; set; }
     private bool _initialized = false;
+    private bool shouldAnimate = false;
     public ArtistDetailPage()
     {
         InitializeComponent();
@@ -44,18 +45,23 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
-                CommandBar.ShownObj = DetailedObject;
-                if (DetailedObject?.ApiObject is DetailedArtist artist)
-                {
-                    CommandBar.ApiObj = DetailedObject.ApiObject;
-                    CommandBar.FavObj = artist;
-                    CommandBar.IsFavourite = artist.IsFavourite;
-                }
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 imageAnimation?.TryStart(detailedImage, [coordinatedPanel]);
+                shouldAnimate = true;
+            }
+            else if (e.Parameter is DetailedArtist artist)
+            {
+                DetailedObject = new InfoWithPicture(artist, artist.MediumImageUri, artist.Name, "", artist.IsFavourite, typeof(ArtistDetailPage), artist.Name[..1]);
             }
 
+            if (DetailedObject?.ApiObject is DetailedArtist artistObj)
+            {
+                CommandBar.ShownObj = DetailedObject;
+                CommandBar.ApiObj = DetailedObject.ApiObject;
+                CommandBar.FavObj = artistObj;
+                CommandBar.IsFavourite = artistObj.IsFavourite;
+            }
         }
     }
 
@@ -70,7 +76,7 @@ public sealed partial class ArtistDetailPage : Page, INotifyPropertyChanged
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ArtistToAlbumAnimation", detailedImage);
         }
-        if (e.NavigationMode == NavigationMode.Back)
+        if (e.NavigationMode == NavigationMode.Back && shouldAnimate)
         {
             if (e.SourcePageType == typeof(ArtistsPage))
             {

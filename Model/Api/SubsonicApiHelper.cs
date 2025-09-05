@@ -149,10 +149,18 @@ namespace WinSonic.Model.Api
             return rs.Status == ResponseStatus.Ok;
         }
 
-        public static async Task<List<Song>> Search(Server server, int songCount = 9999, int songOffset = 0)
+        public static async Task<(List<Song>, List<DetailedArtist>, List<Album>)> Search(Server server, string query = "",
+            int songCount = 9999, int songOffset = 0,
+            int artistCount = 9999, int artistOffset = 0,
+            int albumCount = 9999, int albumOffset = 0)
         {
-            var rs = await Execute(server, "/rest/search3", [("query", ""), ("songCount", songCount.ToString()), ("songOffset", songOffset.ToString())]);
-            return [.. rs.SearchResult3.Song.Select(s => new Song(s, server))];
+            var rs = await Execute(server, "/rest/search3", [("query", query),
+                ("songCount", songCount.ToString()), ("songOffset", songOffset.ToString()),
+                ("artistCount", artistCount.ToString()), ("artistOffset", artistOffset.ToString()),
+                ("albumCount", albumCount.ToString()), ("albumOffset", albumOffset.ToString())]);
+            return ([.. rs.SearchResult3.Song.Select(s => new Song(s, server))],
+                [.. rs.SearchResult3.Artist.Select(a => new DetailedArtist(server, a))],
+                [.. rs.SearchResult3.Album.Select(a => new Album(a, server))]);
         }
 
         public static async Task<List<Playlist>> GetPlaylists(Server server)

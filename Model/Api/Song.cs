@@ -25,5 +25,10 @@
             CoverImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={child.CoverArt}");
             StreamUri = new Uri($"{server.Address}/rest/stream{server.GetStringParameters()}&id={Id}");
         }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }

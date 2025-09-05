@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WinSonic.Controls;
 using WinSonic.Model.Api;
 using WinSonic.Persistence;
@@ -16,15 +18,17 @@ namespace WinSonic.Pages;
 /// </summary>
 public sealed partial class SongsPage : Page
 {
+    private bool IsFiltered() => FavouritesFilterCheckBox.IsChecked;
     private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
     private readonly List<Song> songList = [];
     private readonly List<Song> shownSongs = [];
     private bool initialized = false;
+    private string? id = null;
 
     public SongsPage()
     {
         InitializeComponent();
-        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+        NavigationCacheMode = NavigationCacheMode.Enabled;
         GridTable.Columns = [
             ("Title", new GridLength(4, GridUnitType.Star)),
             ("Artist", new GridLength(2, GridUnitType.Star)),
@@ -34,17 +38,23 @@ public sealed partial class SongsPage : Page
         roamingSettings.ServerSettings.ServerChanged += ServerSettings_ServerChanged;
     }
 
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is string id)
+        {
+            this.id = id;
+        }
+        else
+        {
+            this.id = null;
+        }
+    }
+
     private async void ServerSettings_ServerChanged(Model.Server server, Model.Settings.ServerSettingGroup.ServerOperation operation)
     {
-        RefreshButton.IsEnabled = false;
-        songList.Clear();
-        foreach (var s in roamingSettings.ServerSettings.ActiveServers)
-        {
-            songList.AddRange(await SubsonicApiHelper.Search(s));
-        }
-        Refresh();
+        await RefreshSongs();
         initialized = true;
-        RefreshButton.IsEnabled = true;
     }
 
     private CommandBarFlyout GridTable_RowRightTapped(object sender, Control.RowEvent e)
@@ -57,15 +67,14 @@ public sealed partial class SongsPage : Page
         RefreshButton.IsEnabled = false;
         if (!initialized)
         {
-            songList.Clear();
-            foreach (var server in roamingSettings.ServerSettings.ActiveServers)
-            {
-                songList.AddRange(await SubsonicApiHelper.Search(server));
-            }
-            Refresh();
+            await RefreshSongs();
             initialized = true;
         }
         RefreshButton.IsEnabled = true;
+        if (id != null)
+        {
+            await SelectSong(id);
+        }
     }
 
     private void GridTable_RowDoubleTapped(object sender, Control.RowEvent e)
@@ -73,13 +82,23 @@ public sealed partial class SongsPage : Page
         SongCommandBarFlyout.PlayNow(new CommandBarFlyout(), songList[e.Index], songList, Model.Settings.BehaviorSettingGroup.GridTableDoubleClickBehavior.LoadCurrent);
     }
 
+    private void ClearFilters()
+    {
+        FavouritesFilterCheckBox.IsChecked = false;
+    }
+
     private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+    {
+        await RefreshSongs();
+    }
+
+    private async Task RefreshSongs()
     {
         RefreshButton.IsEnabled = false;
         songList.Clear();
         foreach (var server in roamingSettings.ServerSettings.ActiveServers)
         {
-            songList.AddRange(await SubsonicApiHelper.Search(server));
+            songList.AddRange((await SubsonicApiHelper.Search(server)).Item1);
         }
         Refresh();
         RefreshButton.IsEnabled = true;
@@ -106,6 +125,23 @@ public sealed partial class SongsPage : Page
             }
         }
         GridTable.ShowContent();
+    }
+
+    public async Task SelectSong(string id)
+    {
+        if (IsFiltered())
+        {
+            ClearFilters();
+            await RefreshSongs();
+        }
+        for (int index = 0; index < songList.Count; index++)
+        {
+            if (songList[index].Id == id)
+            {
+                GridTable.SelectedIndex = index;
+                break;
+            }
+        }
     }
 
     private void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)

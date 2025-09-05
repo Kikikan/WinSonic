@@ -1,4 +1,5 @@
-﻿using H.NotifyIcon;
+﻿using FuzzySharp;
+using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -6,7 +7,9 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Media.Playback;
 using WinRT.Interop;
@@ -242,6 +245,99 @@ namespace WinSonic
             animationService.PrepareToAnimate("coverImageAnimation", CoverImage);
             NavFrame.Navigate(typeof(PlayerPage));
             SongInfoStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private async void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            string query = sender.Text;
+            await Task.Delay(300);
+            if (query != sender.Text) return;
+
+            List<ApiObject> suggestions = [];
+            foreach (var server in ((App)Application.Current).RoamingSettings.ServerSettings.ActiveServers)
+            {
+                var result = await SubsonicApiHelper.Search(server, sender.Text);
+                suggestions.AddRange(result.Item1);
+                suggestions.AddRange(result.Item2);
+                suggestions.AddRange(result.Item3);
+            }
+            await Task.Run(() => suggestions = [.. suggestions.Select(x => new
+            {
+                Item = x,
+                Score = CalculateObjectScore(x, query)
+            })
+            .Where(x => x.Score > 0.25)
+            .OrderByDescending(x => x.Score)
+            .Select(x => x.Item)]);
+
+            sender.ItemsSource = suggestions;
+        }
+
+        private double CalculateObjectScore(ApiObject obj, string query)
+        {
+            string searchText = query.ToLower();
+            string? itemName = obj.ToString()?.ToLower();
+            if (itemName == null)
+            {
+                return 0;
+            }
+
+            double nameSimilarity = Fuzz.Ratio(searchText, itemName) / 100.0;
+
+            double exactMatchBonus = (itemName == searchText) ? 1.2 : 1.0;
+
+            double startsWithBonus = itemName.StartsWith(searchText) ? 1.1 : 1.0;
+
+            double typeWeight = obj switch
+            {
+                DetailedArtist => 1.2,
+                Album => 1.1,
+                _ => 1.0,
+            };
+
+            double score = nameSimilarity * 0.5 * exactMatchBonus * startsWithBonus * typeWeight;
+
+            return score;
+        }
+
+        private async void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is ApiObject obj)
+            {
+                if (obj is Song song)
+                {
+                    if (ContentFrame.CurrentSourcePageType != typeof(SongsPage))
+                    {
+                        ContentFrame.Navigate(typeof(SongsPage), obj.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(SongsPage).ToString())
+                            .First();
+                    }
+                    else
+                    {
+                        if (ContentFrame.Content is SongsPage page)
+                        {
+                            await page.SelectSong(obj.Id);
+                        }
+                    }
+                }
+                else if (obj is Album album)
+                {
+                    if (ContentFrame.CurrentSourcePageType == typeof(AlbumDetailPage))
+                    {
+                        ContentFrame.Navigate(typeof(AlbumsPage));
+                    }
+                    ContentFrame.Navigate(typeof(AlbumDetailPage), album);
+                }
+                else if (obj is DetailedArtist artist)
+                {
+                    if (ContentFrame.CurrentSourcePageType == typeof(ArtistDetailPage))
+                    {
+                        ContentFrame.Navigate(typeof(ArtistsPage));
+                    }
+                    ContentFrame.Navigate(typeof(ArtistDetailPage), artist);
+                }
+            }
         }
     }
     // Simple RelayCommand implementation

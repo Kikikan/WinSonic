@@ -28,6 +28,7 @@ namespace WinSonic.Pages
         public InfoWithPicture? DetailedObject { get; set; }
         public ObservableCollection<Song> Songs { get; set; } = [];
         private readonly App app = (App)Application.Current;
+        private bool shouldAnimate = false;
 
         public AlbumDetailPage()
         {
@@ -48,13 +49,6 @@ namespace WinSonic.Pages
             if (e.Parameter is InfoWithPicture info)
             {
                 DetailedObject = info;
-                CommandBar.ShownObj = DetailedObject;
-                if (DetailedObject?.ApiObject is Album album)
-                {
-                    CommandBar.ApiObj = DetailedObject.ApiObject;
-                    CommandBar.FavObj = album;
-                    CommandBar.IsFavourite = album.IsFavourite;
-                }
 
                 ConnectedAnimation imageAnimation = ConnectedAnimationService.GetForCurrentView().GetAnimation("OpenPictureControlItemAnimation");
                 if (imageAnimation != null)
@@ -67,8 +61,21 @@ namespace WinSonic.Pages
                     {
                         backImageAnimation.TryStart(backImage);
                     }
+                    shouldAnimate = true;
 
                 }
+            }
+            else if (e.Parameter is Album album)
+            {
+                DetailedObject = new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title[..1]);
+            }
+
+            CommandBar.ShownObj = DetailedObject;
+            if (DetailedObject?.ApiObject is Album albumObj)
+            {
+                CommandBar.ApiObj = DetailedObject.ApiObject;
+                CommandBar.FavObj = albumObj;
+                CommandBar.IsFavourite = albumObj.IsFavourite;
             }
         }
 
@@ -77,7 +84,7 @@ namespace WinSonic.Pages
         {
             base.OnNavigatingFrom(e);
 
-            if (e.NavigationMode == NavigationMode.Back)
+            if (e.NavigationMode == NavigationMode.Back && shouldAnimate)
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ClosePictureControlItemAnimation", detailedImage);
                 if (e.SourcePageType == typeof(ArtistDetailPage))

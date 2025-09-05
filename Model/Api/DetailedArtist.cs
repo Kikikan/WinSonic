@@ -22,5 +22,30 @@
             MediumImageUri = !string.IsNullOrEmpty(mediumImageUri) ? new Uri(mediumImageUri) : null;
             LargeImageUri = !string.IsNullOrEmpty(largeImageUri) ? new Uri(largeImageUri) : null;
         }
+
+        public DetailedArtist(Server server, ArtistId3 artist) : base(artist.Id, server)
+        {
+            Key = artist.Name[..1];
+            Name = artist.Name;
+            Biography = "";
+            IsFavourite = artist.StarredSpecified;
+            if (!string.IsNullOrEmpty(artist.ArtistImageUrl))
+            {
+                SmallImageUri = new Uri(artist.ArtistImageUrl);
+                MediumImageUri = new Uri(artist.ArtistImageUrl);
+                LargeImageUri = new Uri(artist.ArtistImageUrl);
+            }
+            else
+            {
+                SmallImageUri = null;
+                MediumImageUri = null;
+                LargeImageUri = null;
+            }
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
