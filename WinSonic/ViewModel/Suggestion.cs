@@ -34,6 +34,13 @@ namespace WinSonic.ViewModel
             Object = song;
         }
 
+        internal Suggestion(DetailedPlaylist playlist)
+        {
+            DisplayText = playlist.Name;
+            IconGlyph = "\uea37";
+            Object = playlist;
+        }
+
         public override string ToString()
         {
             return DisplayText;

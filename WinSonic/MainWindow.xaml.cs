@@ -261,6 +261,10 @@ namespace WinSonic
                 suggestions.AddRange(result.Item1.Select(obj => new Suggestion(obj)));
                 suggestions.AddRange(result.Item2.Select(obj => new Suggestion(obj)));
                 suggestions.AddRange(result.Item3.Select(obj => new Suggestion(obj)));
+
+                var playlists = await SubsonicApiHelper.GetPlaylists(server);
+                suggestions.AddRange(playlists.Select(obj => new Suggestion(new DetailedPlaylist(server, obj.Id, obj.Name, obj.Comment, obj.Owner, obj.Public, []))));
+                
             }
             await Task.Run(() => suggestions = [.. suggestions.Select(x => new
             {
@@ -291,8 +295,9 @@ namespace WinSonic
 
             double typeWeight = obj switch
             {
-                DetailedArtist => 1.2,
-                Album => 1.1,
+                DetailedArtist => 1.3,
+                Album => 1.2,
+                Model.Api.Song => 1.1,
                 _ => 1.0,
             };
 
@@ -337,6 +342,14 @@ namespace WinSonic
                         ContentFrame.Navigate(typeof(ArtistsPage));
                     }
                     ContentFrame.Navigate(typeof(ArtistDetailPage), artist);
+                }
+                else if (suggestion.Object is DetailedPlaylist playlist)
+                {
+                    if (ContentFrame.CurrentSourcePageType == typeof(PlaylistDetailPage))
+                    {
+                        ContentFrame.Navigate(typeof(PlaylistPage));
+                    }
+                    ContentFrame.Navigate(typeof(PlaylistDetailPage), playlist);
                 }
             }
         }

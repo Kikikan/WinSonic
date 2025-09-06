@@ -47,6 +47,10 @@ namespace WinSonic.Pages.Details
             {
                 DetailedObject = info;
             }
+            else if (e.Parameter is DetailedPlaylist playlist)
+            {
+                DetailedObject = new InfoWithPicture(playlist, null, playlist.Name, playlist.Owner, playlist.Owner == playlist.Server.Username, typeof(PlaylistDetailPage), playlist.Name[..1]);
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
