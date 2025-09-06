@@ -174,7 +174,7 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click" Margin="15 0 0 0">
                 <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" >
-                    <Image x:Name="CoverImage" MaxHeight="100">
+                    <Image x:Name="CoverImage" MaxHeight="95" Margin="5">
                         <Image.Source>
                             <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
                         </Image.Source>
@@ -187,7 +187,7 @@
             </Button>
             
 
-            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" HorizontalAlignment="Center"/>
+            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" HorizontalAlignment="Stretch"/>
         </Grid>
 
         <!-- Loading Overlay -->
