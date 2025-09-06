@@ -37,9 +37,9 @@
             }
             else
             {
-                SmallImageUri = null;
-                MediumImageUri = null;
-                LargeImageUri = null;
+                SmallImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={artist.CoverArt}");
+                MediumImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={artist.CoverArt}");
+                LargeImageUri = new Uri($"{server.Address}/rest/getCoverArt{server.GetStringParameters()}&id={artist.CoverArt}");
             }
         }
 
