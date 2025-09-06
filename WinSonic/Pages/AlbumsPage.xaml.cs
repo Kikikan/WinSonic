@@ -20,7 +20,7 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
-        private readonly MainWindow mainWindow = ((App)Application.Current).Window;
+        private readonly MainWindow? mainWindow = ((App)Application.Current).Window;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -50,7 +50,7 @@ namespace WinSonic.Pages
             }
             else
             {
-                var suggestions = mainWindow.Suggestions;
+                var suggestions = mainWindow?.Suggestions;
                 if (suggestions != null)
                 {
                     albums.AddRange([.. suggestions.Where(s => s.Object is Album).Select(s => (Album)s.Object)]);
@@ -121,7 +121,10 @@ namespace WinSonic.Pages
                         throw new NotImplementedException();
                 }
                 AlbumControl.UpdateAction = Update;
-                mainWindow.SuggestionsChanged += MainWindow_SuggestionsChanged;
+                if (mainWindow != null)
+                {
+                    mainWindow.SuggestionsChanged += MainWindow_SuggestionsChanged;
+                }
                 initialized = true;
             }
         }
