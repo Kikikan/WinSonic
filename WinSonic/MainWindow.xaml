@@ -167,12 +167,12 @@
                 NavigationFailed="ContentFrame_NavigationFailed" Navigated="ContentFrame_Navigated"/>
             </Grid>
         </NavigationView>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Margin="15 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click" Margin="15 0 0 0">
+            <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click">
                 <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" >
                     <Image x:Name="CoverImage" MaxHeight="95" Margin="5">
                         <Image.Source>
