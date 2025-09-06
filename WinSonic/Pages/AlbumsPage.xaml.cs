@@ -20,6 +20,7 @@ namespace WinSonic.Pages
     public sealed partial class AlbumsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+        private readonly MainWindow mainWindow = ((App)Application.Current).Window;
         private SubsonicApiHelper.AlbumListType OrderBy;
         private bool initialized = false;
         private readonly List<Album> albums = [];
@@ -39,22 +40,41 @@ namespace WinSonic.Pages
         {
             bool added = false;
             bool result = false;
-            foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
+            List<Album> albums = [];
+            if (!SearchResultsFilterCheckBox.IsChecked)
             {
-                List<Album> albums = await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count);
-                this.albums.AddRange(albums);
-                if (albums != null && albums.Count > 0)
+                foreach (var server in roamingSettings.ServerSettings.ActiveServers)
                 {
-                    foreach (var album in albums)
-                    {
-                        if (!FavouritesFilterCheckBox.IsChecked || album.IsFavourite)
-                        {
-                            AlbumControl.Items.Add(new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title[..1]));
-                            added = true;
-                        }
-                    }
-                    result = true;
+                    albums.AddRange(await SubsonicApiHelper.GetAlbumList(server, OrderBy, 12, this.albums.Count));
                 }
+            }
+            else
+            {
+                var suggestions = mainWindow.Suggestions;
+                if (suggestions != null)
+                {
+                    albums.AddRange([.. suggestions.Where(s => s.Object is Album).Select(s => (Album)s.Object)]);
+                }
+            }
+            foreach (var album in albums.ToList())
+            {
+                if (this.albums.Contains(album))
+                {
+                    albums.Remove(album);
+                }
+            }
+            this.albums.AddRange(albums);
+            if (albums != null && albums.Count > 0)
+            {
+                foreach (var album in albums)
+                {
+                    if (!FavouritesFilterCheckBox.IsChecked || album.IsFavourite)
+                    {
+                        AlbumControl.Items.Add(new InfoWithPicture(album, album.CoverImageUrl, album.Title, album.Artist, album.IsFavourite, typeof(AlbumDetailPage), album.Title[..1]));
+                        added = true;
+                    }
+                }
+                result = true;
             }
             if (result && !added)
             {
@@ -101,9 +121,19 @@ namespace WinSonic.Pages
                         throw new NotImplementedException();
                 }
                 AlbumControl.UpdateAction = Update;
+                mainWindow.SuggestionsChanged += MainWindow_SuggestionsChanged;
                 initialized = true;
             }
         }
+
+        private async void MainWindow_SuggestionsChanged(object? sender, EventArgs e)
+        {
+            if (SearchResultsFilterCheckBox.IsChecked)
+            {
+                await Refresh();
+            }
+        }
+
         private async void FavouritesFilterCheckBox_Click(object sender, RoutedEventArgs e)
         {
             await Refresh();

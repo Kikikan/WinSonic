@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -50,6 +51,9 @@ namespace WinSonic
         private MiniPlayerWindow? _miniPlayerWindow;
 
         public MediaPlayer SharedMediaPlayer => MediaPlayerElement.MediaPlayer; // Expose MediaPlayer
+
+        internal ImmutableList<Suggestion> Suggestions { get; private set; } = [];
+        internal event EventHandler SuggestionsChanged;
 
         public MainWindow()
         {
@@ -253,27 +257,31 @@ namespace WinSonic
             string query = sender.Text;
             await Task.Delay(300);
             if (query != sender.Text) return;
+            if (string.IsNullOrEmpty(query))
+            {
+                Suggestions = [];
+                SuggestionsChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
 
             List<Suggestion> suggestions = [];
             foreach (var server in ((App)Application.Current).RoamingSettings.ServerSettings.ActiveServers)
             {
                 var result = await SubsonicApiHelper.Search(server, sender.Text);
-                suggestions.AddRange(result.Item1.Select(obj => new Suggestion(obj)));
-                suggestions.AddRange(result.Item2.Select(obj => new Suggestion(obj)));
-                suggestions.AddRange(result.Item3.Select(obj => new Suggestion(obj)));
+                suggestions.AddRange(result.Item1.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
+                suggestions.AddRange(result.Item2.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
+                suggestions.AddRange(result.Item3.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
 
                 var playlists = await SubsonicApiHelper.GetPlaylists(server);
-                suggestions.AddRange(playlists.Select(obj => new Suggestion(new DetailedPlaylist(server, obj.Id, obj.Name, obj.Comment, obj.Owner, obj.Public, []))));
-                
+                suggestions.AddRange
+                    (
+                        playlists.Select(obj => new DetailedPlaylist(server, obj.Id, obj.Name, obj.Comment, obj.Owner, obj.Public, []))
+                        .Select(playlist => new Suggestion(playlist, CalculateObjectScore(playlist, query)))
+                    );
             }
-            await Task.Run(() => suggestions = [.. suggestions.Select(x => new
-            {
-                Item = x,
-                Score = CalculateObjectScore(x.Object, query)
-            })
-            .Where(x => x.Score > 0.25)
-            .OrderByDescending(x => x.Score)
-            .Select(x => x.Item)]);
+            Suggestions = [.. suggestions.OrderByDescending(x => x.Score)];
+            SuggestionsChanged?.Invoke(this, EventArgs.Empty);
+            suggestions = [.. Suggestions.Where(x => x.Score > 0.25)];
 
             sender.ItemsSource = suggestions;
         }
