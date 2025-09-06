@@ -148,7 +148,17 @@
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.AutoSuggestBox>
-                <AutoSuggestBox QueryIcon="Find" AutomationProperties.Name="Search" TextChanged="AutoSuggestBox_TextChanged" SuggestionChosen="AutoSuggestBox_SuggestionChosen"/>
+                <AutoSuggestBox QueryIcon="Find" AutomationProperties.Name="Search" PlaceholderText="Search everywhere"
+                                TextChanged="AutoSuggestBox_TextChanged" SuggestionChosen="AutoSuggestBox_SuggestionChosen">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="{Binding IconGlyph}"/>
+                                <TextBlock Text="{Binding DisplayText}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
             </NavigationView.AutoSuggestBox>
 
 

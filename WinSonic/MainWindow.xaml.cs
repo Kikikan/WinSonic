@@ -17,6 +17,7 @@ using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages;
 using WinSonic.Pages.Details;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -253,18 +254,18 @@ namespace WinSonic
             await Task.Delay(300);
             if (query != sender.Text) return;
 
-            List<ApiObject> suggestions = [];
+            List<Suggestion> suggestions = [];
             foreach (var server in ((App)Application.Current).RoamingSettings.ServerSettings.ActiveServers)
             {
                 var result = await SubsonicApiHelper.Search(server, sender.Text);
-                suggestions.AddRange(result.Item1);
-                suggestions.AddRange(result.Item2);
-                suggestions.AddRange(result.Item3);
+                suggestions.AddRange(result.Item1.Select(obj => new Suggestion(obj)));
+                suggestions.AddRange(result.Item2.Select(obj => new Suggestion(obj)));
+                suggestions.AddRange(result.Item3.Select(obj => new Suggestion(obj)));
             }
             await Task.Run(() => suggestions = [.. suggestions.Select(x => new
             {
                 Item = x,
-                Score = CalculateObjectScore(x, query)
+                Score = CalculateObjectScore(x.Object, query)
             })
             .Where(x => x.Score > 0.25)
             .OrderByDescending(x => x.Score)
@@ -302,13 +303,13 @@ namespace WinSonic
 
         private async void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            if (args.SelectedItem is ApiObject obj)
+            if (args.SelectedItem is Suggestion suggestion)
             {
-                if (obj is Song song)
+                if (suggestion.Object is Song song)
                 {
                     if (ContentFrame.CurrentSourcePageType != typeof(SongsPage))
                     {
-                        ContentFrame.Navigate(typeof(SongsPage), obj.Id, new EntranceNavigationTransitionInfo());
+                        ContentFrame.Navigate(typeof(SongsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
                         MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
                             .Where(item => (string)item.Tag == typeof(SongsPage).ToString())
                             .First();
@@ -317,11 +318,11 @@ namespace WinSonic
                     {
                         if (ContentFrame.Content is SongsPage page)
                         {
-                            await page.SelectSong(obj.Id);
+                            await page.SelectSong(suggestion.Object.Id);
                         }
                     }
                 }
-                else if (obj is Album album)
+                else if (suggestion.Object is Album album)
                 {
                     if (ContentFrame.CurrentSourcePageType == typeof(AlbumDetailPage))
                     {
@@ -329,7 +330,7 @@ namespace WinSonic
                     }
                     ContentFrame.Navigate(typeof(AlbumDetailPage), album);
                 }
-                else if (obj is DetailedArtist artist)
+                else if (suggestion.Object is DetailedArtist artist)
                 {
                     if (ContentFrame.CurrentSourcePageType == typeof(ArtistDetailPage))
                     {
