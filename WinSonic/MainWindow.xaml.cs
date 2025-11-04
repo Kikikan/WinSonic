@@ -337,25 +337,37 @@ namespace WinSonic
                 }
                 else if (suggestion.Object is Album album)
                 {
-                    if (ContentFrame.CurrentSourcePageType == typeof(AlbumDetailPage))
+                    if (ContentFrame.CurrentSourcePageType != typeof(AlbumsPage))
                     {
                         ContentFrame.Navigate(typeof(AlbumsPage));
+                        ContentFrame.Navigate(typeof(AlbumsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(AlbumsPage).ToString())
+                            .First();
                     }
                     ContentFrame.Navigate(typeof(AlbumDetailPage), album);
                 }
                 else if (suggestion.Object is DetailedArtist artist)
                 {
-                    if (ContentFrame.CurrentSourcePageType == typeof(ArtistDetailPage))
+                    if (ContentFrame.CurrentSourcePageType != typeof(ArtistsPage))
                     {
                         ContentFrame.Navigate(typeof(ArtistsPage));
+                        ContentFrame.Navigate(typeof(ArtistsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(ArtistsPage).ToString())
+                            .First();
                     }
                     ContentFrame.Navigate(typeof(ArtistDetailPage), artist);
                 }
                 else if (suggestion.Object is DetailedPlaylist playlist)
                 {
-                    if (ContentFrame.CurrentSourcePageType == typeof(PlaylistDetailPage))
+                    if (ContentFrame.CurrentSourcePageType != typeof(PlaylistPage))
                     {
                         ContentFrame.Navigate(typeof(PlaylistPage));
+                        ContentFrame.Navigate(typeof(PlaylistPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(PlaylistPage).ToString())
+                            .First();
                     }
                     ContentFrame.Navigate(typeof(PlaylistDetailPage), playlist);
                 }
