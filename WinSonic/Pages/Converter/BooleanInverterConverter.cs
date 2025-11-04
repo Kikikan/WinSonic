@@ -16,7 +16,8 @@ namespace WinSonic.Pages.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return value is bool boolValue ? !boolValue : value;
+            // Inverting back a boolean is the same process as inverting it
+            return Convert(value, targetType, parameter, language);
         }
     }
 }
