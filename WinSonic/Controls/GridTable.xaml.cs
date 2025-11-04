@@ -172,10 +172,6 @@ namespace WinSonic.Pages.Control
             if (SelectedIndex >= 0)
             {
                 ChangeSelection(SelectedIndex, this);
-                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                {
-                    rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView();
-                });
             }
         }
 
@@ -317,6 +313,7 @@ namespace WinSonic.Pages.Control
             _selectedIndex = index;
             rectangles[_rawToOrderedIndeces[SelectedIndex]].Stroke = Colors[RectangleColors[rectangles[_rawToOrderedIndeces[SelectedIndex]]]].Stroke;
             rectangles[_rawToOrderedIndeces[SelectedIndex]].Fill = Colors[RectangleColors[rectangles[_rawToOrderedIndeces[SelectedIndex]]]].HoverFill;
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () => rectangles[_rawToOrderedIndeces[SelectedIndex]].StartBringIntoView());
             SelectionChanged?.Invoke(sender, new RowEvent(SelectedIndex));
         }
 

@@ -1,12 +1,16 @@
-﻿using H.NotifyIcon;
+﻿using FuzzySharp;
+using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Media.Playback;
 using WinRT.Interop;
@@ -14,6 +18,7 @@ using WinSonic.Model.Api;
 using WinSonic.Model.Player;
 using WinSonic.Pages;
 using WinSonic.Pages.Details;
+using WinSonic.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,6 +51,9 @@ namespace WinSonic
         private MiniPlayerWindow? _miniPlayerWindow;
 
         public MediaPlayer SharedMediaPlayer => MediaPlayerElement.MediaPlayer; // Expose MediaPlayer
+
+        internal ImmutableList<Suggestion> Suggestions { get; private set; } = [];
+        internal event EventHandler SuggestionsChanged;
 
         public MainWindow()
         {
@@ -242,6 +250,128 @@ namespace WinSonic
             animationService.PrepareToAnimate("coverImageAnimation", CoverImage);
             NavFrame.Navigate(typeof(PlayerPage));
             SongInfoStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private async void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            string query = sender.Text;
+            await Task.Delay(300);
+            if (query != sender.Text) return;
+            if (string.IsNullOrEmpty(query))
+            {
+                Suggestions = [];
+                SuggestionsChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            List<Suggestion> suggestions = [];
+            foreach (var server in ((App)Application.Current).RoamingSettings.ServerSettings.ActiveServers)
+            {
+                var result = await SubsonicApiHelper.Search(server, sender.Text);
+                suggestions.AddRange(result.Item1.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
+                suggestions.AddRange(result.Item2.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
+                suggestions.AddRange(result.Item3.Select(obj => new Suggestion(obj, CalculateObjectScore(obj, query))));
+
+                var playlists = await SubsonicApiHelper.GetPlaylists(server);
+                suggestions.AddRange
+                    (
+                        playlists.Select(obj => new DetailedPlaylist(server, obj.Id, obj.Name, obj.Comment, obj.Owner, obj.Public, []))
+                        .Select(playlist => new Suggestion(playlist, CalculateObjectScore(playlist, query)))
+                    );
+            }
+            Suggestions = [.. suggestions.OrderByDescending(x => x.Score)];
+            SuggestionsChanged?.Invoke(this, EventArgs.Empty);
+            suggestions = [.. Suggestions.Where(x => x.Score > 0.25)];
+
+            sender.ItemsSource = suggestions;
+        }
+
+        private double CalculateObjectScore(ApiObject obj, string query)
+        {
+            string searchText = query.ToLower();
+            string? itemName = obj.ToString()?.ToLower();
+            if (itemName == null)
+            {
+                return 0;
+            }
+
+            double nameSimilarity = Fuzz.Ratio(searchText, itemName) / 100.0;
+
+            double exactMatchBonus = (itemName == searchText) ? 1.2 : 1.0;
+
+            double startsWithBonus = itemName.StartsWith(searchText) ? 1.1 : 1.0;
+
+            double typeWeight = obj switch
+            {
+                DetailedArtist => 1.3,
+                Album => 1.2,
+                Model.Api.Song => 1.1,
+                _ => 1.0,
+            };
+
+            double score = nameSimilarity * 0.5 * exactMatchBonus * startsWithBonus * typeWeight;
+
+            return score;
+        }
+
+        private async void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is Suggestion suggestion)
+            {
+                if (suggestion.Object is Song song)
+                {
+                    if (ContentFrame.CurrentSourcePageType != typeof(SongsPage))
+                    {
+                        ContentFrame.Navigate(typeof(SongsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(SongsPage).ToString())
+                            .First();
+                    }
+                    else
+                    {
+                        if (ContentFrame.Content is SongsPage page)
+                        {
+                            await page.SelectSong(suggestion.Object.Id);
+                        }
+                    }
+                }
+                else if (suggestion.Object is Album album)
+                {
+                    if (ContentFrame.CurrentSourcePageType != typeof(AlbumsPage))
+                    {
+                        ContentFrame.Navigate(typeof(AlbumsPage));
+                        ContentFrame.Navigate(typeof(AlbumsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(AlbumsPage).ToString())
+                            .First();
+                    }
+                    ContentFrame.Navigate(typeof(AlbumDetailPage), album);
+                }
+                else if (suggestion.Object is DetailedArtist artist)
+                {
+                    if (ContentFrame.CurrentSourcePageType != typeof(ArtistsPage))
+                    {
+                        ContentFrame.Navigate(typeof(ArtistsPage));
+                        ContentFrame.Navigate(typeof(ArtistsPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(ArtistsPage).ToString())
+                            .First();
+                    }
+                    ContentFrame.Navigate(typeof(ArtistDetailPage), artist);
+                }
+                else if (suggestion.Object is DetailedPlaylist playlist)
+                {
+                    if (ContentFrame.CurrentSourcePageType != typeof(PlaylistPage))
+                    {
+                        ContentFrame.Navigate(typeof(PlaylistPage));
+                        ContentFrame.Navigate(typeof(PlaylistPage), suggestion.Object.Id, new EntranceNavigationTransitionInfo());
+                        MainNav.SelectedItem = MainNav.MenuItems.Select(obj => (NavigationViewItem)obj)
+                            .Where(item => (string)item.Tag == typeof(PlaylistPage).ToString())
+                            .First();
+                    }
+                    ContentFrame.Navigate(typeof(PlaylistDetailPage), playlist);
+                }
+            }
         }
     }
     // Simple RelayCommand implementation

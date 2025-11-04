@@ -9,7 +9,12 @@
     mc:Ignorable="d"
     xmlns:models="using:WinSonic.Model.Api"
     xmlns:controls="using:WinSonic.Pages.Control"
+    xmlns:converter="using:WinSonic.Pages.Converter"
     Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <converter:BooleanInverterConverter x:Key="BooleanInverter"/>
+    </Page.Resources>
 
     <Grid Margin="36 0 36 0">
         <Grid.RowDefinitions>
@@ -25,10 +30,11 @@
                 <AppBarButton.Flyout>
                     <MenuFlyout>
                         <ToggleMenuFlyoutItem x:Name="FavouritesFilterCheckBox" Text="Favourites" Click="FavouritesFilterCheckBox_Click"/>
+                        <ToggleMenuFlyoutItem x:Name="SearchResultsFilterCheckBox" Text="Search results" Click="FavouritesFilterCheckBox_Click"/>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton ToolTipService.ToolTip="Order by">
+            <AppBarButton ToolTipService.ToolTip="Order by" IsEnabled="{x:Bind SearchResultsFilterCheckBox.IsChecked, Mode=OneWay, Converter={StaticResource BooleanInverter}}">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE8CB;" />
                 </AppBarButton.Icon>

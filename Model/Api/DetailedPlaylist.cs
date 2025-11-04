@@ -34,5 +34,10 @@
             IsPublic = playlist.IsPublic;
             Songs = [.. playlist.Songs];
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

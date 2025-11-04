@@ -26,6 +26,7 @@
                 <AppBarButton.Flyout>
                     <MenuFlyout>
                         <ToggleMenuFlyoutItem x:Name="FavouritesFilterCheckBox" Text="Favourites" Click="FavouritesFilterCheckBox_Click"/>
+                        <ToggleMenuFlyoutItem x:Name="SearchResultsFilterCheckBox" Text="Search results" Click="SearchResultsFilterCheckBox_Click"/>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>

@@ -147,20 +147,34 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox QueryIcon="Find" AutomationProperties.Name="Search" PlaceholderText="Search everywhere"
+                                TextChanged="AutoSuggestBox_TextChanged" SuggestionChosen="AutoSuggestBox_SuggestionChosen">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="{Binding IconGlyph}"/>
+                                <TextBlock Text="{Binding DisplayText}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+            </NavigationView.AutoSuggestBox>
+
 
             <Grid>
                 <Frame x:Name="ContentFrame" IsTabStop="True"
                 NavigationFailed="ContentFrame_NavigationFailed" Navigated="ContentFrame_Navigated"/>
             </Grid>
         </NavigationView>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Margin="15 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click" Margin="15 0 0 0">
+            <Button x:Name="SongInfoButton" Background="Transparent" BorderThickness="0" Padding="0" Click="SongInfoButton_Click">
                 <StackPanel x:Name="SongInfoStackPanel"  Orientation="Horizontal" Grid.Column="0" >
-                    <Image x:Name="CoverImage" MaxHeight="100">
+                    <Image x:Name="CoverImage" MaxHeight="95" Margin="5">
                         <Image.Source>
                             <BitmapImage UriSource="{x:Bind Song.CoverImageUri, Mode=OneWay}"/>
                         </Image.Source>
@@ -173,7 +187,7 @@
             </Button>
             
 
-            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" HorizontalAlignment="Center"/>
+            <MediaPlayerElement x:Name="MediaPlayerElement" Grid.Column="1" AreTransportControlsEnabled="True" HorizontalAlignment="Stretch"/>
         </Grid>
 
         <!-- Loading Overlay -->

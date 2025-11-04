@@ -22,6 +22,7 @@ namespace WinSonic.Pages
     public sealed partial class ArtistsPage : Page
     {
         private readonly RoamingSettings roamingSettings = ((App)Application.Current).RoamingSettings;
+        private readonly MainWindow? mainWindow = ((App)Application.Current).Window;
         private bool initialized = false;
         private readonly List<DetailedArtist> artists = [];
 
@@ -49,6 +50,18 @@ namespace WinSonic.Pages
                 await Refresh();
                 initialized = true;
                 RefreshButton.IsEnabled = true;
+                if (mainWindow != null)
+                {
+                    mainWindow.SuggestionsChanged += MainWindow_SuggestionsChanged;
+                }
+            }
+        }
+
+        private async void MainWindow_SuggestionsChanged(object? sender, System.EventArgs e)
+        {
+            if (SearchResultsFilterCheckBox.IsChecked)
+            {
+                await Refresh();
             }
         }
 
@@ -61,18 +74,27 @@ namespace WinSonic.Pages
 
         private async Task<bool> Refresh()
         {
-            artists.Clear();
+            this.artists.Clear();
             ArtistControl.Items.Clear();
             List<InfoWithPicture> list = [];
-            foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
+            List<DetailedArtist> artists = [];
+            if (!SearchResultsFilterCheckBox.IsChecked)
             {
-                var artists = await SubsonicApiHelper.GetArtists(server);
-                foreach (var artist in artists)
+                foreach (var server in roamingSettings.ServerSettings.ActiveServers.ToList())
                 {
-                    this.artists.Add(artist);
-                    ArtistControl.Items.Add(ToInfoWithPicture(artist));
+                    artists.AddRange(await SubsonicApiHelper.GetArtists(server));
                 }
             }
+            else if (mainWindow != null)
+            {
+                artists.AddRange([.. mainWindow.Suggestions.Where(x => x.Object is DetailedArtist).Select(x => (DetailedArtist) x.Object)]);
+            }
+            foreach (var artist in artists)
+            {
+                this.artists.Add(artist);
+                ArtistControl.Items.Add(ToInfoWithPicture(artist));
+            }
+            
             ArtistControl.IsGrouped = true;
             return true;
         }
@@ -110,6 +132,11 @@ namespace WinSonic.Pages
         {
 
             return SongCollectionCommandBarFlyout.Create(artists[index], artists[index], await SubsonicApiHelper.GetSongs(artists[index]), this, picture);
+        }
+
+        private async void SearchResultsFilterCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            await Refresh();
         }
     }
 }
